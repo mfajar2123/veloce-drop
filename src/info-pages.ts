@@ -1,7 +1,7 @@
 import { siteConfig } from './site-config';
 import type { Locale } from './tool-registry';
 
-export type InfoSection = { title: string; body?: string; items?: string[] };
+export type InfoSection = { title: string; body?: string; items?: string[]; copyEmail?: boolean };
 export type InfoPage = { lang: Locale; topic: string; title: string; intro: string; sections: InfoSection[] };
 
 export const infoPages: InfoPage[] = [
@@ -39,14 +39,18 @@ export const infoPages: InfoPage[] = [
     { title: 'Photo sizes', body: 'Photo presets provide a starting size; confirm the recipient requirements before using the result.' },
     { title: 'File copies', body: 'Keep an original before editing. Downloads follow your browser settings.' },
   ] },
-  { lang: 'id', topic: 'kontak', title: 'Kontak contoh: belum aktif', intro: 'Identitas dan kanal berikut hanya konfigurasi contoh untuk proyek ini; belum menerima pesan.', sections: [
-    { title: 'Pengelola contoh', body: `${siteConfig.contact.team} · ${siteConfig.contact.region}` },
-    { title: 'Email contoh', body: siteConfig.contact.email },
-    { title: 'Informasi laporan', body: 'Jika kanal bantuan diaktifkan, sertakan browser, sistem operasi, nama alat, langkah yang dilakukan, dan pesan kesalahan. Jangan lampirkan foto identitas, tanda tangan, berkas, atau nama file yang sensitif.' },
+  { lang: 'id', topic: 'kontak', title: 'Kontak', intro: 'Ada pertanyaan, laporan masalah, atau masukan tentang VeloceDrop? Kirim email ke alamat di bawah ini.', sections: [
+    { title: 'Pengelola', body: `${siteConfig.contact.team} · ${siteConfig.contact.region}` },
+    { title: 'Email', body: siteConfig.contact.email, copyEmail: true },
+    { title: 'Cara menghubungi', body: 'Tulis tujuan Anda pada subjek email. Sertakan nama alat yang dipakai bila Anda melaporkan masalah. Situs ini dikelola perorangan, jadi tidak ada dukungan langsung 24 jam.' },
+    { title: 'Informasi yang perlu disertakan', body: 'Sebutkan browser, sistem operasi, nama alat, langkah yang dilakukan, dan pesan kesalahan yang muncul. Tangkapan layar membantu, selama tidak memuat data pribadi.' },
+    { title: 'Yang sebaiknya tidak dikirim', body: 'Jangan lampirkan foto identitas, tanda tangan, dokumen asli, atau nama file sensitif. Berkas Anda diproses di perangkat sendiri, jadi kami tidak memerlukannya untuk menelusuri masalah.' },
   ] },
-  { lang: 'en', topic: 'contact', title: 'Sample contact: not active', intro: 'This project uses the following sample identity and contact channel; it does not currently receive messages.', sections: [
-    { title: 'Sample operator', body: `${siteConfig.contact.team} · ${siteConfig.contact.region}` },
-    { title: 'Sample email', body: siteConfig.contact.email },
-    { title: 'What to include', body: 'If support is activated, include your browser, operating system, tool, steps taken, and error message. Do not attach identity photos, signatures, files, or sensitive filenames.' },
+  { lang: 'en', topic: 'contact', title: 'Contact', intro: 'Have a question, a problem to report, or feedback about VeloceDrop? Send an email to the address below.', sections: [
+    { title: 'Operator', body: `${siteConfig.contact.team} · ${siteConfig.contact.region}` },
+    { title: 'Email', body: siteConfig.contact.email, copyEmail: true },
+    { title: 'How to reach us', body: 'State your purpose in the subject line. Mention the tool you were using if you are reporting a problem. The site is run by one person, so there is no live 24-hour support.' },
+    { title: 'What to include', body: 'Include your browser, operating system, tool name, steps taken, and the error message shown. A screenshot helps, as long as it contains no personal data.' },
+    { title: 'What not to send', body: 'Do not attach identity photos, signatures, original documents, or sensitive filenames. Your files are processed on your own device, so we do not need them to investigate a problem.' },
   ] },
 ];

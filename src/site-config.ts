@@ -1,9 +1,8 @@
 export const siteConfig = {
   contact: {
     team: 'Tim VeloceDrop',
-    email: 'hello@velocedrop.example',
+    email: 'velocedrop2123@gmail.com',
     region: 'Indonesia & global',
-    status: 'example-inactive',
   },
   advertising: {
     enabled: false,

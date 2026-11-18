@@ -12,13 +12,14 @@ test('support pages explain actual limits and retain localized routes', async ({
   await expect(page.getByRole('contentinfo').getByRole('link', { name: 'Terms' })).toHaveAttribute('href', '/en/info/terms/');
 
   await page.goto('/id/info/kontak/');
-  await expect(page.getByRole('heading', { name: 'Kontak contoh: belum aktif' })).toBeVisible();
-  await expect(page.getByText('hello@velocedrop.example')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Salin email contoh' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Kontak' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'velocedrop2123@gmail.com' })).toHaveAttribute('href', 'mailto:velocedrop2123@gmail.com');
+  await expect(page.getByRole('button', { name: 'Salin alamat email' })).toBeVisible();
 
   await page.goto('/en/info/contact/');
-  await expect(page.getByRole('heading', { name: 'Sample contact: not active' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Copy sample email' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Contact' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'velocedrop2123@gmail.com' })).toHaveAttribute('href', 'mailto:velocedrop2123@gmail.com');
+  await expect(page.getByRole('button', { name: 'Copy email address' })).toBeVisible();
 
   await page.goto('/en/privacy/');
   await expect(page.getByRole('heading', { name: 'Privacy' })).toBeVisible();

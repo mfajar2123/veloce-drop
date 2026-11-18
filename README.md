@@ -40,10 +40,10 @@ If the site is ever served under a path prefix instead of a domain root, set `PU
 
 The deployment must include `public/models/modnet.onnx` and `public/ort/ort-wasm-simd-threaded.wasm` at their existing paths. The portrait tool requests these public assets from the same origin only after the user presses its model-loading button; together they are 40,737,492 bytes. Users' files are processed in the browser and are not intentionally uploaded. See [docs/PRIVACY.md](docs/PRIVACY.md) for the implementation limits and [ASSET_CREDITS.md](ASSET_CREDITS.md) for asset provenance and licenses.
 
-Example contact details are centralized in `src/site-config.ts` and deliberately inactive. Ads are disabled there with no publisher ID; do not set them up until a real provider, consent policy, and network/privacy disclosures are configured.
+Contact details live in `src/site-config.ts` and are used by the localized Contact pages, which link to `mailto:` and offer a copy button. Ads are disabled there with no publisher ID; do not set them up until a real provider, consent policy, and network/privacy disclosures are configured.
 
 The `protobufjs` installation script is explicitly denied in `pnpm-workspace.yaml`; it checks dependent version notation and is not required for inference.
 
-Before publication, replace the inactive sample contact, set `PUBLIC_SITE_URL`, and verify the deployed headers, dependency licenses, and real-domain output. Netlify has not been connected to this checkout yet, so no public URL and no deployed-header behaviour has been verified.
+Before publication, set `PUBLIC_SITE_URL` and verify the deployed headers, dependency licenses, and real-domain output. Netlify has not been connected to this checkout yet, so no public URL and no deployed-header behaviour has been verified.
 
 `pnpm assets:og` regenerates `public/images/og-share.png` from `public/images/og-share.svg`. Social platforms do not render SVG link previews, so the PNG is what `og:image` and `twitter:image` point at.

@@ -8,7 +8,6 @@ export function getStaticPaths() {
 
 const { record } = Astro.props as { record: (typeof infoPages)[number] };
 const en = record.lang === 'en';
-const isContact = record.topic === 'kontak' || record.topic === 'contact';
 ---
 
 <Base lang={record.lang} title={record.title} description={record.intro}>
@@ -16,7 +15,7 @@ const isContact = record.topic === 'kontak' || record.topic === 'contact';
     <p class="eyebrow">{en ? 'VeloceDrop information' : 'Informasi VeloceDrop'}</p>
     <h1>{record.title}</h1>
     <p class="info-intro">{record.intro}</p>
-    {record.sections.map(section => <section><h2>{section.title}</h2>{section.body && <p>{section.body}</p>}{section.items && <ul>{section.items.map(item => <li>{item}</li>)}</ul>}{isContact && section.title === (en ? 'Sample email' : 'Email contoh') && <p><button class="button secondary" type="button" data-copy-contact>{en ? 'Copy sample email' : 'Salin email contoh'}</button> <span data-copy-state aria-live="polite"></span></p>}</section>)}
+    {record.sections.map(section => <section><h2>{section.title}</h2>{section.body && (section.copyEmail ? <p class="contact-email"><a href={`mailto:${section.body}`}>{section.body}</a></p> : <p>{section.body}</p>)}{section.items && <ul>{section.items.map(item => <li>{item}</li>)}</ul>}{section.copyEmail && section.body && <p><button class="button secondary" type="button" data-copy-contact data-email={section.body}>{en ? 'Copy email address' : 'Salin alamat email'}</button> <span data-copy-state aria-live="polite"></span></p>}</section>)}
   </article>
 </Base>
 
@@ -26,9 +25,10 @@ const isContact = record.topic === 'kontak' || record.topic === 'contact';
     if (!button || button.dataset.ready) return;
     button.dataset.ready = 'true';
     const state = document.querySelector<HTMLElement>('[data-copy-state]');
+    const email = button.dataset.email ?? '';
     button.addEventListener('click', async () => {
       try {
-        await navigator.clipboard.writeText('hello@velocedrop.example');
+        await navigator.clipboard.writeText(email);
         if (state) state.textContent = document.documentElement.lang === 'en' ? 'Copied.' : 'Tersalin.';
       } catch {
         if (state) state.textContent = document.documentElement.lang === 'en' ? 'Clipboard access is unavailable.' : 'Akses clipboard tidak tersedia.';
@@ -46,4 +46,6 @@ const isContact = record.topic === 'kontak' || record.topic === 'contact';
   .info-page section{padding-top:18px;margin-top:24px;border-top:1px solid #e2e8f0}
   .info-page h2{font-size:1.25rem;line-height:1.25}
   .info-page li{padding-block:4px}
+  .info-page .contact-email{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:1.05rem}
+  .info-page .contact-email a{overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:.2em}
 </style>

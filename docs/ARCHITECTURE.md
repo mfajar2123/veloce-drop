@@ -39,4 +39,4 @@ Because the policy is hash-based, changing any inline script changes the hashes.
 
 `public/images/og-share.png` is a 1200 × 630 raster generated from `public/images/og-share.svg` by `scripts/generate-og-image.mjs`. Social platforms and messaging apps do not render SVG Open Graph images, so `og:image` and `twitter:image` point at the PNG. Regenerate it after changing the SVG.
 
-Advertising is disabled in `site-config.ts` and has no publisher ID. Turning on a reserved slot does not integrate an ad provider or configure consent. Replace the sample contact and set `PUBLIC_SITE_URL` before a real public release.
+Advertising is disabled in `site-config.ts` and has no publisher ID. Turning on a reserved slot does not integrate an ad provider or configure consent. Contact details also live in `site-config.ts` and drive the localized Contact pages. Set `PUBLIC_SITE_URL` before a real public release.
