@@ -1,0 +1,53 @@
+{
+  "name": "velocedrop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prebuild": "node scripts/prepare-heic-source.mjs",
+    "dev": "astro dev",
+    "build": "astro build",
+    "postbuild": "node scripts/apply-pages-base-path.mjs && node scripts/generate-headers.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "lint": "eslint .",
+    "assets:prepare": "node scripts/prepare-landing-assets.mjs",
+    "assets:og": "node scripts/generate-og-image.mjs",
+    "performance:landing": "node scripts/landing-budget.mjs",
+    "test:unit": "node --experimental-strip-types --test tests/*.test.mjs",
+    "test:e2e": "playwright test --workers=1"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.1.2",
+    "@base-ui/react": "^1.9.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@jsquash/oxipng": "2.3.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.4.4",
+    "class-variance-authority": "^0.7.1",
+    "cn": "^0.5.2",
+    "fflate": "^0.8.3",
+    "heic-to": "1.6.7",
+    "onnxruntime-web": "^1.31.1",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.4.299",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@axe-core/playwright": "^4.14.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^10.14.0",
+    "eslint-plugin-astro": "^3.2.1",
+    "globals": "^17.14.0",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.72.1"
+  }
+}

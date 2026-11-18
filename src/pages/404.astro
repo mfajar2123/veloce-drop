@@ -1,0 +1,30 @@
+---
+import '../styles/global.css';
+const basePath=(import.meta.env.BASE_URL||'/').replace(/^\/*/,'/').replace(/\/*$/,'/');
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="robots" content="noindex"/>
+    <meta name="description" content="Halaman tidak ditemukan / Page not found."/>
+    <title>Halaman tidak ditemukan · VeloceDrop</title>
+    <link rel="icon" href={`${basePath}favicon-96.png`} type="image/png" sizes="96x96"/>
+  </head>
+  <body>
+    <a class="skip" href="#main">Lewati ke konten</a>
+    <main id="main" class="wrap workspace info" style="min-height:70vh;display:grid;align-content:center">
+      <p class="local">404</p>
+      <h1>Halaman tidak ditemukan</h1>
+      <p>Alamat ini mungkin berubah atau tidak tersedia.</p>
+      <h2 lang="en">Page not found</h2>
+      <p lang="en">This address may have changed or is unavailable.</p>
+      <div class="actions" style="justify-content:flex-start">
+        <a class="button" href={`${basePath}id/`}>Beranda Indonesia</a>
+        <a class="button secondary" href={`${basePath}en/`}>English home</a>
+        <a class="button secondary" href={`${basePath}id/alat/`}>Lihat alat</a>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,101 @@
+---
+const { lang = 'id' } = Astro.props;
+const en = lang === 'en';
+---
+
+<aside class="wrap" aria-label={en ? 'Session files' : 'Berkas sesi'} data-session-tray style="margin-top: 20px" transition:persist>
+  <button class="button secondary" type="button" aria-expanded="false" data-session-toggle>{en ? 'Session files (0)' : 'Berkas sesi (0)'}</button>
+  <div class="panel" data-session-panel hidden>
+    <p data-session-description></p>
+    <ul data-session-list></ul>
+    <p data-session-empty></p>
+    <button class="button secondary" type="button" data-session-clear hidden></button>
+  </div>
+</aside>
+
+<script>
+  import { clearSessionFiles, listSessionFiles, removeSessionFile, subscribeSession } from '../engines/session-files';
+
+  function initializeSessionTray() {
+    document.querySelectorAll<HTMLElement>('[data-session-tray]').forEach(tray => {
+      if (tray.dataset.ready) return;
+      tray.dataset.ready = 'true';
+      const toggle = tray.querySelector<HTMLButtonElement>('[data-session-toggle]');
+      const panel = tray.querySelector<HTMLElement>('[data-session-panel]');
+      const description = tray.querySelector<HTMLElement>('[data-session-description]');
+      const list = tray.querySelector<HTMLUListElement>('[data-session-list]');
+      const empty = tray.querySelector<HTMLElement>('[data-session-empty]');
+      const clear = tray.querySelector<HTMLButtonElement>('[data-session-clear]');
+      if (!toggle || !panel || !description || !list || !empty || !clear) return;
+
+      const urls = new Map<string, string>();
+      let open = false;
+      const en = () => document.documentElement.lang === 'en';
+      const labels = () => en()
+        ? { tray: 'Session files', description: 'Results stay in memory for up to 30 minutes and disappear when you reload or close this page. Maximum five files and 50 MB total.', empty: 'No results in this session.', download: 'Download', remove: 'Remove result', clear: 'Clear all' }
+        : { tray: 'Berkas sesi', description: 'Hasil berada di memori hingga 30 menit dan hilang saat halaman dimuat ulang atau ditutup. Maksimal lima berkas dan total 50 MB.', empty: 'Belum ada hasil dalam sesi ini.', download: 'Unduh', remove: 'Hapus hasil', clear: 'Bersihkan semua' };
+
+      const render = () => {
+        const copy = labels();
+        const files = listSessionFiles();
+        tray.setAttribute('aria-label', copy.tray);
+        const currentIds = new Set(files.map(file => file.id));
+        for (const [id, url] of urls) {
+          if (!currentIds.has(id)) { URL.revokeObjectURL(url); urls.delete(id); }
+        }
+        toggle.textContent = `${copy.tray} (${files.length})`;
+        toggle.setAttribute('aria-expanded', String(open));
+        panel.hidden = !open;
+        description.textContent = copy.description;
+        list.replaceChildren();
+        if (!open) {
+          empty.hidden = true;
+          clear.hidden = true;
+          return;
+        }
+        empty.textContent = copy.empty;
+        empty.hidden = files.length > 0;
+        clear.textContent = copy.clear;
+        clear.hidden = files.length === 0;
+        files.forEach((file, index) => {
+          const item = document.createElement('li');
+          const name = document.createElement('strong');
+          name.textContent = file.name;
+          item.append(name);
+          if (file.width && file.height) item.append(document.createTextNode(` · ${file.width} × ${file.height} px`));
+          item.append(document.createTextNode(` · ${(file.blob.size / 1000).toFixed(1)} KB `));
+          let url = urls.get(file.id);
+          if (!url) { url = URL.createObjectURL(file.blob); urls.set(file.id, url); }
+          const download = document.createElement('a');
+          download.className = 'button download';
+          download.href = url;
+          download.download = file.name;
+          download.textContent = copy.download;
+          item.append(download, document.createTextNode(' '));
+          const remove = document.createElement('button');
+          remove.className = 'button secondary';
+          remove.type = 'button';
+          remove.textContent = en() ? 'Remove' : 'Hapus';
+          remove.setAttribute('aria-label', `${copy.remove} ${files.length - index}`);
+          remove.addEventListener('click', () => removeSessionFile(file.id));
+          item.append(remove);
+          list.append(item);
+        });
+      };
+
+      toggle.addEventListener('click', () => { open = !open; render(); });
+      clear.addEventListener('click', clearSessionFiles);
+      document.addEventListener('astro:page-load', render);
+      const unsubscribe = subscribeSession(render);
+      window.addEventListener('pagehide', () => {
+        unsubscribe();
+        for (const url of urls.values()) URL.revokeObjectURL(url);
+        urls.clear();
+      }, { once: true });
+      render();
+    });
+  }
+
+  document.addEventListener('astro:page-load', initializeSessionTray);
+  initializeSessionTray();
+</script>

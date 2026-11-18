@@ -1,0 +1,8 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PdfCompressor from '../../../components/PdfCompressor';
+import { catalog } from '../../../tool-registry';
+export function getStaticPaths(){return catalog.filter(tool=>tool.id.startsWith('pdf-')&&tool.targetKB).flatMap(tool=>(['id','en'] as const).map(lang=>({params:{lang,preset:tool.path[lang].split('/').filter(Boolean).at(-1)},props:{target:tool.targetKB,title:tool.name[lang]}})))}
+const {target,title}=Astro.props as {target:number;title:string};const lang=Astro.params.lang!;const en=lang==='en';
+---
+<Base lang={lang} title={title} description={en?'Compress a PDF by rasterizing pages locally.':'Kompres PDF dengan merasterisasi halaman secara lokal.'}><div class="wrap workspace"><h1>{title}</h1><p class="lead">{en?'Choose a target, review the rasterization warning, then create a PDF.':'Pilih target, baca penjelasan rasterisasi, lalu buat PDF.'}</p><PdfCompressor lang={lang} initialTarget={target} client:load /></div></Base>

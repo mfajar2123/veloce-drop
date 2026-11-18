@@ -1,0 +1,7 @@
+---
+import Base from '../../layouts/Base.astro';
+import BackgroundStudio from '../../components/BackgroundStudio';
+export function getStaticPaths(){return [{params:{lang:'id'}},{params:{lang:'en'}}]}
+const lang=Astro.params.lang!;const en=lang==='en';
+---
+<Base lang={lang} title={en?'Remove portrait background':'Hapus latar potret'} description={en?'Remove a portrait background locally.':'Hapus latar potret secara lokal.'}><div class="wrap workspace"><h1>{en?'Remove portrait background':'Hapus latar potret'}</h1><p class="lead">{en?'Load the model, choose a portrait and refine the mask.':'Muat model, pilih potret, lalu perbaiki mask.'}</p><BackgroundStudio lang={lang} client:load /></div></Base>

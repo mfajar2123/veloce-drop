@@ -1,0 +1,7 @@
+---
+import Base from '../../layouts/Base.astro';
+import PrintSheetUpload from '../../components/PrintSheetUpload';
+export function getStaticPaths(){return [{params:{lang:'id'}},{params:{lang:'en'}}]}
+const lang=Astro.params.lang!;const en=lang==='en';
+---
+<Base lang={lang} title={en?'Print photo sheet':'Cetak lembar foto'} description={en?'Prepare a photo sheet locally for printing.':'Siapkan lembar foto untuk dicetak secara lokal.'}><div class="wrap workspace"><h1>{en?'Print photo sheet':'Cetak lembar foto'}</h1><p class="lead">{en?'Choose a photo and create a print-sized PDF.':'Pilih foto dan buat PDF sesuai ukuran cetak.'}</p><PrintSheetUpload lang={lang} client:load /></div></Base>

@@ -1,0 +1,78 @@
+---
+import { catalog, type Locale } from '../tool-registry';
+
+const { lang } = Astro.props as { lang: Locale };
+const en = lang === 'en';
+---
+
+<div class="wrap section" data-catalog data-lang={lang}>
+  <h1>{en ? 'Image and document tools' : 'Alat gambar dan dokumen'}</h1>
+  <p>{en ? 'Search by tool, format or purpose, or choose a collection.' : 'Cari berdasarkan alat, format, atau tujuan, atau pilih kumpulan alat.'}</p>
+  <fieldset class="catalog-filters" data-filters disabled>
+    <label for="tool-search">{en ? 'Search tools' : 'Cari alat'}</label>
+    <input id="tool-search" type="search" autocomplete="off" placeholder={en ? 'For example: PDF, passport, WebP' : 'Contoh: PDF, pas foto, WebP'} data-search />
+    <div class="catalog-packages" role="group" aria-label={en ? 'Tool collections' : 'Kumpulan alat'}>
+      <button type="button" data-package="all" aria-pressed="true">{en ? 'All tools' : 'Semua alat'}</button>
+      <button type="button" data-package="applicant" aria-pressed="false">{en ? 'Applications' : 'Pelamar / CPNS'}</button>
+      <button type="button" data-package="seller" aria-pressed="false">{en ? 'Online sellers' : 'Penjual Online / UMKM'}</button>
+      <button type="button" data-package="social" aria-pressed="false">{en ? 'iPhone / social' : 'iPhone / Sosmed'}</button>
+    </div>
+  </fieldset>
+  <p data-js-note>{en ? 'Search and collection filters require JavaScript. All available tools are listed below.' : 'Pencarian dan filter kumpulan memerlukan JavaScript. Semua alat tersedia di bawah ini.'}</p>
+  <p class="notice" data-count aria-live="polite"></p>
+  <div class="tool-list" data-tool-list>
+    {catalog.map(tool => <a class="tool-row" href={tool.path[lang]} data-search-text={`${tool.name.id} ${tool.name.en} ${tool.description.id} ${tool.description.en} ${tool.keywords}`} data-packages={tool.packages.join(' ')}><strong>{tool.name[lang]}</strong><span>{tool.description[lang]}</span></a>)}
+  </div>
+  <p data-empty hidden>{en ? 'No tools match. Try another term or collection.' : 'Tidak ada alat yang cocok. Coba kata atau kumpulan lain.'}</p>
+</div>
+
+<script>
+  function setupCatalog() {
+    const root = document.querySelector<HTMLElement>('[data-catalog]');
+    if (!root || root.dataset.ready) return;
+    root.dataset.ready = 'true';
+    const filters = root.querySelector<HTMLFieldSetElement>('[data-filters]')!;
+    const input = root.querySelector<HTMLInputElement>('[data-search]')!;
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-package]'));
+    const rows = Array.from(root.querySelectorAll<HTMLElement>('[data-search-text]'));
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+    const en = root.dataset.lang === 'en';
+    let selected = 'all';
+
+    function update() {
+      const words = input.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
+      let visible = 0;
+      for (const row of rows) {
+        const text = (row.dataset.searchText ?? '').toLocaleLowerCase();
+        const matches = words.every(word => text.includes(word)) && (selected === 'all' || (row.dataset.packages ?? '').split(' ').includes(selected));
+        row.hidden = !matches;
+        if (matches) visible++;
+      }
+      for (const button of buttons) button.setAttribute('aria-pressed', String(button.dataset.package === selected));
+      empty.hidden = visible > 0;
+      count.textContent = en ? `${visible} ${visible === 1 ? 'tool' : 'tools'}` : `${visible} alat`;
+    }
+
+    input.addEventListener('input', update);
+    for (const button of buttons) button.addEventListener('click', () => { selected = button.dataset.package ?? 'all'; update(); });
+    filters.disabled = false;
+    root.querySelector<HTMLElement>('[data-js-note]')!.hidden = true;
+    update();
+  }
+
+  document.addEventListener('astro:page-load', setupCatalog);
+  setupCatalog();
+</script>
+
+<style>
+  [data-catalog] h1{font-size:clamp(2.2rem,5vw,3.5rem);line-height:1.1;letter-spacing:-.035em;margin:0 0 16px}
+  .catalog-filters{border:0;padding:0;margin:28px 0 0;display:grid;gap:12px;max-width:780px}
+  .catalog-filters label{font-weight:700}
+  .catalog-filters input{width:100%;min-height:48px;padding:10px 14px;border:1px solid #64748b;border-radius:6px;background:#fff}
+  .catalog-packages{display:flex;flex-wrap:wrap;gap:8px}
+  .catalog-packages button{min-height:44px;padding:8px 14px;border:1px solid #065f46;border-radius:6px;background:#fff;color:#065f46}
+  .catalog-packages button[aria-pressed="true"]{background:#065f46;color:#fff}
+  [data-tool-list]{margin-top:12px}
+  [data-tool-list] [hidden],[data-empty][hidden]{display:none!important}
+</style>

@@ -1,0 +1,13 @@
+---
+import { siteConfig } from '../site-config';
+const { placement } = Astro.props as { placement: string };
+const enabled = siteConfig.advertising.enabled && Boolean(siteConfig.advertising.publisherId);
+---
+
+{enabled && <aside class="ad-slot" aria-label="Advertisement" data-ad-placement={placement}>
+  <span>IKLAN / ADVERTISEMENT</span>
+</aside>}
+
+<style>
+  .ad-slot{display:grid;place-items:center;min-height:280px;margin-block:24px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;color:#475569;font-size:.75rem;letter-spacing:.04em}
+</style>

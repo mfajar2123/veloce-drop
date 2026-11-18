@@ -1,0 +1,49 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { infoPages } from '../../../info-pages';
+
+export function getStaticPaths() {
+  return infoPages.map(record => ({ params: { lang: record.lang, topic: record.topic }, props: { record } }));
+}
+
+const { record } = Astro.props as { record: (typeof infoPages)[number] };
+const en = record.lang === 'en';
+const isContact = record.topic === 'kontak' || record.topic === 'contact';
+---
+
+<Base lang={record.lang} title={record.title} description={record.intro}>
+  <article class="wrap panel info-page">
+    <p class="eyebrow">{en ? 'VeloceDrop information' : 'Informasi VeloceDrop'}</p>
+    <h1>{record.title}</h1>
+    <p class="info-intro">{record.intro}</p>
+    {record.sections.map(section => <section><h2>{section.title}</h2>{section.body && <p>{section.body}</p>}{section.items && <ul>{section.items.map(item => <li>{item}</li>)}</ul>}{isContact && section.title === (en ? 'Sample email' : 'Email contoh') && <p><button class="button secondary" type="button" data-copy-contact>{en ? 'Copy sample email' : 'Salin email contoh'}</button> <span data-copy-state aria-live="polite"></span></p>}</section>)}
+  </article>
+</Base>
+
+<script>
+  function setupContactCopy() {
+    const button = document.querySelector<HTMLButtonElement>('[data-copy-contact]');
+    if (!button || button.dataset.ready) return;
+    button.dataset.ready = 'true';
+    const state = document.querySelector<HTMLElement>('[data-copy-state]');
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText('hello@velocedrop.example');
+        if (state) state.textContent = document.documentElement.lang === 'en' ? 'Copied.' : 'Tersalin.';
+      } catch {
+        if (state) state.textContent = document.documentElement.lang === 'en' ? 'Clipboard access is unavailable.' : 'Akses clipboard tidak tersedia.';
+      }
+    });
+  }
+  document.addEventListener('astro:page-load', setupContactCopy);
+  setupContactCopy();
+</script>
+
+<style>
+  .info-page{max-width:880px;margin-top:36px}
+  .info-page h1{margin:.2em 0;font-size:clamp(2rem,5vw,3.25rem);line-height:1.1;letter-spacing:-.045em}
+  .info-page .info-intro{max-width:720px;color:#334155;font-size:1.1rem}
+  .info-page section{padding-top:18px;margin-top:24px;border-top:1px solid #e2e8f0}
+  .info-page h2{font-size:1.25rem;line-height:1.25}
+  .info-page li{padding-block:4px}
+</style>

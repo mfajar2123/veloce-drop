@@ -1,0 +1,12 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ToolCatalog from '../../../components/ToolCatalog.astro';
+import type { Locale } from '../../../tool-registry';
+
+export function getStaticPaths() { return [{ params: { lang: 'id' } }]; }
+const lang: Locale = 'id';
+---
+
+<Base lang={lang} title="Alat Kompres Foto, Resize, dan PDF" description="Cari alat online untuk kompres foto, ubah ukuran, konversi format, hapus latar, dan menyiapkan dokumen PDF langsung di browser.">
+  <ToolCatalog lang={lang} />
+</Base>

@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.astro/
+test-results/
+playwright-report/
+.cache/
+.pnpm-store/
+
+# Local tooling: skills are restored from skills-lock.json instead of vendored
+.agents/
+.agent/
+.codex/
+.gemini/
+.opencode/
+
+# Local environment overrides
+.env
+.env.*
+*.local

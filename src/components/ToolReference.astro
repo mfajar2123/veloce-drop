@@ -1,0 +1,28 @@
+---
+import type { CatalogTool, Locale } from '../tool-registry';
+const { lang, tool } = Astro.props as { lang: Locale; tool: CatalogTool | undefined };
+const en = lang === 'en';
+---
+
+{tool && <section class="wrap tool-reference" aria-label={en ? 'Tool guidance' : 'Panduan alat'}>
+  <div class="tool-reference-faq">
+    <p class="eyebrow">{en ? 'Before you export' : 'Sebelum mengekspor'}</p>
+    <h2>{en ? 'A few things to know' : 'Hal yang perlu diketahui'}</h2>
+    {tool.faq?.map(faq => <details><summary>{faq.question[lang]}</summary><p>{faq.answer[lang]}</p></details>)}
+  </div>
+  {tool.nextSteps?.length && <nav class="tool-reference-next" aria-label={en ? 'Related tools' : 'Alat terkait'}>
+    <h2>{en ? 'A useful next step' : 'Langkah berikutnya'}</h2>
+    {tool.nextSteps.slice(0, 2).map(step => <a href={step.path[lang]}>{step.label[lang]}</a>)}
+  </nav>}
+</section>}
+
+<style>
+  .tool-reference{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,.5fr);gap:40px;padding-block:38px;border-top:1px solid #e2e8f0}
+  .tool-reference h2{margin:.2em 0 .8em;font-size:1.35rem}
+  .tool-reference details{border-top:1px solid #e2e8f0;padding:13px 0}
+  .tool-reference summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:700}
+  .tool-reference details p{max-width:680px;color:#475569}
+  .tool-reference-next{align-self:start;padding:20px;border-radius:8px;background:#fff;border:1px solid #e2e8f0}
+  .tool-reference-next a{display:flex;align-items:center;min-height:44px;font-weight:700}
+  @media(max-width:680px){.tool-reference{grid-template-columns:1fr;gap:20px;padding-block:26px}}
+</style>

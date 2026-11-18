@@ -1,0 +1,4 @@
+allowBuilds:
+  protobufjs: false
+overrides:
+  minimatch: ^11.0.1

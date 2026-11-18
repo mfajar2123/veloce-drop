@@ -1,0 +1,54 @@
+---
+type Props = { lang: string };
+const { lang } = Astro.props;
+const en = lang === 'en';
+const scenarios = en ? [
+  { title: 'Preparing an application', body: 'Set a passport photo size, reduce attachments, and organize documents before sending them.', label: 'Resize & compress', href: '/en/ukuran/resize-image/', image: '/images/landing-workspace-sample.webp', alt: 'Illustration of someone preparing a portrait at a desk' },
+  { title: 'Preparing product photos', body: 'Keep product canvases consistent and place a shop logo across multiple images.', label: 'Resize & batch logo', href: '/en/watermark-logo-massal/', image: '/images/landing-product-sample.webp', alt: 'Illustration of a small business product being packed' },
+  { title: 'Getting photos ready to share', body: 'Choose a story, feed, or profile crop for the image you want to post.', label: 'Social image sizes', href: '/en/ukuran/resize-image/', image: '/images/landing-workspace-sample.webp', alt: 'Preview of a photo crop for a social post', preview: 'social' },
+] : [
+  { title: 'Melengkapi berkas lamaran', body: 'Samakan ukuran pas foto, kecilkan lampiran, lalu rapikan dokumen sebelum dikirim.', label: 'Ubah ukuran & kompres', href: '/id/ukuran/ubah-ukuran-gambar/', image: '/images/landing-workspace-sample.webp', alt: 'Ilustrasi seseorang menyiapkan pas foto di meja kerja' },
+  { title: 'Menyiapkan foto produk', body: 'Buat bidang produk konsisten dan letakkan logo toko pada beberapa foto sekaligus.', label: 'Resize & watermark logo', href: '/id/watermark-logo-massal/', image: '/images/landing-product-sample.webp', alt: 'Ilustrasi produk UMKM yang sedang disiapkan untuk dikemas' },
+  { title: 'Merapikan foto untuk dibagikan', body: 'Pilih ukuran story, feed, atau profil untuk gambar yang akan dibagikan.', label: 'Ukuran gambar sosial', href: '/id/ukuran/ubah-ukuran-gambar/', image: '/images/landing-workspace-sample.webp', alt: 'Pratinjau potongan foto untuk unggahan sosial', preview: 'social' },
+];
+---
+
+<div class="scenario-panel" data-scenario-panel-root>
+  <div class="scenario-tabs" role="group" aria-label={en ? 'Choose a use case' : 'Pilih kebutuhan'}>
+    {scenarios.map((scenario, index) => <button type="button" data-scenario-tab={index} aria-pressed={index === 0}>{scenario.title}</button>)}
+  </div>
+  <div aria-live="polite">
+    {scenarios.map((scenario, index) => <article class="scenario-detail" data-scenario-panel={index} hidden={index !== 0}>
+      <div>
+        <p class="eyebrow">{en ? `Use case 0${index + 1}` : `Kebutuhan 0${index + 1}`}</p>
+        <h3>{scenario.title}</h3>
+        <p>{scenario.body}</p>
+        <a class="text-link" href={scenario.href}>{scenario.label}</a>
+      </div>
+      {scenario.preview === 'social' ? <div class="scenario-social-preview" role="img" aria-label={scenario.alt}>
+        <img src={scenario.image} srcset={`${scenario.image.replace('.webp', '-768.webp')} 768w, ${scenario.image} 1536w`} sizes="(max-width: 768px) 100vw, 50vw" alt="" width="1536" height="1024" loading="lazy" />
+        <span class="scenario-social-frame" aria-hidden="true"></span>
+        <span class="scenario-social-label" aria-hidden="true">9:16</span>
+      </div> : <img src={scenario.image} srcset={`${scenario.image.replace('.webp', '-768.webp')} 768w, ${scenario.image} 1536w`} sizes="(max-width: 768px) 100vw, 50vw" alt={scenario.alt} width="1536" height="1024" loading="lazy" />}
+    </article>)}
+  </div>
+</div>
+
+<script>
+  function initializeScenarios() {
+    document.querySelectorAll<HTMLElement>('[data-scenario-panel-root]').forEach(root => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = 'true';
+      const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-scenario-tab]'));
+      const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-scenario-panel]'));
+      tabs.forEach(tab => tab.addEventListener('click', () => {
+        const active = tab.dataset.scenarioTab;
+        tabs.forEach(item => item.setAttribute('aria-pressed', String(item === tab)));
+        panels.forEach(panel => { panel.hidden = panel.dataset.scenarioPanel !== active; });
+      }));
+    });
+  }
+
+  document.addEventListener('astro:page-load', initializeScenarios);
+  initializeScenarios();
+</script>

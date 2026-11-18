@@ -1,0 +1,23 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ResizeStudio from '../../../components/ResizeStudio';
+import { catalog, type Locale } from '../../../tool-registry';
+
+export function getStaticPaths() {
+  return catalog.filter(tool => tool.presetKey).flatMap(tool => (['id', 'en'] as const).map(lang => ({
+    params: { lang, preset: tool.path[lang].split('/').filter(Boolean).at(-1) },
+    props: { lang, key: tool.presetKey!, title: tool.name[lang] },
+  })));
+}
+
+const { lang, key, title } = Astro.props as { lang: Locale; key: string; title: string };
+const en = lang === 'en';
+---
+
+<Base lang={lang} title={title} description={en ? 'Resize and crop an image locally.' : 'Ubah ukuran dan crop gambar secara lokal.'}>
+  <div class="wrap workspace">
+    <h1>{title}</h1>
+    <p class="lead">{en ? 'Set output dimensions, choose a crop mode, and download a PNG.' : 'Atur dimensi hasil, pilih mode crop, lalu unduh PNG.'}</p>
+    <ResizeStudio lang={lang} preset={key} client:load />
+  </div>
+</Base>

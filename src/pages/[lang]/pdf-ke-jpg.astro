@@ -1,0 +1,7 @@
+---
+import Base from '../../layouts/Base.astro';
+import PdfToImages from '../../components/PdfToImages';
+export function getStaticPaths(){return [{params:{lang:'id'}},{params:{lang:'en'}}]}
+const lang=Astro.params.lang!;const en=lang==='en';
+---
+<Base lang={lang} title={en?'PDF to JPG':'PDF ke JPG'} description={en?'Convert PDF pages to JPG locally.':'Konversi halaman PDF ke JPG secara lokal.'}><div class="wrap workspace"><h1>{en?'PDF to JPG':'PDF ke JPG'}</h1><p class="lead">{en?'Select pages and resolution, then download the images.':'Pilih halaman dan resolusi, lalu unduh gambar.'}</p><PdfToImages lang={lang} client:load /></div></Base>

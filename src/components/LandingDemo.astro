@@ -1,0 +1,58 @@
+---
+type Props = { lang: string; original: string; compressed: string; originalBytes: number; compressedBytes: number };
+const { lang, original, compressed, originalBytes, compressedBytes } = Astro.props;
+const en = lang === 'en';
+const saved = Math.max(0, Math.round((1 - compressedBytes / originalBytes) * 100));
+const formatBytes = (bytes: number) => new Intl.NumberFormat(en ? 'en' : 'id', { maximumFractionDigits: 1 }).format(bytes / 1000);
+const toolPath = en ? '/en/compress-image/' : '/id/kompres-foto/';
+---
+
+<div class="landing-demo" data-landing-demo data-tool-path={toolPath}>
+  <div class="landing-comparison" style="aspect-ratio: 3 / 2">
+    <img src={original} srcset={`${original.replace('.webp', '-768.webp')} 768w, ${original} 1536w`} sizes="(max-width: 768px) 100vw, 50vw" alt={en ? 'Sample portrait before compression' : 'Foto contoh sebelum dikompres'} width="1536" height="1024" fetchpriority="high" />
+    <img class="landing-comparison-after" src={compressed} srcset={`${compressed.replace('.webp', '-768.webp')} 768w, ${compressed} 1536w`} sizes="(max-width: 768px) 100vw, 50vw" alt="" aria-hidden="true" width="1536" height="1024" style="clip-path: inset(0 0 0 52%)" />
+    <span class="landing-divider" style="left: 52%" aria-hidden="true"></span>
+    <span class="landing-image-label before">{en ? 'Original' : 'Asli'}</span>
+    <span class="landing-image-label after">{en ? 'Compressed' : 'Terkompresi'}</span>
+    <label class="landing-split-label">
+      <span class="sr-only">{en ? 'Before and after comparison' : 'Perbandingan sebelum dan sesudah'}</span>
+      <input data-landing-split aria-label={en ? 'Before and after comparison' : 'Perbandingan sebelum dan sesudah'} type="range" min="0" max="100" value="52" />
+    </label>
+  </div>
+  <div class="landing-demo-caption">
+    <p>{en ? 'A real sample, encoded in the browser' : 'Contoh nyata, dikodekan di browser'}<br /><strong>{formatBytes(originalBytes)} KB → {formatBytes(compressedBytes)} KB</strong> · {saved}% {en ? 'smaller' : 'lebih kecil'}</p>
+    <button class="button" type="button" data-landing-try>{en ? 'Try this sample' : 'Coba foto contoh'}</button>
+  </div>
+  <p class="notice">{en ? 'Synthetic demonstration image. Your own files stay on this device while processing.' : 'Foto ilustrasi sintetis. Berkas Anda tetap di perangkat saat diproses.'}</p>
+</div>
+
+<script>
+  function initializeLandingDemo() {
+    document.querySelectorAll<HTMLElement>('[data-landing-demo]').forEach(root => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = 'true';
+      const slider = root.querySelector<HTMLInputElement>('[data-landing-split]');
+      const after = root.querySelector<HTMLImageElement>('.landing-comparison-after');
+      const divider = root.querySelector<HTMLElement>('.landing-divider');
+      const button = root.querySelector<HTMLButtonElement>('[data-landing-try]');
+      if (!slider || !after || !divider || !button) return;
+
+      slider.addEventListener('input', () => {
+        const split = Number(slider.value);
+        after.style.clipPath = `inset(0 0 0 ${split}%)`;
+        divider.style.left = `${split}%`;
+      });
+
+      button.addEventListener('click', () => {
+        if (button.disabled) return;
+        const en = root.closest('[data-lang]')?.getAttribute('data-lang') === 'en';
+        button.disabled = true;
+        button.textContent = en ? 'Preparing sample…' : 'Membuka foto contoh…';
+        location.assign(`${root.dataset.toolPath}?example=workspace`);
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initializeLandingDemo);
+  initializeLandingDemo();
+</script>
