@@ -44,7 +44,7 @@ Explore link: https://trends.google.com/trends/explore?geo=ID&date=today%205-y&q
 
 Search ranking, Google indexing, displayed favicons, and AdSense approval are not guaranteed by metadata or deployment. A production domain, public launch, Search Console verification, original useful content, and compliance with current AdSense policies remain operational prerequisites. Do not publish the `.example` placeholder as a canonical host.
 
-Google Search's favicon eligibility is hostname-scoped: a GitHub Pages project URL under `username.github.io/repository/` is a subdirectory home page and is not eligible for a distinct project favicon in Google results. The 96 × 96 PNG is linked from the redirect root and localized home pages, but showing it for this project requires a custom domain or a Pages site at the hostname root. Googlebot must also be able to crawl both the home page and the favicon. See [Google's favicon guidelines](https://developers.google.com/search/docs/appearance/favicon-in-search).
+Google Search's favicon eligibility is hostname-scoped. Serving the site from a subdirectory of someone else's hostname makes the home page a subdirectory page, which is not eligible for a distinct project favicon. The 96 × 96 PNG is linked from the redirect root and localized home pages, but showing it in results requires a hostname at the root, such as a Netlify subdomain or a custom domain. Googlebot must also be able to crawl both the home page and the favicon. See [Google's favicon guidelines](https://developers.google.com/search/docs/appearance/favicon-in-search).
 
 ## Source links
 

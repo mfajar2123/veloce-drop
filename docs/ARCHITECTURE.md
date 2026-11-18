@@ -22,7 +22,7 @@ Some image processing still decodes or runs on the main thread. Tool limits do n
 
 Astro's static output is served by the selected hosting provider. `PUBLIC_SITE_URL` sets the origin used for canonical URLs, sitemap, and robots; its fallback is a reserved example domain. `public/_headers` contains security headers in syntax accepted by several static hosts, but the actual host must be configured and tested to serve them. Static redirect behavior is provider-specific; the generated root page uses immediate client and meta refresh fallbacks.
 
-Netlify is the intended host; `netlify.toml` sets the build command, `dist` publish directory, the `/` to `/id/` redirect, and long-lived caching for hashed assets. Do not declare `Content-Security-Policy` in `netlify.toml`: Netlify would serve it alongside the generated one and the stricter, hashless policy would block every inline script.
+Netlify is the deployment target; `netlify.toml` sets the build command, `dist` publish directory, the `/` to `/id/` redirect, and long-lived caching for hashed assets. There is no CI workflow in this repository: Netlify builds from the connected GitHub repository, so a push to `master` triggers the deploy. Do not declare `Content-Security-Policy` in `netlify.toml`: Netlify would serve it alongside the generated one and the stricter, hashless policy would block every inline script.
 
 ### Content Security Policy
 

@@ -28,23 +28,15 @@ Install the Playwright browsers before running browser tests: `pnpm exec playwri
 
 ## Static deployment
 
-Deploy targets are Netlify (primary) and GitHub Pages. Both are static; nothing here needs a server runtime.
+Netlify is the deployment target. The site is static; nothing here needs a server runtime.
 
-### Netlify
-
-`netlify.toml` holds the build command (`pnpm build`), the `dist` publish directory, the `/` to `/id/` redirect, and long-lived caching for hashed assets. Netlify also applies `dist/_headers`, so the CSP, framing, and referrer policies are enforced as real response headers there.
+`netlify.toml` holds the build command (`pnpm build`), the `dist` publish directory, the `/` to `/id/` redirect, and long-lived caching for hashed assets. Netlify also applies `dist/_headers`, so the CSP, framing, and referrer policies are enforced as real response headers.
 
 Set `PUBLIC_SITE_URL` in the Netlify environment to the final HTTPS origin, for example `https://velocedrop.netlify.app` or a custom domain. Without it, canonical and sitemap URLs fall back to `https://velocedrop.example`, which `scripts/verify-pages-output.mjs` rejects on purpose.
 
 The CSP is hash-based. `pnpm build` emits per-page hashes through Astro's `security.csp`, then `postbuild` merges them into `dist/_headers` with `scripts/generate-headers.mjs`. Rebuild rather than editing `dist` by hand, or the header policy will not match the shipped scripts. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-### GitHub Pages
-
-For GitHub Pages, set the repository's Pages publishing source to **GitHub Actions**. `.github/workflows/pages.yml` builds and deploys the static site on pushes to `main` or `master`; `actions/configure-pages` supplies the site URL and repository base path. The build rewrites route and public-asset references so images, the favicon, PDF.js files, and the locally loaded portrait model continue to resolve for both root and project sites. `scripts/verify-pages-output.mjs` checks every local HTML `src` and `href`, the generated URLs, and required assets before the workflow uploads the artifact.
-
-GitHub Pages does not apply the `public/_headers` file as response headers. This means the deployed CSP, framing, and referrer policies are not enforced there; a proxy/CDN or a different host is required for that. The static HTML build does not prove deployed response-header behavior. [GitHub Pages discussion](https://github.com/orgs/community/discussions/54257)
-
-For another static host, set `PUBLIC_SITE_URL` to the site's final HTTPS origin and `PUBLIC_BASE_PATH` to its path prefix (or `/` at the domain root). Without a production URL, canonical and sitemap URLs use `https://velocedrop.example`; that placeholder must not be published. Configure the host to serve `public/_headers` as response headers. Static redirects and security-header behavior should be verified on the chosen provider.
+If the site is ever served under a path prefix instead of a domain root, set `PUBLIC_BASE_PATH` to that prefix. At the domain root the default `/` needs no rewriting.
 
 The deployment must include `public/models/modnet.onnx` and `public/ort/ort-wasm-simd-threaded.wasm` at their existing paths. The portrait tool requests these public assets from the same origin only after the user presses its model-loading button; together they are 40,737,492 bytes. Users' files are processed in the browser and are not intentionally uploaded. See [docs/PRIVACY.md](docs/PRIVACY.md) for the implementation limits and [ASSET_CREDITS.md](ASSET_CREDITS.md) for asset provenance and licenses.
 
@@ -52,6 +44,6 @@ Example contact details are centralized in `src/site-config.ts` and deliberately
 
 The `protobufjs` installation script is explicitly denied in `pnpm-workspace.yaml`; it checks dependent version notation and is not required for inference.
 
-Before publication, replace the inactive sample contact, set `PUBLIC_SITE_URL`, and verify the deployed headers, dependency licenses, and real-domain output. The Pages workflow is configured but has not run because this local checkout has no GitHub remote. Netlify has not been connected to this checkout yet either, so neither host has a verified public URL.
+Before publication, replace the inactive sample contact, set `PUBLIC_SITE_URL`, and verify the deployed headers, dependency licenses, and real-domain output. Netlify has not been connected to this checkout yet, so no public URL and no deployed-header behaviour has been verified.
 
 `pnpm assets:og` regenerates `public/images/og-share.png` from `public/images/og-share.svg`. Social platforms do not render SVG link previews, so the PNG is what `og:image` and `twitter:image` point at.

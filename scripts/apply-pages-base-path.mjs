@@ -21,4 +21,4 @@ async function rewrite(directory) {
 }
 
 await rewrite('dist');
-console.log(`Applied GitHub Pages base path ${basePath} to static routes and assets.`);
+console.log(basePath === '/' ? 'Served at the domain root; no asset path rewrite needed.' : `Applied base path ${basePath} to static routes and assets.`);

@@ -132,7 +132,7 @@ for (const file of localizedPages) {
 
 const sitemap = await readFile(join(root, 'sitemap.xml'), 'utf8');
 if (!sitemap.includes(`${basePath}id/`) || !sitemap.includes(`${basePath}en/`)) {
-  throw new Error('Sitemap URLs do not include the GitHub Pages base path.');
+  throw new Error('Sitemap URLs do not include the configured base path.');
 }
 
 const robots = await readFile(join(root, 'robots.txt'), 'utf8');
@@ -143,4 +143,4 @@ if (assetStats.some(file => file.size < 100_000)) {
   throw new Error('A required large inference asset is unexpectedly small.');
 }
 
-console.log(`GitHub Pages output verified (${requiredFiles.length} required paths and ${localizedPages.length} localized page metadata sets).`);
+console.log(`Static output verified (${requiredFiles.length} required paths and ${localizedPages.length} localized page metadata sets).`);
