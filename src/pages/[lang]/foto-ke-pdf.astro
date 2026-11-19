@@ -1,7 +1,0 @@
----
-import Base from '../../layouts/Base.astro';
-import PhotoPdfStudio from '../../components/PhotoPdfStudio';
-export function getStaticPaths(){return [{params:{lang:'id'}},{params:{lang:'en'}}]}
-const lang=Astro.params.lang!;const en=lang==='en';
----
-<Base lang={lang} title={en?'Photos to PDF':'Foto ke PDF'} description={en?'Arrange photos and create a PDF locally.':'Susun foto dan buat PDF secara lokal.'}><div class="wrap workspace"><h1>{en?'Photos to PDF':'Foto ke PDF'}</h1><p class="lead">{en?'Arrange your images, choose paper size, then create a PDF.':'Susun gambar, pilih ukuran kertas, lalu buat PDF.'}</p><PhotoPdfStudio lang={lang} client:load /></div></Base>

@@ -31,10 +31,10 @@ const rootIndex = await readFile(join(root, 'index.html'), 'utf8');
 if (!html.includes('rel="icon"') || !html.includes('canonical')) {
   throw new Error('Landing page is missing its favicon or canonical URL.');
 }
-for (const expected of [`${basePath}favicon-96.png`, `${basePath}images/landing-workspace-sample.webp`, `${basePath}id/`]) {
+for (const expected of [`${basePath}favicon-96.png`, `${basePath}images/landing-workspace-sample.webp`, `${basePath}id/`, `${basePath}en/`]) {
   if (!html.includes(expected)) throw new Error(`Landing HTML is missing base-prefixed reference: ${expected}`);
 }
-for (const expected of [`${basePath}favicon-96.png`, `${basePath}id/`]) {
+for (const expected of [`${basePath}favicon-96.png`, `${basePath}en/`]) {
   if (!rootIndex.includes(expected)) throw new Error(`Root redirect page is missing base-prefixed reference: ${expected}`);
 }
 

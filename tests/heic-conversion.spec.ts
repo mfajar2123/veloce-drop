@@ -28,7 +28,7 @@ test('HEIC primary image converts locally to a valid JPEG',async({page})=>{
 });
 
 test('invalid HEIC input reports an error without offering a download',async({page})=>{
-  await page.goto('/en/konversi/image/');
+  await page.goto('/en/convert-image/');
   await page.getByLabel('Image format or action').selectOption('heic');
   await page.locator('input[type=file]').setInputFiles({name:'broken.heic',mimeType:'image/heic',buffer:Buffer.from('not an HEIC')});
   await page.getByRole('button',{name:'Convert to JPG'}).click();

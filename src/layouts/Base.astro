@@ -5,7 +5,14 @@ import {ClientRouter} from 'astro:transitions';
 import SessionTray from '../components/SessionTray.astro';
 import ToolReference from '../components/ToolReference.astro';
 import {catalog, type Locale} from '../tool-registry';
-const { lang = 'id', title, description = 'Local image tools' } = Astro.props;
+const { lang = 'id', title, description = 'Local image tools', trail, article, jsonLd } = Astro.props as {
+  lang?: Locale;
+  title: string;
+  description?: string;
+  trail?: Array<{ name: string; path?: string }>;
+  article?: { publishedAt: Date; updatedAt?: Date };
+  jsonLd?: Record<string, unknown>;
+};
 const en = lang === 'en';
 const targetLang:Locale = en ? 'id' : 'en';
 const basePath=(import.meta.env.BASE_URL||'/').replace(/^\/*/,'/').replace(/\/*$/,'/');
@@ -24,33 +31,48 @@ const canonical=publicUrl(pathname);
 const isProductPage=Boolean(tool)||pathname==='/id/'||pathname==='/en/';
 const isHomePage=pathname===`/${lang}/`;
 const catalogPath=lang==='en'?'/en/tools/':'/id/alat/';
-const breadcrumbItems=!isHomePage?[
-  {name:en?'Home':'Beranda',url:publicUrl(`/${lang}/`)},
-  ...(tool?[{name:en?'Tools':'Alat',url:publicUrl(catalogPath)}]:[]),
-  {name:tool?.name[lang as Locale]??pageTitle},
-]:[];
+const breadcrumbItems: Array<{ name: string; url?: string }> = trail?.length
+  ? trail.map(item=>({name:item.name,url:item.path?publicUrl(item.path):undefined}))
+  : !isHomePage?[
+    {name:en?'Home':'Beranda',url:publicUrl(`/${lang}/`)},
+    ...(tool?[{name:en?'Tools':'Alat',url:publicUrl(catalogPath)}]:[]),
+    {name:tool?.name[lang as Locale]??pageTitle},
+  ]:[];
+const faqSchema=tool?.faq?.length?{
+  '@context':'https://schema.org',
+  '@type':'FAQPage',
+  mainEntity:tool.faq.map(item=>({
+    '@type':'Question',
+    name:item.question[lang as Locale],
+    acceptedAnswer:{'@type':'Answer',text:item.answer[lang as Locale]},
+  })),
+}:null;
 const idAlternate=lang==='id'?canonical:publicUrl(alternate);
 const enAlternate=lang==='en'?canonical:publicUrl(alternate);
 const socialImage=publicUrl('/images/og-share.png');
+const documentTitle=article?pageTitle:`${pageTitle} | VeloceDrop`;
 ---
 <!doctype html>
 <html lang={lang}>
   <head>
     <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="theme-color" content="#065F46"/><meta name="description" content={pageDescription}/>
-    <title>{pageTitle} | VeloceDrop</title><link rel="canonical" href={canonical}/>
-    <link rel="alternate" hreflang="id" href={idAlternate}/><link rel="alternate" hreflang="en" href={enAlternate}/><link rel="alternate" hreflang="x-default" href={idAlternate}/>
-    <meta property="og:type" content="website"/><meta property="og:site_name" content="VeloceDrop"/><meta property="og:title" content={`${pageTitle} | VeloceDrop`}/><meta property="og:description" content={pageDescription}/><meta property="og:url" content={canonical}/><meta property="og:locale" content={en?'en_US':'id_ID'}/><meta property="og:image" content={socialImage}/><meta property="og:image:alt" content="VeloceDrop image and document tools"/>
-    <meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={`${pageTitle} | VeloceDrop`}/><meta name="twitter:description" content={pageDescription}/><meta name="twitter:image" content={socialImage}/>
+    <title>{documentTitle}</title><link rel="canonical" href={canonical}/>
+    <link rel="alternate" hreflang="id" href={idAlternate}/><link rel="alternate" hreflang="en" href={enAlternate}/><link rel="alternate" hreflang="x-default" href={enAlternate}/>
+    <meta property="og:type" content={article?'article':'website'}/><meta property="og:site_name" content="VeloceDrop"/><meta property="og:title" content={documentTitle}/><meta property="og:description" content={pageDescription}/><meta property="og:url" content={canonical}/><meta property="og:locale" content={en?'en_US':'id_ID'}/><meta property="og:image" content={socialImage}/><meta property="og:image:alt" content="VeloceDrop image and document tools"/>
+    <meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={documentTitle}/><meta name="twitter:description" content={pageDescription}/><meta name="twitter:image" content={socialImage}/>
     <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebSite', name: 'VeloceDrop', url: publicUrl('/'), inLanguage: [ 'id', 'en' ] })}/>
     {isProductPage && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebApplication', name: pageTitle, applicationCategory: 'MultimediaApplication', operatingSystem: 'Any modern browser', description: pageDescription, url: canonical, image: socialImage })}/>}
     {breadcrumbItems.length>1 && <script type="application/ld+json" set:html={JSON.stringify({ '@context':'https://schema.org', '@type':'BreadcrumbList', itemListElement:breadcrumbItems.map((item,index)=>({ '@type':'ListItem', position:index+1, name:item.name, ...(item.url?{item:item.url}:{}) })) })}/>} 
-    <link rel="icon" href={`${basePath}favicon-96.png`} type="image/png" sizes="96x96"/>{tool && <ClientRouter />}
+    {faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}/>}
+    {article && <script type="application/ld+json" set:html={JSON.stringify({ '@context':'https://schema.org', '@type':'Article', headline:pageTitle, description:pageDescription, datePublished:new Date(article.publishedAt).toISOString(), ...(article.updatedAt?{dateModified:new Date(article.updatedAt).toISOString()}:{}), inLanguage:lang, mainEntityOfPage:{'@type':'WebPage','@id':canonical}, author:{'@type':'Organization',name:'VeloceDrop'}, publisher:{'@type':'Organization',name:'VeloceDrop'}, image:socialImage })}/>}
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}/>}
+    <link rel="icon" href={`${basePath}favicon-96.png`} type="image/png" sizes="96x96"/><link rel="alternate" type="application/rss+xml" title="VeloceDrop guides" href={`${basePath}rss.xml`}/>{tool && <ClientRouter />}
   </head>
   <body>
     <a class="skip" href="#main">{en ? 'Skip to content' : 'Lewati ke konten'}</a>
-    <header class="header"><div class="wrap nav"><a class="brand" href={`/${lang}/`}><span class="brand-mark">V</span>VeloceDrop</a><nav class="links" aria-label={en ? 'Main navigation' : 'Navigasi utama'}><a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a><a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a><a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a><a href={alternate} lang={targetLang}>{en ? 'ID' : 'EN'}</a></nav><button class="mobile-menu-trigger" type="button" aria-haspopup="dialog" aria-controls="mobile-menu">{en ? 'Menu' : 'Menu'}</button></div><dialog class="mobile-menu" id="mobile-menu" aria-labelledby="mobile-menu-title"><div class="mobile-menu-heading"><strong id="mobile-menu-title">{en ? 'Navigation' : 'Navigasi'}</strong><button class="mobile-menu-close" type="button">{en ? 'Close' : 'Tutup'}</button></div><nav aria-label={en ? 'Mobile navigation' : 'Navigasi seluler'}><a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a><a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a><a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a><a href={alternate} lang={targetLang}>{en ? 'ID' : 'EN'}</a></nav></dialog></header>
+    <header class="header"><div class="wrap nav"><a class="brand" href={`/${lang}/`}><span class="brand-mark">V</span>VeloceDrop</a><nav class="links" aria-label={en ? 'Main navigation' : 'Navigasi utama'}><a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a><a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a><a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a><a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a><a href={alternate} lang={targetLang}>{en ? 'ID' : 'EN'}</a></nav><button class="mobile-menu-trigger" type="button" aria-haspopup="dialog" aria-controls="mobile-menu">{en ? 'Menu' : 'Menu'}</button></div><dialog class="mobile-menu" id="mobile-menu" aria-labelledby="mobile-menu-title"><div class="mobile-menu-heading"><strong id="mobile-menu-title">{en ? 'Navigation' : 'Navigasi'}</strong><button class="mobile-menu-close" type="button">{en ? 'Close' : 'Tutup'}</button></div><nav aria-label={en ? 'Mobile navigation' : 'Navigasi seluler'}><a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a><a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a><a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a><a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a><a href={alternate} lang={targetLang}>{en ? 'ID' : 'EN'}</a></nav></dialog></header>
     <main id="main">{breadcrumbItems.length>1&&<nav class="breadcrumbs" aria-label={en?'Breadcrumb':'Jejak navigasi'}><ol>{breadcrumbItems.map((item,index)=><li>{index>0&&<span class="breadcrumb-separator" aria-hidden="true">/</span>}{item.url?<a href={new URL(item.url).pathname}>{item.name}</a>:<span aria-current="page">{item.name}</span>}</li>)}</ol></nav>}<slot /><ToolReference lang={lang as Locale} tool={tool} /><SessionTray lang={lang} /></main>
-    <footer class="footer"><div class="wrap"><div><strong>VeloceDrop</strong><p>{en ? 'Precision Image & Document Tools. 100% On Your Device.' : 'Olah Foto & Dokumen Presisi. 100% Aman di Perangkat Anda.'}</p></div><div><nav class="footer-links" aria-label={en ? 'More information' : 'Informasi lainnya'}><a href={en?'/en/info/about/':'/id/info/tentang/'}>{en?'About':'Tentang'}</a><a href={en?'/en/info/contact/':'/id/info/kontak/'}>{en?'Contact':'Kontak'}</a><a href={en?'/en/info/help/':'/id/info/bantuan/'}>{en?'Help':'Bantuan'}</a><a href={en?'/en/privacy/':'/id/privasi/'}>{en?'Privacy':'Privasi'}</a><a href={en?'/en/info/terms/':'/id/info/ketentuan/'}>{en?'Terms':'Ketentuan'}</a></nav><p>© {new Date().getFullYear()} VeloceDrop</p></div></div></footer>
+    <footer class="footer"><div class="wrap"><div><strong>VeloceDrop</strong><p>{en ? 'Precision Image & Document Tools. 100% On Your Device.' : 'Olah Foto & Dokumen Presisi. 100% Aman di Perangkat Anda.'}</p></div><div><nav class="footer-links" aria-label={en ? 'More information' : 'Informasi lainnya'}><a href={en?'/en/info/about/':'/id/info/tentang/'}>{en?'About':'Tentang'}</a><a href={en?'/en/articles/':'/id/articles/'}>{en?'Guides':'Panduan'}</a><a href={en?'/en/info/contact/':'/id/info/kontak/'}>{en?'Contact':'Kontak'}</a><a href={en?'/en/info/help/':'/id/info/bantuan/'}>{en?'Help':'Bantuan'}</a><a href={en?'/en/privacy/':'/id/privasi/'}>{en?'Privacy':'Privasi'}</a><a href={en?'/en/info/terms/':'/id/info/ketentuan/'}>{en?'Terms':'Ketentuan'}</a></nav><p>© {new Date().getFullYear()} VeloceDrop</p></div></div></footer>
   </body>
 </html>
 <script>

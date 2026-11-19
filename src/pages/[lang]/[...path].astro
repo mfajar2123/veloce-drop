@@ -1,0 +1,136 @@
+---
+import Base from '../../layouts/Base.astro';
+import Compressor from '../../components/Compressor';
+import BatchCompressor from '../../components/BatchCompressor';
+import ResizeStudio from '../../components/ResizeStudio';
+import FormatConversionWorkspace from '../../components/FormatConversionWorkspace';
+import BackgroundStudio from '../../components/BackgroundStudio';
+import LogoWatermarkBatch from '../../components/LogoWatermarkBatch';
+import PhotoPdfStudio from '../../components/PhotoPdfStudio';
+import PdfToImages from '../../components/PdfToImages';
+import PdfCompressor from '../../components/PdfCompressor';
+import PrintSheetUpload from '../../components/PrintSheetUpload';
+import { catalog, type Locale } from '../../tool-registry';
+
+type ToolProps = {
+  kind: 'tool';
+  lang: Locale;
+  toolId: string;
+  title: string;
+  lead: string;
+  description: string;
+  preset?: string;
+  targetKB?: number;
+};
+
+type PrivacyProps = {
+  kind: 'privacy';
+  lang: Locale;
+  title: string;
+  description: string;
+};
+
+export function getStaticPaths() {
+  const toolLead: Record<string, { id: string; en: string }> = {
+    'compress-image': { id: 'Pilih gambar, tentukan target, lalu unduh hasilnya.', en: 'Choose an image, set a target, and download the actual result.' },
+    batch: { id: 'Tambahkan gambar, tentukan target, lalu unduh hasil satu per satu atau sebagai ZIP.', en: 'Add images, set a target and download each result or a ZIP.' },
+    'resize-image': { id: 'Atur dimensi hasil, pilih mode crop, lalu unduh PNG.', en: 'Set output dimensions, choose a crop mode, and download a PNG.' },
+    'image-converter': { id: 'Pilih format sumber, periksa pratinjau hasil, lalu unduh berkas konversi.', en: 'Choose a source format, inspect the output preview, and download the converted file.' },
+    background: { id: 'Muat model, pilih potret, lalu perbaiki mask.', en: 'Load the model, choose a portrait and refine the mask.' },
+    'logo-watermark': { id: 'Tambahkan logo pada beberapa gambar produk, lalu unduh hasilnya.', en: 'Place a logo on multiple product images and download the results.' },
+    'photo-pdf': { id: 'Susun gambar, pilih ukuran kertas, lalu buat PDF.', en: 'Arrange your images, choose paper size, then create a PDF.' },
+    'pdf-jpg': { id: 'Pilih halaman dan resolusi, lalu unduh gambar.', en: 'Select pages and resolution, then download the images.' },
+    'pdf-500kb': { id: 'Pilih target, baca penjelasan rasterisasi, lalu buat PDF.', en: 'Choose a target, review the rasterization warning, then create a PDF.' },
+    print: { id: 'Pilih foto dan buat PDF sesuai ukuran cetak.', en: 'Choose a photo and create a print-sized PDF.' },
+  };
+
+  const privacyCopy = {
+    id: {
+      title: 'Privasi',
+      description: 'Pelajari cara berkas diproses di browser, disimpan sementara dalam memori sesi, dan aset situs yang tetap memerlukan jaringan.',
+    },
+    en: {
+      title: 'Privacy',
+      description: 'Learn how files are processed in your browser, kept temporarily in session memory, and which site assets still use a network connection.',
+    },
+  } as const;
+
+  const paths: Array<{ params: { lang: string; path: string }; props: ToolProps | PrivacyProps }> = [];
+
+  for (const tool of catalog) {
+    for (const lang of ['id', 'en'] as const) {
+      paths.push({
+        params: { lang, path: tool.path[lang].replace(/^\/+|\/+$/g, '').replace(new RegExp(`^${lang}/`), '') },
+        props: {
+          kind: 'tool',
+          lang,
+          toolId: tool.id,
+          title: tool.name[lang],
+          lead: toolLead[tool.id][lang],
+          description: tool.seo?.description[lang] ?? tool.description[lang],
+          preset: tool.presetKey,
+          targetKB: tool.targetKB,
+        },
+      });
+    }
+  }
+
+  for (const lang of ['id', 'en'] as const) {
+    paths.push({
+      params: { lang, path: lang === 'id' ? 'privasi' : 'privacy' },
+      props: { kind: 'privacy', lang, title: privacyCopy[lang].title, description: privacyCopy[lang].description },
+    });
+  }
+
+  return paths;
+}
+
+const props = Astro.props as ToolProps | PrivacyProps;
+const lang = props.lang;
+const en = lang === 'en';
+---
+
+{props.kind === 'privacy' ? (
+  <Base lang={lang} title={props.title} description={props.description}>
+    <div class="wrap workspace">
+      <article class="info privacy-page">
+        <h1>{props.title}</h1>
+        <p class="lead">{en ? 'Image and document tools process selected files in your browser on your device. This describes file processing, not a claim that loading the website is offline.' : 'Alat gambar dan dokumen memproses berkas yang Anda pilih di browser pada perangkat Anda. Ini menjelaskan pemrosesan berkas, bukan berarti situs dimuat tanpa jaringan.'}</p>
+        <section>
+          <h2>{en ? 'Files and results' : 'Berkas dan hasil'}</h2>
+          <p>{en ? 'Input files and generated results are kept in page memory while you work. Cross-tool handoffs can place up to five results in the session tray, with a combined 50 MB limit and 30-minute expiry. You can remove an item or clear the tray. Reloading or closing the page clears the app-held session.' : 'Berkas masukan dan hasil disimpan di memori halaman selama Anda bekerja. Alur lintas alat dapat menyimpan hingga lima hasil dalam tray sesi, dengan batas total 50 MB dan masa berlaku 30 menit. Anda bisa menghapus satu hasil atau membersihkan tray. Memuat ulang atau menutup halaman menghapus sesi aplikasi.'}</p>
+          <p>{en ? 'The app does not intentionally write file bytes, thumbnails, filenames, or results to URLs, localStorage, IndexedDB, analytics, or a service worker cache. The browser controls downloaded files and may retain them according to its own settings.' : 'Aplikasi tidak dengan sengaja menulis byte berkas, thumbnail, nama file, atau hasil ke URL, localStorage, IndexedDB, analitik, atau cache service worker. Berkas yang diunduh mengikuti pengaturan browser Anda.'}</p>
+        </section>
+        <section>
+          <h2>{en ? 'Network requests' : 'Permintaan jaringan'}</h2>
+          <p>{en ? 'The page, self-hosted fonts, and public application assets use network requests. Background removal asks to load its public same-origin model and runtime only after you select that action. The image itself stays in browser processing memory.' : 'Halaman, font self-hosted, dan aset publik aplikasi memakai jaringan. Penghapus latar meminta model dan runtime publik dari origin yang sama setelah Anda memilih tindakan tersebut. Gambar tetap berada di memori pemrosesan browser.'}</p>
+        </section>
+        <section>
+          <h2>{en ? 'No advertising or analytics configured' : 'Iklan dan analitik belum dikonfigurasi'}</h2>
+          <p>{en ? 'This build has no advertising publisher, third-party analytics, account, or file-upload API. If those services are added later, their network requests, consent requirements, and policy must be reviewed and this notice updated.' : 'Build ini tidak memiliki publisher iklan, analitik pihak ketiga, akun, atau API unggah berkas. Jika layanan tersebut ditambahkan, permintaan jaringan, persetujuan, dan kebijakannya harus ditinjau lalu pemberitahuan ini diperbarui.'}</p>
+        </section>
+        <section>
+          <h2>{en ? 'Limits and reporting' : 'Batasan dan laporan'}</h2>
+          <p>{en ? 'Browser libraries may keep temporary decoded buffers, and large files can use substantial device memory. Processing behavior and support vary by format and device. Security headers depend on the static host configuration. Do not include sensitive files when reporting a problem.' : 'Pustaka browser dapat menyimpan buffer dekode sementara, dan berkas besar dapat memakai banyak memori perangkat. Dukungan format dan perilaku proses berbeda menurut alat dan perangkat. Header keamanan bergantung pada konfigurasi host statis. Jangan sertakan berkas sensitif saat melaporkan masalah.'}</p>
+        </section>
+      </article>
+    </div>
+  </Base>
+) : (
+  <Base lang={lang} title={props.title} description={props.description}>
+    <div class="wrap workspace">
+      <h1>{props.title}</h1>
+      <p class="lead">{props.lead}</p>
+      {props.toolId === 'compress-image' && <Compressor lang={lang} initialTarget={props.targetKB ?? 200} client:load />}
+      {props.toolId === 'batch' && <BatchCompressor lang={lang} client:load />}
+      {props.toolId === 'resize-image' && <ResizeStudio lang={lang} preset={props.preset ?? '3x4'} client:load />}
+      {props.toolId === 'image-converter' && <FormatConversionWorkspace lang={lang} client:load />}
+      {props.toolId === 'background' && <BackgroundStudio lang={lang} client:load />}
+      {props.toolId === 'logo-watermark' && <LogoWatermarkBatch lang={lang} client:load />}
+      {props.toolId === 'photo-pdf' && <PhotoPdfStudio lang={lang} client:load />}
+      {props.toolId === 'pdf-jpg' && <PdfToImages lang={lang} client:load />}
+      {props.toolId === 'pdf-500kb' && <PdfCompressor lang={lang} initialTarget={props.targetKB ?? 500} client:load />}
+      {props.toolId === 'print' && <PrintSheetUpload lang={lang} client:load />}
+    </div>
+  </Base>
+)}

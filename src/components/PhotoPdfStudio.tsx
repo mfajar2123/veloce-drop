@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import {takeSessionFile} from '../engines/session-files';
 import WorkflowActions from './WorkflowActions';
+import { toolHref } from '../tool-links';
 import {readImageBlobHeader} from '../engines/image-header';
 
 type Item = { id: number; file: File; preview: string; width: number; height: number; rotation: number };
@@ -99,6 +100,6 @@ export default function PhotoPdfStudio({lang}:{lang:string}){
       return <figure key={item.id} data-pdf-page-preview style={{margin:0}}><div style={{position:'relative',aspectRatio:`${pageWidth}/${pageHeight}`,background:'#fff',border:'1px solid #94a3b8',boxShadow:'0 2px 8px rgb(15 23 42 / 10%)'}}><div style={{position:'absolute',left:`${padding/pageWidth*100}%`,right:`${padding/pageWidth*100}%`,top:`${padding/pageHeight*100}%`,bottom:`${padding/pageHeight*100}%`}}><img data-page-image-preview data-rotation={item.rotation} src={item.preview} alt="" style={{position:'absolute',left:'50%',top:'50%',width:`${innerWidth?previewWidth/innerWidth*100:0}%`,height:`${innerHeight?previewHeight/innerHeight*100:0}%`,objectFit:'fill',transform:`translate(-50%,-50%) rotate(${item.rotation}deg)`}}/></div></div><figcaption>{en?'Page':'Halaman'} {index+1} · {item.file.name} · {pageWidth.toFixed(1)} × {pageHeight.toFixed(1)} pt</figcaption></figure>
     })}</div></section>}
     {errors.length>0&&<div role="alert" className="error"><ul>{errors.map((error,index)=><li key={index}>{error}</li>)}</ul></div>}
-    {result&&<div className="result" aria-live="polite"><p>PDF · {result.pages} {en?'pages':'halaman'} · {result.bytes.toLocaleString(en?'en':'id')} bytes</p><p><a href={result.url} className="button download" download="photos.pdf">{en?'Download PDF':'Unduh PDF'}</a></p><WorkflowActions lang={lang} blob={result.blob} steps={[{path:`/${lang}/pdf-ke-jpg/`,id:'Ubah PDF ke JPG',en:'Convert PDF to JPG'},{path:`/${lang}/kompres-pdf/500kb/`,id:'Kompres PDF',en:'Compress PDF'}]}/></div>}
+    {result&&<div className="result" aria-live="polite"><p>PDF · {result.pages} {en?'pages':'halaman'} · {result.bytes.toLocaleString(en?'en':'id')} bytes</p><p><a href={result.url} className="button download" download="photos.pdf">{en?'Download PDF':'Unduh PDF'}</a></p><WorkflowActions lang={lang} blob={result.blob} steps={[{path:toolHref('pdf-jpg',lang as 'id'|'en'),id:'Ubah PDF ke JPG',en:'Convert PDF to JPG'},{path:toolHref('pdf-500kb',lang as 'id'|'en'),id:'Kompres PDF',en:'Compress PDF'}]}/></div>}
   </section>
 }

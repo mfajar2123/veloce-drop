@@ -70,7 +70,7 @@ test('lossless PNG optimization removes metadata and keeps pixels and transparen
 });
 
 test('corrupt PNG input is rejected clearly', async ({ page }) => {
-  await page.goto('/en/konversi/image/');
+  await page.goto('/en/convert-image/');
   await page.getByLabel('Image format or action').selectOption('optimize-png');
   await page.getByLabel('Choose a PNG (up to 20 MB)').setInputFiles({ name: 'broken.png', mimeType: 'image/png', buffer: Buffer.from([1, 2, 3]) });
   await page.getByRole('button', { name: 'Optimize PNG' }).click();

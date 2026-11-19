@@ -1,0 +1,150 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { articlesFor, articlePath, categoryLabel } from '../../../articles';
+import { toolHref } from '../../../tool-links';
+import type { Locale } from '../../../tool-registry';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'id' } }, { params: { lang: 'en' } }];
+}
+
+const lang = Astro.params.lang as Locale;
+const en = lang === 'en';
+const all = await articlesFor(lang);
+const PER_PAGE = 6;
+---
+
+<Base lang={lang} title={en ? 'Guides for everyday image and PDF work' : 'Panduan untuk pekerjaan foto dan PDF sehari-hari'} description={en ? 'Practical guides on compressing, resizing, converting and preparing images and PDFs, written against the actual behaviour of these tools.' : 'Panduan praktis tentang kompresi, ukuran, konversi, dan penyiapan foto serta PDF, ditulis berdasarkan perilaku nyata alat ini.'}>
+  <div class="wrap articles-page" data-articles data-lang={lang} data-per-page={PER_PAGE}>
+    <header class="articles-head">
+      <p class="eyebrow">{en ? 'VeloceDrop guides' : 'Panduan VeloceDrop'}</p>
+      <h1>{en ? 'Guides for everyday image and PDF work' : 'Panduan untuk pekerjaan foto dan PDF sehari-hari'}</h1>
+      <p class="lead">{en ? 'These guides explain what the tools actually do, where the limits are, and which choice fits a given upload rule. No filler, no invented numbers.' : 'Panduan ini menjelaskan apa yang benar-benar dilakukan alat, di mana batasnya, dan pilihan mana yang cocok untuk aturan unggah tertentu. Tanpa basa-basi, tanpa angka karangan.'}</p>
+    </header>
+
+    <div class="articles-controls">
+      <label for="article-search">{en ? 'Search guides' : 'Cari panduan'}</label>
+      <input id="article-search" type="search" autocomplete="off" placeholder={en ? 'For example: 200 KB, PDF, passport' : 'Contoh: 200 KB, PDF, pas foto'} data-article-search />
+      <div class="articles-categories" role="group" aria-label={en ? 'Filter by topic' : 'Saring menurut topik'}>
+        <button type="button" data-category="all" aria-pressed="true">{en ? 'All topics' : 'Semua topik'}</button>
+        {Object.entries(categoryLabel).map(([key, label]) => (
+          all.some(article => article.data.category === key) && <button type="button" data-category={key} aria-pressed="false">{label[lang]}</button>
+        ))}
+      </div>
+    </div>
+
+    <p class="notice" data-article-count aria-live="polite"></p>
+
+    <ol class="article-list" data-article-list>
+      {all.map((article, index) => (
+        <li class="article-card" data-article data-search={`${article.data.title} ${article.data.summary} ${categoryLabel[article.data.category]?.[lang] ?? ''}`.toLocaleLowerCase()} data-category={article.data.category} data-page={Math.floor(index / PER_PAGE) + 1} hidden={index >= PER_PAGE}>
+          <article>
+            <p class="article-meta"><span>{categoryLabel[article.data.category]?.[lang] ?? article.data.category}</span> · <time datetime={article.data.publishedAt.toISOString()}>{article.data.publishedAt.toLocaleDateString(en ? 'en-GB' : 'id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</time> · {article.data.readingMinutes} {en ? 'min read' : 'menit baca'}</p>
+            <h2><a href={articlePath(article)}>{article.data.title}</a></h2>
+            <p>{article.data.summary}</p>
+            <a class="text-link" href={articlePath(article)}>{en ? 'Read the guide' : 'Baca panduan'} <span aria-hidden="true">→</span></a>
+          </article>
+        </li>
+      ))}
+    </ol>
+
+    <p data-article-empty hidden>{en ? 'No guides match that search yet.' : 'Belum ada panduan yang cocok dengan pencarian itu.'}</p>
+
+    <nav class="article-pagination" data-pagination aria-label={en ? 'Guide pages' : 'Halaman panduan'}>
+      <button type="button" data-page-prev disabled>{en ? 'Previous' : 'Sebelumnya'}</button>
+      <span data-page-status aria-live="polite"></span>
+      <button type="button" data-page-next>{en ? 'Next' : 'Berikutnya'}</button>
+    </nav>
+
+    <aside class="articles-tools">
+      <h2>{en ? 'Need the tool instead?' : 'Butuh alatnya langsung?'}</h2>
+      <p>{en ? 'Every guide links back to the workspace it describes.' : 'Setiap panduan menautkan kembali ke ruang kerja yang dijelaskan.'}</p>
+      <a class="button" href={toolHref('compress-image', lang)}>{en ? 'Compress an image' : 'Kompres foto'}</a>
+      <a class="button secondary" href={en ? '/en/tools/' : '/id/alat/'}>{en ? 'Browse all tools' : 'Jelajahi semua alat'}</a>
+    </aside>
+  </div>
+</Base>
+
+<script>
+  function setupArticles() {
+    const root = document.querySelector<HTMLElement>('[data-articles]');
+    if (!root || root.dataset.ready) return;
+    root.dataset.ready = 'true';
+    const en = root.dataset.lang === 'en';
+    const container: HTMLElement = root;
+    const perPage = Number(root.dataset.perPage ?? 6);
+    const search = root.querySelector<HTMLInputElement>('[data-article-search]')!;
+    const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-article]'));
+    const count = root.querySelector<HTMLElement>('[data-article-count]')!;
+    const empty = root.querySelector<HTMLElement>('[data-article-empty]')!;
+    const prev = root.querySelector<HTMLButtonElement>('[data-page-prev]')!;
+    const next = root.querySelector<HTMLButtonElement>('[data-page-next]')!;
+    const status = root.querySelector<HTMLElement>('[data-page-status]')!;
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('button[data-category]'));
+    let category = 'all';
+    let page = 1;
+
+    function matching() {
+      const words = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
+      return cards.filter(card => {
+        const text = card.dataset.search ?? '';
+        return words.every(word => text.includes(word)) && (category === 'all' || card.dataset.category === category);
+      });
+    }
+
+    function render() {
+      const results = matching();
+      const pages = Math.max(1, Math.ceil(results.length / perPage));
+      if (page > pages) page = pages;
+      for (const card of cards) card.hidden = true;
+      results.slice((page - 1) * perPage, page * perPage).forEach(card => { card.hidden = false; });
+      for (const button of buttons) button.setAttribute('aria-pressed', String(button.dataset.category === category));
+      empty.hidden = results.length > 0;
+      count.textContent = en
+        ? `${results.length} ${results.length === 1 ? 'guide' : 'guides'}${results.length > perPage ? ` · page ${page} of ${pages}` : ''}`
+        : `${results.length} panduan${results.length > perPage ? ` · halaman ${page} dari ${pages}` : ''}`;
+      status.textContent = en ? `Page ${page} of ${pages}` : `Halaman ${page} dari ${pages}`;
+      prev.disabled = page <= 1;
+      next.disabled = page >= pages;
+      container.querySelector<HTMLElement>('[data-pagination]')!.hidden = results.length <= perPage;
+    }
+
+    search.addEventListener('input', () => { page = 1; render(); });
+    for (const button of buttons) button.addEventListener('click', () => { category = button.dataset.category ?? 'all'; page = 1; render(); });
+    prev.addEventListener('click', () => { page -= 1; render(); });
+    next.addEventListener('click', () => { page += 1; render(); });
+    render();
+  }
+  document.addEventListener('astro:page-load', setupArticles);
+  setupArticles();
+</script>
+
+<style>
+  .articles-page{padding-block:clamp(32px,5vw,56px)}
+  .articles-head{max-width:760px}
+  .articles-head h1{margin:.1em 0 .4em;font-size:clamp(2rem,4.6vw,3.4rem);line-height:1.1;letter-spacing:-.04em}
+  .articles-head .lead{color:#334155;font-size:1.06rem}
+  .articles-controls{display:grid;gap:10px;max-width:760px;margin:28px 0 8px}
+  .articles-controls label{font-weight:700}
+  .articles-controls input{width:100%;min-height:48px}
+  .articles-categories{display:flex;flex-wrap:wrap;gap:8px}
+  .articles-categories button{min-height:40px;padding:6px 13px;border:1px solid #64748b;border-radius:6px;background:#fff;color:var(--ink);font-size:.9rem}
+  .articles-categories button[aria-pressed="true"]{border-color:var(--brand);background:var(--brand);color:#fff}
+  .article-list{display:grid;gap:0;padding:0;margin:24px 0 0;list-style:none;border-top:1px solid var(--line)}
+  .article-card{border-bottom:1px solid var(--line);padding:22px 0}
+  .article-card[hidden]{display:none}
+  .article-card h2{margin:.25em 0 .4em;font-size:clamp(1.25rem,2.4vw,1.6rem);line-height:1.25;letter-spacing:-.02em}
+  .article-card h2 a{color:var(--ink);text-decoration:none}
+  .article-card h2 a:hover{color:var(--brand);text-decoration:underline}
+  .article-card .text-link{text-decoration:underline;text-underline-offset:.2em}
+  .article-card p{margin:0 0 10px;max-width:70ch;color:#334155}
+  .article-meta{margin:0!important;color:var(--text-muted)!important;font-size:.84rem}
+  .article-pagination{display:flex;align-items:center;gap:14px;margin-top:24px}
+  .article-pagination[hidden]{display:none}
+  .article-pagination button{min-height:44px;padding:8px 16px;border:1px solid var(--brand);border-radius:6px;background:#fff;color:var(--brand);font-weight:700}
+  .article-pagination button:disabled{border-color:#cbd5e1;color:#94a3b8}
+  .articles-tools{margin-top:44px;padding:26px;border:1px solid var(--line);border-radius:10px;background:#fff;max-width:720px}
+  .articles-tools h2{margin:0 0 8px;font-size:1.25rem}
+  .articles-tools p{margin:0 0 16px;color:var(--text-muted)}
+  .articles-tools .button{margin-right:8px}
+</style>

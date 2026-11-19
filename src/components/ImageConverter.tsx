@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { sanitizeSvg } from '../engines/safe-svg';
 import WorkflowActions from './WorkflowActions';
 import {readImageBlobHeader} from '../engines/image-header';
+import { toolHref } from '../tool-links';
 
 type Format = 'image/jpeg' | 'image/png' | 'image/webp';
 type Result = { url: string; blob: Blob; bytes: number; width: number; height: number; type: Format };
@@ -53,6 +54,6 @@ export default function ImageConverter({ lang, input, initialOutput }: { lang: s
     </div>
     <p className="notice">{input==='svg'?(en?'SVG is sanitized before local rasterization. Scripts, styles, external resources, embedded HTML, and unsupported SVG features are rejected. The PNG keeps transparent areas.':'SVG disanitasi sebelum dirasterkan secara lokal. Script, style, sumber luar, HTML sematan, dan fitur SVG yang tidak didukung akan ditolak. PNG mempertahankan area transparan.'):(en?'JPEG cannot preserve transparency; transparent areas use the selected background. JPEG and WebP may reduce image quality. The preview shows the actual output.':'JPEG tidak mendukung transparansi; area transparan memakai warna latar yang dipilih. JPEG dan WebP dapat mengurangi kualitas gambar. Pratinjau menampilkan hasil sebenarnya.')}</p>
     {error&&<p className="error" role="alert">{error}</p>}
-    {result&&<div className="result" aria-live="polite"><p>{result.width} × {result.height} px · {result.type.replace('image/','').toUpperCase()} · {result.bytes.toLocaleString(en?'en':'id')} bytes</p><img src={result.url} alt={en?'Converted image preview':'Pratinjau gambar hasil konversi'} width={result.width} height={result.height}/><p><a className="button download" href={result.url} download={`converted.${result.type==='image/jpeg'?'jpg':result.type.slice(6)}`}>{en?'Download image':'Unduh gambar'}</a></p><WorkflowActions lang={lang} blob={result.blob} width={result.width} height={result.height} steps={[{path:en?'/en/ukuran/resize-image/':'/id/ukuran/ubah-ukuran-gambar/',id:'Atur ukuran gambar',en:'Resize image'},{path:en?'/en/compress-image/':'/id/kompres-foto/',id:'Kompres 200 KB',en:'Compress to 200 KB'}]}/></div>}
+    {result&&<div className="result" aria-live="polite"><p>{result.width} × {result.height} px · {result.type.replace('image/','').toUpperCase()} · {result.bytes.toLocaleString(en?'en':'id')} bytes</p><img src={result.url} alt={en?'Converted image preview':'Pratinjau gambar hasil konversi'} width={result.width} height={result.height}/><p><a className="button download" href={result.url} download={`converted.${result.type==='image/jpeg'?'jpg':result.type.slice(6)}`}>{en?'Download image':'Unduh gambar'}</a></p><WorkflowActions lang={lang} blob={result.blob} width={result.width} height={result.height} steps={[{path:toolHref('resize-image',lang as 'id'|'en'),id:'Atur ukuran gambar',en:'Resize image'},{path:toolHref('compress-image',lang as 'id'|'en'),id:'Kompres 200 KB',en:'Compress to 200 KB'}]}/></div>}
   </section>;
 }

@@ -26,7 +26,7 @@ test('sanitizes and rasterizes SVG to a transparent PNG', async ({ page }) => {
 
 test('rejects active and external SVG content without making a request', async ({ page }) => {
   const requests: string[] = []; page.on('request', request => requests.push(request.url()));
-  await page.goto('/en/konversi/image/');
+  await page.goto('/en/convert-image/');
   await waitForHydration(page);
   await page.getByLabel('Image format or action').selectOption('svg');
   const source = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><script>alert(1)</script><image href="https://example.invalid/pixel.png" width="1" height="1"/></svg>';

@@ -28,7 +28,7 @@ test('resize accepts an image dropped onto its uploader',async({page})=>{
 });
 
 test('international passport preset exports a 2 x 2 inch image at 300 DPI',async({page})=>{
-  await page.goto('/en/ukuran/resize-image/');
+  await page.goto('/en/resize-image/');
   await page.getByLabel('Quick size').selectOption('passport-2x2');
   await page.locator('input[type=file]').setInputFiles('tests/fixtures/portrait.jpg');
   await page.getByRole('button',{name:'Create image'}).click();

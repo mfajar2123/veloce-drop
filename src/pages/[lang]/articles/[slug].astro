@@ -1,0 +1,130 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { articlesFor, articlePath, articleSlug, slugOf, findTranslation, categoryLabel, type Article } from '../../../articles';
+import { toolHref } from '../../../tool-links';
+import { catalog, type Locale } from '../../../tool-registry';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of ['id', 'en'] as const) {
+    for (const entry of await articlesFor(lang)) {
+      paths.push({ params: { lang, slug: articleSlug(entry) }, props: { entry } });
+    }
+  }
+  return paths;
+}
+
+const { entry } = Astro.props as { entry: Article };
+const lang = entry.data.lang as Locale;
+const en = lang === 'en';
+const { Content, headings } = await render(entry);
+const translation = await findTranslation(entry);
+const all = await articlesFor(lang);
+const tool = catalog.find(candidate => candidate.id === entry.data.toolId);
+const related = entry.data.related
+  .map(slug => all.find(candidate => slugOf(candidate.id) === slug))
+  .filter((candidate): candidate is Article => Boolean(candidate));
+const trail = [
+  { name: en ? 'Home' : 'Beranda', path: `/${lang}/` },
+  { name: en ? 'Guides' : 'Panduan', path: `/${lang}/articles/` },
+  { name: entry.data.title },
+];
+const toc = headings.filter(heading => heading.depth === 2);
+---
+
+<Base
+  lang={lang}
+  title={entry.data.title}
+  description={entry.data.summary}
+  trail={trail}
+  article={{ publishedAt: entry.data.publishedAt, updatedAt: entry.data.updatedAt }}
+  jsonLd={{
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, ...(item.path ? { item: new URL(item.path, Astro.site ?? 'https://velocedrop.example').toString() } : {}) })),
+  }}
+>
+  <div class="wrap article-page">
+    <article class="article-body">
+      <header class="article-head">
+        <p class="article-meta">
+          <a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a> ·
+          <span>{categoryLabel[entry.data.category]?.[lang] ?? entry.data.category}</span> ·
+          <time datetime={entry.data.publishedAt.toISOString()}>{entry.data.publishedAt.toLocaleDateString(en ? 'en-GB' : 'id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</time> ·
+          {entry.data.readingMinutes} {en ? 'min read' : 'menit baca'}
+        </p>
+        <h1>{entry.data.title}</h1>
+        <p class="article-summary">{entry.data.summary}</p>
+        {translation && <p class="article-translation"><a href={articlePath(translation)} lang={translation.data.lang}>{en ? 'Baca dalam bahasa Indonesia' : 'Read in English'}</a></p>}
+      </header>
+
+      {toc.length > 1 && (
+        <nav class="article-toc" aria-label={en ? 'On this page' : 'Di halaman ini'}>
+          <p class="eyebrow">{en ? 'On this page' : 'Di halaman ini'}</p>
+          <ol>
+            {toc.map(heading => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}
+          </ol>
+        </nav>
+      )}
+
+      <div class="article-prose" data-article-prose>
+        <Content />
+      </div>
+
+      {tool && (
+        <aside class="article-cta">
+          <h2>{en ? `Try it: ${tool.name.en}` : `Coba: ${tool.name.id}`}</h2>
+          <p>{tool.seo?.description[lang] ?? tool.description[lang]}</p>
+          <a class="button" href={toolHref(tool.id, lang)}>{en ? 'Open the tool' : 'Buka alatnya'}</a>
+        </aside>
+      )}
+
+      {related.length > 0 && (
+        <nav class="article-related" aria-label={en ? 'Related guides' : 'Panduan terkait'}>
+          <h2>{en ? 'Related guides' : 'Panduan terkait'}</h2>
+          <ul>
+            {related.map(item => <li><a href={articlePath(item)}>{item.data.title}</a><span>{item.data.summary}</span></li>)}
+          </ul>
+        </nav>
+      )}
+    </article>
+  </div>
+</Base>
+
+<style>
+  .article-page{padding-block:clamp(28px,4vw,52px);display:grid;grid-template-columns:minmax(0,1fr);gap:32px}
+  .article-body{max-width:760px}
+  .article-head h1{margin:.2em 0 .5em;font-size:clamp(1.9rem,4.2vw,3rem);line-height:1.12;letter-spacing:-.04em;text-wrap:balance}
+  .article-summary{margin:0 0 8px;color:#334155;font-size:1.08rem}
+  .article-meta{margin:0;color:var(--text-muted);font-size:.85rem}
+  .article-meta a{color:var(--brand);text-decoration:underline;text-underline-offset:.2em}
+  .article-translation{margin:12px 0 0;font-size:.9rem}
+  .article-toc{margin:28px 0 0;padding:18px 20px;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .article-toc .eyebrow{margin:0 0 8px}
+  .article-toc ol{margin:0;padding-left:20px;display:grid;gap:6px}
+  .article-toc a{color:var(--brand);font-size:.94rem}
+  .article-prose{margin-top:30px;font-size:1.03rem;line-height:1.75;color:#1e293b}
+  .article-prose :global(h2){margin:2.1em 0 .5em;font-size:clamp(1.35rem,2.6vw,1.75rem);line-height:1.25;letter-spacing:-.025em;color:var(--ink);scroll-margin-top:90px}
+  .article-prose :global(h3){margin:1.7em 0 .4em;font-size:1.18rem;color:var(--ink)}
+  .article-prose :global(p){margin:0 0 1.15em;max-width:70ch}
+  .article-prose :global(ul),.article-prose :global(ol){margin:0 0 1.2em;padding-left:22px;max-width:70ch;display:grid;gap:8px}
+  .article-prose :global(li){line-height:1.65}
+  .article-prose :global(strong){color:var(--ink)}
+  .article-prose :global(a){color:var(--brand);text-underline-offset:.2em}
+  .article-prose :global(table){width:100%;border-collapse:collapse;margin:0 0 1.4em;font-size:.95rem}
+  .article-prose :global(th),.article-prose :global(td){border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  .article-prose :global(th){background:var(--soft);font-weight:700}
+  .article-prose :global(blockquote){margin:0 0 1.3em;padding:12px 18px;border-left:3px solid var(--brand);background:#f8fafc;color:#334155}
+  .article-prose :global(code){font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.9em;background:var(--soft);padding:2px 5px;border-radius:4px}
+  .article-prose :global(figure){margin:1.6em 0}
+  .article-prose :global(figcaption){margin-top:8px;color:var(--text-muted);font-size:.86rem}
+  .article-cta{margin-top:40px;padding:24px;border:1px solid var(--line);border-radius:10px;background:#ecfdf5}
+  .article-cta h2{margin:0 0 8px;font-size:1.2rem}
+  .article-cta p{margin:0 0 14px;color:#334155}
+  .article-related{margin-top:40px;padding-top:24px;border-top:1px solid var(--line)}
+  .article-related h2{margin:0 0 14px;font-size:1.25rem}
+  .article-related ul{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+  .article-related a{font-weight:700;color:var(--brand)}
+  .article-related span{display:block;color:var(--text-muted);font-size:.92rem;margin-top:2px}
+</style>

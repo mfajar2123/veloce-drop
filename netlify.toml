@@ -12,8 +12,77 @@
 
 [[redirects]]
   from = "/"
-  to = "/id/"
+  to = "/en/"
   status = 302
+  force = true
+
+# English tool slugs were localized in a later release. Keep the old
+# Indonesian-slug English URLs working with permanent redirects so any
+# existing links and search results transfer their signals.
+[[redirects]]
+  from = "/en/kompres-foto-massal/*"
+  to = "/en/batch-compress-images/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/ukuran/ubah-ukuran-gambar/*"
+  to = "/en/resize-image/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/ukuran/resize-image/*"
+  to = "/en/resize-image/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/konversi/gambar/*"
+  to = "/en/convert-image/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/konversi/image/*"
+  to = "/en/convert-image/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/hapus-latar/*"
+  to = "/en/remove-background/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/watermark-logo-massal/*"
+  to = "/en/watermark-logo/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/foto-ke-pdf/*"
+  to = "/en/photos-to-pdf/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/pdf-ke-jpg/*"
+  to = "/en/pdf-to-jpg/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/kompres-pdf/*"
+  to = "/en/compress-pdf/500kb/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/cetak-foto/*"
+  to = "/en/print-photo-sheet/"
+  status = 301
   force = true
 
 [[headers]]

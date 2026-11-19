@@ -43,7 +43,7 @@ test('creates a valid multi-size ICO with square PNG frames and transparency', a
 });
 
 test('rejects corrupt raster data instead of renaming it to ICO', async ({ page }) => {
-  await page.goto('/en/konversi/image/');
+  await page.goto('/en/convert-image/');
   await waitForHydration(page);
   await page.getByLabel('Image format or action').selectOption('ico');
   await page.locator('input[type=file]').setInputFiles({ name: 'broken.png', mimeType: 'image/png', buffer: Buffer.from('not a PNG') });

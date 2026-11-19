@@ -1,7 +1,0 @@
----
-import Base from '../../layouts/Base.astro';
-import BatchCompressor from '../../components/BatchCompressor';
-export function getStaticPaths(){return [{params:{lang:'id'}},{params:{lang:'en'}}]}
-const lang=Astro.params.lang!;const en=lang==='en';
----
-<Base lang={lang} title={en?'Batch image compression':'Kompres foto massal'} description={en?'Compress multiple images locally.':'Kompres beberapa gambar secara lokal.'}><div class="wrap workspace"><h1>{en?'Batch image compression':'Kompres foto massal'}</h1><p class="lead">{en?'Add images, set a target and download each result or a ZIP.':'Tambahkan gambar, tentukan target, lalu unduh hasil satu per satu atau sebagai ZIP.'}</p><BatchCompressor lang={lang} client:load /></div></Base>

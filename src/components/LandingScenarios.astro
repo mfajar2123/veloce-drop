@@ -1,15 +1,18 @@
 ---
-type Props = { lang: string };
+import { toolHref } from '../tool-links';
+import type { Locale } from '../tool-registry';
+
+type Props = { lang: Locale };
 const { lang } = Astro.props;
 const en = lang === 'en';
 const scenarios = en ? [
-  { title: 'Preparing an application', body: 'Set a passport photo size, reduce attachments, and organize documents before sending them.', label: 'Resize & compress', href: '/en/ukuran/resize-image/', image: '/images/landing-workspace-sample.webp', alt: 'Illustration of someone preparing a portrait at a desk' },
-  { title: 'Preparing product photos', body: 'Keep product canvases consistent and place a shop logo across multiple images.', label: 'Resize & batch logo', href: '/en/watermark-logo-massal/', image: '/images/landing-product-sample.webp', alt: 'Illustration of a small business product being packed' },
-  { title: 'Getting photos ready to share', body: 'Choose a story, feed, or profile crop for the image you want to post.', label: 'Social image sizes', href: '/en/ukuran/resize-image/', image: '/images/landing-workspace-sample.webp', alt: 'Preview of a photo crop for a social post', preview: 'social' },
+  { title: 'Preparing an application', body: 'Set a passport photo size, reduce attachments, and organize documents before sending them.', label: 'Resize & compress', href: toolHref('resize-image', lang), image: '/images/landing-workspace-sample.webp', alt: 'Illustration of someone preparing a portrait at a desk' },
+  { title: 'Preparing product photos', body: 'Keep product canvases consistent and place a shop logo across multiple images.', label: 'Resize & batch logo', href: toolHref('logo-watermark', lang), image: '/images/landing-product-sample.webp', alt: 'Illustration of a small business product being packed' },
+  { title: 'Getting photos ready to share', body: 'Choose a story, feed, or profile crop for the image you want to post.', label: 'Social image sizes', href: toolHref('resize-image', lang), image: '/images/landing-workspace-sample.webp', alt: 'Preview of a photo crop for a social post', preview: 'social' },
 ] : [
-  { title: 'Melengkapi berkas lamaran', body: 'Samakan ukuran pas foto, kecilkan lampiran, lalu rapikan dokumen sebelum dikirim.', label: 'Ubah ukuran & kompres', href: '/id/ukuran/ubah-ukuran-gambar/', image: '/images/landing-workspace-sample.webp', alt: 'Ilustrasi seseorang menyiapkan pas foto di meja kerja' },
-  { title: 'Menyiapkan foto produk', body: 'Buat bidang produk konsisten dan letakkan logo toko pada beberapa foto sekaligus.', label: 'Resize & watermark logo', href: '/id/watermark-logo-massal/', image: '/images/landing-product-sample.webp', alt: 'Ilustrasi produk UMKM yang sedang disiapkan untuk dikemas' },
-  { title: 'Merapikan foto untuk dibagikan', body: 'Pilih ukuran story, feed, atau profil untuk gambar yang akan dibagikan.', label: 'Ukuran gambar sosial', href: '/id/ukuran/ubah-ukuran-gambar/', image: '/images/landing-workspace-sample.webp', alt: 'Pratinjau potongan foto untuk unggahan sosial', preview: 'social' },
+  { title: 'Melengkapi berkas lamaran', body: 'Samakan ukuran pas foto, kecilkan lampiran, lalu rapikan dokumen sebelum dikirim.', label: 'Ubah ukuran & kompres', href: toolHref('resize-image', lang), image: '/images/landing-workspace-sample.webp', alt: 'Ilustrasi seseorang menyiapkan pas foto di meja kerja' },
+  { title: 'Menyiapkan foto produk', body: 'Buat bidang produk konsisten dan letakkan logo toko pada beberapa foto sekaligus.', label: 'Resize & watermark logo', href: toolHref('logo-watermark', lang), image: '/images/landing-product-sample.webp', alt: 'Ilustrasi produk UMKM yang sedang disiapkan untuk dikemas' },
+  { title: 'Merapikan foto untuk dibagikan', body: 'Pilih ukuran story, feed, atau profil untuk gambar yang akan dibagikan.', label: 'Ukuran gambar sosial', href: toolHref('resize-image', lang), image: '/images/landing-workspace-sample.webp', alt: 'Pratinjau potongan foto untuk unggahan sosial', preview: 'social' },
 ];
 ---
 

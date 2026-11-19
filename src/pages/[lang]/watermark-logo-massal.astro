@@ -1,9 +1,0 @@
----
-import Base from '../../layouts/Base.astro';
-import LogoWatermarkBatch from '../../components/LogoWatermarkBatch';
-export function getStaticPaths(){return [{params:{lang:'id'}},{params:{lang:'en'}}]}
-const lang=Astro.params.lang!;const en=lang==='en';
----
-<Base lang={lang} title={en?'Batch logo watermark':'Watermark logo massal'} description={en?'Apply a local logo to product images.':'Tambahkan logo ke beberapa gambar produk secara lokal.'}>
-  <div class="wrap workspace"><h1>{en?'Batch logo watermark':'Watermark logo massal'}</h1><p class="lead">{en?'Place a logo on multiple product images and download the results.':'Tambahkan logo pada beberapa gambar produk, lalu unduh hasilnya.'}</p><LogoWatermarkBatch lang={lang} client:load /></div>
-</Base>

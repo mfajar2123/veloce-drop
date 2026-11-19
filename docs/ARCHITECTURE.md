@@ -22,7 +22,23 @@ Some image processing still decodes or runs on the main thread. Tool limits do n
 
 Astro's static output is served by the selected hosting provider. `PUBLIC_SITE_URL` sets the origin used for canonical URLs, sitemap, and robots; its fallback is a reserved example domain. `public/_headers` contains security headers in syntax accepted by several static hosts, but the actual host must be configured and tested to serve them. Static redirect behavior is provider-specific; the generated root page uses immediate client and meta refresh fallbacks.
 
-Netlify is the deployment target; `netlify.toml` sets the build command, `dist` publish directory, the `/` to `/id/` redirect, and long-lived caching for hashed assets. There is no CI workflow in this repository: Netlify builds from the connected GitHub repository, so a push to `master` triggers the deploy. Do not declare `Content-Security-Policy` in `netlify.toml`: Netlify would serve it alongside the generated one and the stricter, hashless policy would block every inline script.
+## Guides and articles
+
+Articles are Markdown files in `src/content/articles/`, loaded through the Astro content collection defined in `src/content.config.ts`. Each file is named `<slug>.<lang>.md`, and `generateId` keeps the language suffix so an English and Indonesian version of the same article never collide in the data store.
+
+`src/articles.ts` is the shared query layer: it strips the language suffix to build public URLs, sorts by publication date, and pairs translations through the `translationKey` field. Adding an article means adding two Markdown files with a shared `translationKey`; they appear in the index, sitemap, and translation link automatically.
+
+The schema enforces the constraints that matter for search results: title up to 70 characters, summary between 80 and 160 characters, a category from a fixed list, and a `toolId` that must match a catalog entry so every guide links back to its workspace. The build fails on a violation rather than publishing a malformed page.
+
+Routes: `/[lang]/articles/` is the index with client-side search, category filters, and pagination; `/[lang]/articles/[slug]/` renders the article with a table of contents generated from its `h2` headings, related-guide links, and `Article` plus `BreadcrumbList` structured data.
+
+Article pages intentionally omit the `| VeloceDrop` title suffix. The added characters would push long headlines past the 70-character budget and cost space in search results.
+
+`src/pages/rss.xml.ts` publishes an English feed of the most recent articles, discovered through a `<link rel="alternate">` in the document head.
+
+Netlify is the deployment target; `netlify.toml` sets the build command, `dist` publish directory, the `/` to `/en/` redirect, and long-lived caching for hashed assets. There is no CI workflow in this repository: Netlify builds from the connected GitHub repository, so a push to `master` triggers the deploy. Do not declare `Content-Security-Policy` in `netlify.toml`: Netlify would serve it alongside the generated one and the stricter, hashless policy would block every inline script.
+
+English is the default locale. `/` redirects to `/en/`, and `hreflang="x-default"` points at the English version of each page, so search engines treat English as the international entry point. The Indonesian site remains fully available under `/id/`.
 
 ### Content Security Policy
 

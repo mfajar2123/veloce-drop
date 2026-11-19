@@ -1,8 +1,0 @@
----
-import Base from '../../../layouts/Base.astro';
-import FormatConversionWorkspace from '../../../components/FormatConversionWorkspace';
-import { catalog } from '../../../tool-registry';
-export function getStaticPaths(){return catalog.filter(tool=>tool.id==='image-converter').flatMap(tool=>(['id','en'] as const).map(lang=>({params:{lang,preset:tool.path[lang].split('/').filter(Boolean).at(-1)},props:{title:tool.name[lang]}})))}
-const {title}=Astro.props as {title:string};const lang=Astro.params.lang!;const en=lang==='en';
----
-<Base lang={lang} title={title} description={en?'Convert common image formats locally in one workspace.':'Konversi format gambar umum secara lokal dalam satu ruang kerja.'}><div class="wrap workspace"><h1>{title}</h1><p class="lead">{en?'Choose a source format, inspect the output preview, and download the converted file.':'Pilih format sumber, periksa pratinjau hasil, lalu unduh berkas konversi.'}</p><FormatConversionWorkspace lang={lang} client:load/></div></Base>

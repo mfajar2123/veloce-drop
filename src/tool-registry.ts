@@ -20,7 +20,6 @@ export type CatalogTool = {
   outputFormat?: string;
 };
 
-const common = (slug: string): Text => ({ id: `/id/${slug}/`, en: `/en/${slug}/` });
 const localized = (id: string, en: string): Text => ({ id: `/id/${id}/`, en: `/en/${en}/` });
 
 export const catalog: CatalogTool[] = [
@@ -37,7 +36,7 @@ export const catalog: CatalogTool[] = [
     id: 'batch',
     name: { id: 'Kompres foto massal', en: 'Batch image compression' },
     description: { id: 'Kompres banyak foto dan unduh satu ZIP', en: 'Compress multiple images and download one ZIP' },
-    path: common('kompres-foto-massal'),
+    path: localized('kompres-foto-massal', 'batch-compress-images'),
     keywords: 'bulk batch banyak jpg jpeg webp ukuran produk seller',
     packages: ['seller', 'social'],
   },
@@ -45,7 +44,7 @@ export const catalog: CatalogTool[] = [
     id: 'resize-image',
     name: { id: 'Ubah ukuran dan crop gambar', en: 'Resize and crop images' },
     description: { id: 'Atur dimensi atau pilih ukuran foto yang umum', en: 'Set dimensions or choose a common photo size' },
-    path: localized('ukuran/ubah-ukuran-gambar', 'ukuran/resize-image'),
+    path: localized('ukuran/ubah-ukuran-gambar', 'resize-image'),
     keywords: 'resize image foto gambar crop passport pas foto instagram story square marketplace pixels dpi',
     packages: ['applicant', 'seller', 'social'],
     presetKey: '3x4',
@@ -54,7 +53,7 @@ export const catalog: CatalogTool[] = [
     id: 'image-converter',
     name: { id: 'Konversi format gambar', en: 'Convert image formats' },
     description: { id: 'Konversi JPEG, PNG, WebP, HEIC, SVG, dan ICO di browser', en: 'Convert JPEG, PNG, WebP, HEIC, SVG, and ICO in your browser' },
-    path: localized('konversi/gambar', 'konversi/image'),
+    path: localized('konversi/gambar', 'convert-image'),
     keywords: 'jpg jpeg png webp heic heif svg ico convert converter konversi format iphone',
     packages: ['applicant', 'seller', 'social'],
   },
@@ -62,7 +61,7 @@ export const catalog: CatalogTool[] = [
     id: 'background',
     name: { id: 'Hapus latar gambar', en: 'Remove image background' },
     description: { id: 'Hapus latar potret secara lokal dan perbaiki mask', en: 'Remove a portrait background locally and refine the mask' },
-    path: common('hapus-latar'),
+    path: localized('hapus-latar', 'remove-background'),
     keywords: 'background remove remover hapus latar belakang foto portrait transparan transparent',
     packages: ['applicant', 'seller', 'social'],
   },
@@ -70,7 +69,7 @@ export const catalog: CatalogTool[] = [
     id: 'logo-watermark',
     name: { id: 'Tambah watermark logo', en: 'Add a logo watermark' },
     description: { id: 'Terapkan logo ke banyak foto sekaligus', en: 'Apply a logo to multiple photos at once' },
-    path: common('watermark-logo-massal'),
+    path: localized('watermark-logo-massal', 'watermark-logo'),
     keywords: 'logo watermark batch massal produk product toko umkm',
     packages: ['seller', 'social'],
   },
@@ -78,7 +77,7 @@ export const catalog: CatalogTool[] = [
     id: 'photo-pdf',
     name: { id: 'Gabungkan foto ke PDF', en: 'Combine photos into a PDF' },
     description: { id: 'Susun beberapa gambar dan pilih ukuran kertas', en: 'Arrange multiple images and choose a paper size' },
-    path: common('foto-ke-pdf'),
+    path: localized('foto-ke-pdf', 'photos-to-pdf'),
     keywords: 'jpg jpeg png webp pdf dokumen document scan gabung combine image to pdf',
     packages: ['applicant', 'seller'],
   },
@@ -86,7 +85,7 @@ export const catalog: CatalogTool[] = [
     id: 'pdf-jpg',
     name: { id: 'Ubah PDF ke JPG', en: 'Convert PDF to JPG' },
     description: { id: 'Pilih halaman dan unduh sebagai gambar', en: 'Select pages and download them as images' },
-    path: common('pdf-ke-jpg'),
+    path: localized('pdf-ke-jpg', 'pdf-to-jpg'),
     keywords: 'pdf jpg jpeg convert konversi gambar image pages',
     packages: ['applicant', 'seller'],
   },
@@ -94,7 +93,7 @@ export const catalog: CatalogTool[] = [
     id: 'pdf-500kb',
     name: { id: 'Kompres PDF', en: 'Compress PDF' },
     description: { id: 'Atur batas ukuran; halaman dirasterkan secara lokal', en: 'Set a file-size limit; pages are rasterized locally' },
-    path: common('kompres-pdf/500kb'),
+    path: localized('kompres-pdf/500kb', 'compress-pdf/500kb'),
     keywords: 'pdf compress kompres ukuran size dokumen document',
     packages: ['applicant', 'seller'],
     targetKB: 500,
@@ -103,7 +102,7 @@ export const catalog: CatalogTool[] = [
     id: 'print',
     name: { id: 'Cetak lembar foto', en: 'Print photo sheets' },
     description: { id: 'Susun beberapa foto pada kertas 4R atau A4', en: 'Arrange multiple photos on 4R or A4 paper' },
-    path: common('cetak-foto'),
+    path: localized('cetak-foto', 'print-photo-sheet'),
     keywords: 'print cetak foto photo 4r a4 pas foto passport',
     packages: ['applicant'],
   },

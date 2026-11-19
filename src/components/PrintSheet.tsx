@@ -1,5 +1,6 @@
 import {useEffect,useRef,useState} from 'react';
 import WorkflowActions from './WorkflowActions';
+import { toolHref } from '../tool-links';
 
 type Output={url:string;blob:Blob;bytes:number;count:number};
 const papers:Record<string,[number,number]>={ '4r':[101.6,152.4],a4:[210,297] };
@@ -61,6 +62,6 @@ export default function PrintSheet({lang,version,capture}:{lang:string;version:s
     </div>
     <p aria-live="polite">{en?`Capacity: ${columns} columns × ${rows} rows = ${capacity} photos.`:`Kapasitas: ${columns} kolom × ${rows} baris = ${capacity} foto.`}</p>
     <p className="notice">{en?'Cut marks extend 2 mm with a 1 mm gap from each photo. Printer margins can vary.':'Tanda potong sepanjang 2 mm berjarak 1 mm dari foto. Margin printer dapat berbeda.'}</p>
-    {error&&<p role="alert" className="error">{error}</p>}{result&&<div aria-live="polite"><p>PDF · {result.count} {en?'photos':'foto'} · {result.bytes.toLocaleString(en?'en':'id')} bytes</p><a className="button download" href={result.url} download="photo-sheet.pdf">{en?'Download print PDF':'Unduh PDF cetak'}</a><WorkflowActions lang={lang} blob={result.blob} steps={[{path:`/${lang}/pdf-ke-jpg/`,id:'Ubah PDF ke JPG',en:'Convert PDF to JPG'},{path:`/${lang}/kompres-pdf/500kb/`,id:'Kompres PDF',en:'Compress PDF'}]}/></div>}
+    {error&&<p role="alert" className="error">{error}</p>}{result&&<div aria-live="polite"><p>PDF · {result.count} {en?'photos':'foto'} · {result.bytes.toLocaleString(en?'en':'id')} bytes</p><a className="button download" href={result.url} download="photo-sheet.pdf">{en?'Download print PDF':'Unduh PDF cetak'}</a><WorkflowActions lang={lang} blob={result.blob} steps={[{path:toolHref('pdf-jpg',lang as 'id'|'en'),id:'Ubah PDF ke JPG',en:'Convert PDF to JPG'},{path:toolHref('pdf-500kb',lang as 'id'|'en'),id:'Kompres PDF',en:'Compress PDF'}]}/></div>}
   </details>;
 }

@@ -3,16 +3,16 @@ export const prerender = true;
 const basePath = (import.meta.env.BASE_URL || '/').replace(/^\/*/, '/').replace(/\/*$/, '/');
 ---
 <!doctype html>
-<html lang="id">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="robots" content="noindex" />
-    <meta http-equiv="refresh" content={`0;url=${basePath}id/`} />
+    <meta http-equiv="refresh" content={`0;url=${basePath}en/`} />
     <link rel="icon" href={`${basePath}favicon-96.png`} type="image/png" sizes="96x96" />
-    <title>Membuka VeloceDrop</title>
-    <script is:inline define:vars={{ destination: `${basePath}id/` }}>window.location.replace(destination);</script>
+    <title>Opening VeloceDrop</title>
+    <script is:inline define:vars={{ destination: `${basePath}en/` }}>window.location.replace(destination);</script>
   </head>
   <body>
-    <p><a href={`${basePath}id/`}>Lanjut ke VeloceDrop</a></p>
+    <p><a href={`${basePath}en/`}>Continue to VeloceDrop</a></p>
   </body>
 </html>

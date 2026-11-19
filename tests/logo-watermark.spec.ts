@@ -78,7 +78,7 @@ test('batch logo controls fit a narrow viewport',async({page},testInfo)=>{
 });
 
 test('invalid logo can be replaced and English controls are available',async({page})=>{
-  await page.goto('/en/watermark-logo-massal/');const input=page.locator('input[type=file]').nth(0);
+  await page.goto('/en/watermark-logo/');const input=page.locator('input[type=file]').nth(0);
   await input.setInputFiles({name:'bad.png',mimeType:'image/png',buffer:Buffer.from('invalid')});await expect(page.getByRole('alert')).toContainText('Logo must be a valid JPEG, PNG or WebP image.');
   const data=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=10;c.height=10;return c.toDataURL().split(',')[1]});
   await input.setInputFiles({name:'good.png',mimeType:'image/png',buffer:Buffer.from(data,'base64')});await expect(page.getByText(/Logo ready/)).toBeVisible();await expect(page.getByRole('alert')).toHaveCount(0);
