@@ -56,10 +56,10 @@ console.log('video:', JSON.stringify(videoState));
 console.log('live capture button visible:', await page.getByRole('button', { name: 'Capture page' }).isVisible());
 
 await page.getByRole('button', { name: 'Capture page' }).click();
-await page.getByRole('button', { name: 'Save scan' }).waitFor({ timeout: 30_000 });
+await page.getByRole('button', { name: 'Preview scan' }).waitFor({ timeout: 30_000 });
 const cornerCount = await page.locator('.scanner-corner').count();
 console.log('corners after capture:', cornerCount);
-await page.getByRole('button', { name: 'Save scan' }).click();
+await page.getByRole('button', { name: 'Preview scan' }).click();
 const download = page.getByRole('link', { name: 'Download JPG' });
 await download.waitFor({ timeout: 60_000 });
 const href = await download.getAttribute('href');

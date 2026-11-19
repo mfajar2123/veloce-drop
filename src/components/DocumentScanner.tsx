@@ -5,7 +5,7 @@ import { canvasToBlob, detectDocumentQuad, enhanceDocument, imageDataToCanvas, w
 import WorkflowActions from './WorkflowActions';
 
 type Stage = 'idle' | 'live' | 'review' | 'result';
-type Output = { url: string; blob: Blob; width: number; height: number; type: 'image/jpeg' };
+type Output = { url: string; preview: string; blob: Blob; width: number; height: number };
 
 const MAX_INPUT_PIXELS = 24_000_000;
 const LIVE_INTERVAL = 350;
@@ -26,10 +26,12 @@ export default function DocumentScanner({ lang }: { lang: string }) {
   const [notice, setNotice] = useState('');
   const [corners, setCorners] = useState<Quad | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [cameraReady, setCameraReady] = useState(false);
   const [detected, setDetected] = useState(false);
   const [frame, setFrame] = useState<{ width: number; height: number } | null>(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [outputs, setOutputs] = useState<Output[]>([]);
+  const [resultPreviewReady, setResultPreviewReady] = useState(false);
   const [format, setFormat] = useState<'jpeg' | 'pdf'>('jpeg');
   const [enhance, setEnhance] = useState(true);
   const [dragging, setDragging] = useState<number | null>(null);
@@ -39,6 +41,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
   const streamRef = useRef<MediaStream | null>(null);
   const captureRef = useRef<HTMLCanvasElement | null>(null);
   const sourceRef = useRef<ImageData | null>(null);
+  const sourceUrlRef = useRef('');
   const urlsRef = useRef(new Set<string>());
   const aliveRef = useRef(true);
   const timerRef = useRef<number | null>(null);
@@ -47,6 +50,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
     for (const url of urlsRef.current) URL.revokeObjectURL(url);
     urlsRef.current.clear();
     setOutputs([]);
+    setResultPreviewReady(false);
   }, []);
 
   const stopCamera = useCallback(() => {
@@ -56,6 +60,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
     if (stream) for (const track of stream.getTracks()) track.stop();
     if (videoRef.current) videoRef.current.srcObject = null;
     setCameraStream(null);
+    setCameraReady(false);
     setStage(current => (current === 'live' ? 'idle' : current));
   }, []);
 
@@ -67,6 +72,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
       const stream = streamRef.current;
       if (stream) for (const track of stream.getTracks()) track.stop();
       for (const url of urlsRef.current) URL.revokeObjectURL(url);
+      if (sourceUrlRef.current) URL.revokeObjectURL(sourceUrlRef.current);
     };
   }, []);
 
@@ -117,6 +123,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
       setError(en ? 'This browser cannot open the camera here. Use the file option instead.' : 'Browser ini tidak bisa membuka kamera di sini. Gunakan pilihan berkas.');
       return;
     }
+    setBusy(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } },
@@ -132,9 +139,11 @@ export default function DocumentScanner({ lang }: { lang: string }) {
       window.setTimeout(detectLive, 400);
       timerRef.current = window.setInterval(detectLive, LIVE_INTERVAL);
     } catch {
-      setError(en
+      if (aliveRef.current) setError(en
         ? 'Camera access was blocked. Allow the camera in your browser, or choose a photo instead.'
         : 'Akses kamera diblokir. Izinkan kamera di browser, atau pilih foto sebagai gantinya.');
+    } finally {
+      if (aliveRef.current) setBusy(false);
     }
   }, [detectLive, en]);
 
@@ -152,6 +161,12 @@ export default function DocumentScanner({ lang }: { lang: string }) {
 
   // --- still image path ------------------------------------------------------
 
+  function replaceSourcePreview(blob?: Blob) {
+    if (sourceUrlRef.current) URL.revokeObjectURL(sourceUrlRef.current);
+    sourceUrlRef.current = blob ? URL.createObjectURL(blob) : '';
+    setPreviewUrl(sourceUrlRef.current);
+  }
+
   async function loadFile(file: File) {
     setError('');
     setNotice('');
@@ -161,13 +176,19 @@ export default function DocumentScanner({ lang }: { lang: string }) {
     setDetected(false);
     try {
       const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
-      if (bitmap.width * bitmap.height > MAX_INPUT_PIXELS) throw new Error('pixels');
+      if (bitmap.width * bitmap.height > MAX_INPUT_PIXELS) {
+        bitmap.close();
+        throw new Error('pixels');
+      }
       const canvas = captureRef.current ?? document.createElement('canvas');
       captureRef.current = canvas;
       canvas.width = bitmap.width;
       canvas.height = bitmap.height;
       const context = canvas.getContext('2d', { willReadFrequently: true });
-      if (!context) throw new Error('canvas');
+      if (!context) {
+        bitmap.close();
+        throw new Error('canvas');
+      }
       context.drawImage(bitmap, 0, 0);
       const image = context.getImageData(0, 0, canvas.width, canvas.height);
       bitmap.close();
@@ -178,9 +199,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
       const quad = detectDocumentQuad(image.data, image.width, image.height);
       setDetected(Boolean(quad));
       setCorners(quad ?? fullQuad(image.width, image.height));
-      const url = URL.createObjectURL(file);
-      urlsRef.current.add(url);
-      setPreviewUrl(url);
+      replaceSourcePreview(file);
       if (!quad) {
         setNotice(en
           ? 'No page outline was found, so the full frame is selected. Drag the corners to mark the paper yourself.'
@@ -226,6 +245,9 @@ export default function DocumentScanner({ lang }: { lang: string }) {
       const scaleX = previousFrame ? fullWidth / previousFrame.width : 1;
       const scaleY = previousFrame ? fullHeight / previousFrame.height : 1;
 
+      const blob = await canvasToBlob(canvas, 'image/jpeg', 0.92);
+      if (!aliveRef.current) return;
+      stopCamera();
       sourceRef.current = image;
       setFrame({ width: fullWidth, height: fullHeight });
       setDetected(Boolean(detectedQuad));
@@ -236,16 +258,12 @@ export default function DocumentScanner({ lang }: { lang: string }) {
       } else {
         setCorners(fullQuad(fullWidth, fullHeight));
       }
-      const blob = await canvasToBlob(canvas, 'image/jpeg', 0.92);
-      const url = URL.createObjectURL(blob);
-      urlsRef.current.add(url);
-      setPreviewUrl(url);
-      stopCamera();
+      replaceSourcePreview(blob);
       setStage('review');
       if (!detectedQuad) {
         setNotice(en
-          ? 'The page outline was not detected clearly. Drag the corners to match the paper, then save.'
-          : 'Tepi halaman tidak terdeteksi dengan jelas. Geser sudut agar sesuai kertas, lalu simpan.');
+          ? 'The page outline was not detected clearly. Drag the corners to match the paper, then preview the scan.'
+          : 'Tepi halaman kurang jelas. Geser sudut ke tepi kertas, lalu lihat pratinjau.');
       }
     } catch {
       setError(en ? 'The frame could not be captured.' : 'Bingkai tidak dapat diambil.');
@@ -315,13 +333,15 @@ export default function DocumentScanner({ lang }: { lang: string }) {
       const canvas = imageDataToCanvas(processed);
       const blob = format === 'jpeg'
         ? await canvasToBlob(canvas, 'image/jpeg', 0.92)
-        : await buildPdf(processed);
+        : await buildPdf(canvas);
+      const previewBlob = format === 'pdf' ? await canvasToBlob(canvas, 'image/jpeg', 0.88) : blob;
 
       if (!aliveRef.current) return;
       releaseOutputs();
       const url = URL.createObjectURL(blob);
-      urlsRef.current.add(url);
-      setOutputs([{ url, blob, width: processed.width, height: processed.height, type: 'image/jpeg' }]);
+      const preview = previewBlob === blob ? url : URL.createObjectURL(previewBlob);
+      urlsRef.current.add(url).add(preview);
+      setOutputs([{ url, preview, blob, width: processed.width, height: processed.height }]);
       setStage('result');
     } catch (cause) {
       setError(cause instanceof Error && cause.message === 'empty'
@@ -332,21 +352,19 @@ export default function DocumentScanner({ lang }: { lang: string }) {
     }
   }
 
-  async function buildPdf(image: ImageData): Promise<Blob> {
-    if (image.width < 2 || image.height < 2) throw new Error('empty');
+  async function buildPdf(canvas: HTMLCanvasElement): Promise<Blob> {
     const { PDFDocument } = await import('pdf-lib');
     const document = await PDFDocument.create();
-    const png = imageDataToCanvas(image);
-    const encoded = await canvasToBlob(png, 'image/png', 1);
+    const encoded = await canvasToBlob(canvas, 'image/png', 1);
     const embedded = await document.embedPng(await encoded.arrayBuffer());
     // A4 in points, then fit the page inside it with a 10 mm margin.
     const pageWidth = 595.28;
     const pageHeight = 841.89;
     const margin = (10 * 72) / 25.4;
-    const scale = Math.min((pageWidth - margin * 2) / image.width, (pageHeight - margin * 2) / image.height);
-    const width = image.width * scale;
-    const height = image.height * scale;
-    const page = document.addPage([width + margin * 2, height + margin * 2]);
+    const scale = Math.min((pageWidth - margin * 2) / canvas.width, (pageHeight - margin * 2) / canvas.height);
+    const width = canvas.width * scale;
+    const height = canvas.height * scale;
+    const page = document.addPage([pageWidth, pageHeight]);
     page.drawImage(embedded, { x: (page.getWidth() - width) / 2, y: (page.getHeight() - height) / 2, width, height });
     const bytes = await document.save();
     return new Blob([bytes as BlobPart], { type: 'application/pdf' });
@@ -359,7 +377,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
     setCorners(null);
     setFrame(null);
     setDetected(false);
-    setPreviewUrl('');
+    replaceSourcePreview();
     setNotice('');
     setError('');
     setStage('idle');
@@ -374,22 +392,35 @@ export default function DocumentScanner({ lang }: { lang: string }) {
     <p className="local">{en ? 'The camera frame and the scan stay on this device. Nothing is uploaded.' : 'Bingkai kamera dan hasil scan tetap di perangkat ini. Tidak ada yang diunggah.'}</p>
 
     {stage === 'result' && outputs.length > 0
-      ? <div className="result">
-          <h2>{en ? 'Your scan is ready' : 'Hasil scan siap'}</h2>
-          <p>{format === 'pdf'
-            ? (en ? `1 page PDF, fitted to A4 with a 10 mm margin.` : `PDF 1 halaman, menyesuaikan A4 dengan margin 10 mm.`)
-            : `${outputs[0].width} × ${outputs[0].height} px · JPEG · ${sizeLabel(outputs[0].blob.size)}`}</p>
-          <p><a className="button download" href={outputs[0].url} download={`scan.${format === 'pdf' ? 'pdf' : 'jpg'}`}>{en ? `Download ${format === 'pdf' ? 'PDF' : 'JPG'}` : `Unduh ${format === 'pdf' ? 'PDF' : 'JPG'}`}</a></p>
-          <div className="controls">
-            <button className="button secondary" type="button" onClick={() => { setStage('review'); releaseOutputs(); }}>{en ? 'Adjust corners' : 'Perbaiki sudut'}</button>
-            <button className="button secondary" type="button" onClick={reset}>{en ? 'Scan another page' : 'Scan halaman lain'}</button>
+      ? <div className="result scanner-result">
+          <figure className="scanner-result-preview">
+            <img
+              src={outputs[0].preview}
+              width={outputs[0].width}
+              height={outputs[0].height}
+              alt={en ? 'Corrected document scan' : 'Pratinjau dokumen yang sudah diluruskan'}
+              onLoad={() => setResultPreviewReady(true)}
+              onError={() => setError(en ? 'The preview could not open. Adjust the corners and try again.' : 'Pratinjau tidak bisa dibuka. Atur sudutnya dan coba lagi.')}
+            />
+          </figure>
+          <div className="scanner-result-actions">
+            <h2>{en ? 'Scan preview' : 'Pratinjau hasil scan'}</h2>
+            <p>{format === 'pdf'
+              ? (en ? 'One A4 PDF page with at least 10 mm of margin.' : 'Satu halaman PDF A4 dengan margin minimal 10 mm.')
+              : `${outputs[0].width} × ${outputs[0].height} px · JPEG · ${sizeLabel(outputs[0].blob.size)}`}</p>
+            {error && <p className="error" role="alert">{error}</p>}
+            {resultPreviewReady && <p><a className="button download" href={outputs[0].url} download={`scan.${format === 'pdf' ? 'pdf' : 'jpg'}`}>{en ? `Download ${format === 'pdf' ? 'PDF' : 'JPG'}` : `Unduh ${format === 'pdf' ? 'PDF' : 'JPG'}`}</a></p>}
+            <div className="controls">
+              <button className="button secondary" type="button" onClick={() => { setError(''); setStage('review'); releaseOutputs(); }}>{en ? 'Adjust corners' : 'Perbaiki sudut'}</button>
+              <button className="button secondary" type="button" onClick={reset}>{en ? 'Scan another page' : 'Scan halaman lain'}</button>
+            </div>
+            {resultPreviewReady && format === 'jpeg' && <WorkflowActions lang={lang} blob={outputs[0].blob} width={outputs[0].width} height={outputs[0].height} steps={[{ path: toolHref('photo-pdf', lang as 'id' | 'en'), id: 'Gabungkan ke PDF', en: 'Combine into a PDF' }, { path: toolHref('compress-image', lang as 'id' | 'en'), id: 'Kompres hasil scan', en: 'Compress the scan' }]} />}
           </div>
-          <WorkflowActions lang={lang} blob={outputs[0].blob} width={outputs[0].width} height={outputs[0].height} steps={[{ path: toolHref('photo-pdf', lang as 'id' | 'en'), id: 'Gabungkan ke PDF', en: 'Combine into a PDF' }, { path: toolHref('compress-image', lang as 'id' | 'en'), id: 'Kompres hasil scan', en: 'Compress the scan' }]} />
         </div>
-      : <div className="scanner-workspace">
+      : <div className="scanner-workspace" data-stage={stage}>
           <div className="scanner-view">
             <div className="scanner-stage" ref={overlayRef} style={previewBox ? { aspectRatio: `${previewBox.aspect}` } : undefined}>
-              {stage === 'live' && <video ref={videoRef} playsInline muted aria-label={en ? 'Camera preview' : 'Pratinjau kamera'} />}
+              {stage === 'live' && <video ref={videoRef} playsInline muted onCanPlay={() => setCameraReady(true)} aria-label={en ? 'Camera preview' : 'Pratinjau kamera'} />}
               {stage === 'review' && previewUrl && <img src={previewUrl} alt={en ? 'Document to scan' : 'Dokumen yang akan dipindai'} />}
               {stage === 'idle' && <div className="scanner-empty">
                 <p>{en ? 'Point your camera at a page.' : 'Arahkan kamera ke halaman.'}</p>
@@ -428,15 +459,15 @@ export default function DocumentScanner({ lang }: { lang: string }) {
             </>}
 
             {stage === 'live' && <>
-              <button className="button" type="button" disabled={busy} onClick={() => void capture()}>{en ? 'Capture page' : 'Ambil halaman'}</button>
-              <button className="button secondary" type="button" onClick={stopCamera}>{en ? 'Stop camera' : 'Hentikan kamera'}</button>
+              <button className="button" type="button" disabled={busy || !cameraReady} onClick={() => void capture()}>{en ? 'Capture page' : 'Ambil halaman'}</button>
+              <button className="button secondary" type="button" disabled={busy} onClick={stopCamera}>{en ? 'Stop camera' : 'Hentikan kamera'}</button>
               <p className="notice">{detected
                 ? (en ? 'Page detected. Hold still and capture.' : 'Halaman terdeteksi. Tahan diam lalu ambil.')
                 : (en ? 'Fill the frame with the paper.' : 'Penuhi bingkai dengan kertas.')}</p>
             </>}
 
             {stage === 'review' && <>
-              <button className="button" type="button" disabled={busy} onClick={() => void save()}>{busy ? (en ? 'Preparing…' : 'Menyiapkan…') : (en ? 'Save scan' : 'Simpan hasil scan')}</button>
+              <button className="button" type="button" disabled={busy} onClick={() => void save()}>{busy ? (en ? 'Preparing…' : 'Menyiapkan…') : (en ? 'Preview scan' : 'Lihat pratinjau')}</button>
               <label className="scanner-field">{en ? 'Save as' : 'Simpan sebagai'}
                 <select value={format} onChange={event => setFormat(event.target.value as 'jpeg' | 'pdf')} disabled={busy}>
                   <option value="jpeg">JPG</option>

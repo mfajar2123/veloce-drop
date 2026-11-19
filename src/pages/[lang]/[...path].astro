@@ -133,7 +133,7 @@ const en = lang === 'en';
       {props.toolId === 'pdf-jpg' && <PdfToImages lang={lang} client:load />}
       {props.toolId === 'pdf-500kb' && <PdfCompressor lang={lang} initialTarget={props.targetKB ?? 500} client:load />}
       {props.toolId === 'print' && <PrintSheetUpload lang={lang} client:load />}
-      {props.toolId === 'document-scanner' && <DocumentScanner lang={lang} client:only="react" />}
+      {props.toolId === 'document-scanner' && <DocumentScanner lang={lang} client:load />}
     </div>
   </Base>
 )}

@@ -6,17 +6,17 @@ import { articlePath } from './articles';
 // article files, so these links can never drift out of sync silently: the test
 // suite checks that every mapped slug resolves to a real article.
 export const toolGuides: Record<string, string[]> = {
-  'compress-image': ['compress-image-without-losing-quality', 'why-200kb-targets-fail', 'jpeg-vs-webp-for-web-uploads'],
+  'compress-image': ['reduce-upload-photo-size', 'compress-image-without-losing-quality', 'why-200kb-targets-fail', 'jpeg-vs-webp-for-web-uploads'],
   batch: ['batch-processing-workflow', 'why-200kb-targets-fail'],
-  'resize-image': ['passport-photo-sizes-explained', 'social-media-image-sizes'],
-  'image-converter': ['heic-to-jpg-on-windows', 'image-formats-explained'],
+  'resize-image': ['fit-photo-to-pixel-dimensions', 'passport-photo-sizes-explained', 'social-media-image-sizes'],
+  'image-converter': ['convert-iphone-heic-for-sharing', 'heic-to-jpg-on-windows', 'image-formats-explained'],
   background: ['background-removal-limits', 'why-local-processing-matters'],
   'logo-watermark': ['watermark-that-survives-resizing', 'batch-processing-workflow'],
   'photo-pdf': ['photos-to-pdf-page-order'],
-  'pdf-jpg': ['pdf-to-jpg-resolution'],
+  'pdf-jpg': ['extract-selected-pdf-pages-as-jpg', 'pdf-to-jpg-resolution'],
   'pdf-500kb': ['pdf-compression-and-lost-text'],
   print: ['print-photo-sheet-layouts', 'passport-photo-sizes-explained'],
-  'document-scanner': ['photos-to-pdf-page-order', 'why-local-processing-matters'],
+  'document-scanner': ['scan-paper-to-pdf', 'photos-to-pdf-page-order', 'why-local-processing-matters'],
 };
 
 export type GuideLink = { path: string; title: string };

@@ -80,6 +80,24 @@ test('landing respects reduced motion preferences', async ({ page }) => {
   expect(transitionDurations.every((duration) => duration <= 0.00002)).toBe(true);
 });
 
+test('localized pages fit a narrow viewport', async ({ page, request, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Run the full route layout sweep once.');
+  test.setTimeout(180_000);
+  await page.setViewportSize({ width: 320, height: 740 });
+  const sitemap = await (await request.get('/sitemap.xml')).text();
+  const routes = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => new URL(match[1]).pathname);
+  const overflow: string[] = [];
+  for (const route of routes) {
+    await page.goto(route, { waitUntil: 'domcontentloaded' });
+    const extra = await page.evaluate(async () => {
+      await document.fonts.ready;
+      return document.documentElement.scrollWidth - document.documentElement.clientWidth;
+    });
+    if (extra > 0) overflow.push(`${route}: ${extra}px`);
+  }
+  expect(overflow).toEqual([]);
+});
+
 test('enabled controls expose a pointer cursor and disabled controls expose a disabled cursor', async ({ page }) => {
   for (const [, route] of routes) {
     await page.goto(route);

@@ -164,4 +164,8 @@ const licenseLabel = (license?: string) => {
   .article-related ul{list-style:none;margin:0;padding:0;display:grid;gap:16px}
   .article-related a{font-weight:700;color:var(--brand)}
   .article-related span{display:block;color:var(--text-muted);font-size:.92rem;margin-top:2px}
+  @media(max-width:480px){
+    .article-prose :global(table){table-layout:fixed;overflow-wrap:anywhere;font-size:.875rem}
+    .article-prose :global(th),.article-prose :global(td){padding:8px 6px}
+  }
 </style>

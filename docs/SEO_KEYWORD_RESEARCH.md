@@ -29,6 +29,16 @@ Qualitative recommendation: lead Indonesian pages with task phrases used in ever
 
 ## Trends comparison set
 
+The 2026-11-19 guide update targets five tasks in both languages. Compare the broad parent queries in [Google Trends for Indonesia](https://trends.google.com/trends/explore?date=today%2012-m&geo=ID&q=scan%20dokumen,kompres%20foto,ubah%20ukuran%20foto,PDF%20ke%20JPG,HEIC%20ke%20JPG) and [Google Trends for the UK](https://trends.google.com/trends/explore?date=today%2012-m&geo=GB&q=scan%20document,compress%20image,resize%20image,PDF%20to%20JPG,HEIC%20to%20JPG). Explore did not return chart data in the workspace research session. Treat the terms below as candidates and do not infer volume or growth from their inclusion. [Google explains how Trends normalizes the data](https://support.google.com/trends/answer/4365533).
+
+| Guide slug | Indonesian search phrase | English search phrase |
+|---|---|---|
+| scan-paper-to-pdf | scan dokumen ke PDF lewat HP | scan document to PDF with phone |
+| reduce-upload-photo-size | kompres foto untuk upload | compress photo for upload |
+| fit-photo-to-pixel-dimensions | ubah ukuran foto ke piksel | resize photo to exact pixels |
+| extract-selected-pdf-pages-as-jpg | ubah halaman PDF ke JPG | convert selected PDF pages to JPG |
+| convert-iphone-heic-for-sharing | ubah HEIC iPhone ke JPG | convert iPhone HEIC to JPG |
+
 Compare these broad Indonesian phrases first: `kompres foto`, `ubah ukuran foto`, `hapus background`, `JPG ke PDF`, `PDF ke JPG`. Then test more specific phrases from the table. Use the same region, time range and search type for every comparison. Save exported CSVs with date and settings before treating a pattern as evidence. Trends scores are relative and must not be presented as monthly searches.
 
 Explore link: https://trends.google.com/trends/explore?geo=ID&date=today%205-y&q=kompres%20foto,ubah%20ukuran%20foto,hapus%20background,JPG%20ke%20PDF,PDF%20ke%20JPG

@@ -5,6 +5,7 @@ import {ClientRouter} from 'astro:transitions';
 import SessionTray from '../components/SessionTray.astro';
 import ToolReference from '../components/ToolReference.astro';
 import {catalog, type Locale} from '../tool-registry';
+import {siteConfig} from '../site-config';
 const { lang = 'id', title, description = 'Local image tools', trail, article, jsonLd, ogImage } = Astro.props as {
   lang?: Locale;
   title: string;
@@ -71,9 +72,51 @@ const documentTitle=article?pageTitle:`${pageTitle} | Doculven`;
   </head>
   <body>
     <a class="skip" href="#main">{en ? 'Skip to content' : 'Lewati ke konten'}</a>
-    <header class="header"><div class="wrap nav"><a class="brand" href={`/${lang}/`}><span class="brand-mark" aria-hidden="true">D</span>Doculven</a><nav class="links" aria-label={en ? 'Main navigation' : 'Navigasi utama'}><a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a><a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a><a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a><a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a><a href={alternate} lang={targetLang}>{en ? 'ID' : 'EN'}</a></nav><button class="mobile-menu-trigger" type="button" aria-haspopup="dialog" aria-controls="mobile-menu">{en ? 'Menu' : 'Menu'}</button></div><dialog class="mobile-menu" id="mobile-menu" aria-labelledby="mobile-menu-title"><div class="mobile-menu-heading"><strong id="mobile-menu-title">{en ? 'Navigation' : 'Navigasi'}</strong><button class="mobile-menu-close" type="button">{en ? 'Close' : 'Tutup'}</button></div><nav aria-label={en ? 'Mobile navigation' : 'Navigasi seluler'}><a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a><a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a><a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a><a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a><a href={alternate} lang={targetLang}>{en ? 'ID' : 'EN'}</a></nav></dialog></header>
+    <header class="header">
+      <div class="wrap nav"><a class="brand" href={`/${lang}/`}><span class="brand-mark" aria-hidden="true">D</span>Doculven</a>
+        <nav class="links" aria-label={en ? 'Main navigation' : 'Navigasi utama'}>
+          <a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a>
+          <a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a>
+          <a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a>
+          <a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a>
+        </nav>
+        <div class="nav-actions">
+          <a class="language-switch" href={alternate} lang={targetLang} hreflang={targetLang} aria-label={en ? "ID — Bahasa Indonesia" : "EN — English"}><svg viewBox="0 0 24 16" width="24" height="16" aria-hidden="true">{en ? <><path fill="#fff" d="M0 0h24v16H0z"/><path fill="#ce1126" d="M0 0h24v8H0z"/></> : <><path fill="#012169" d="M0 0h24v16H0z"/><path stroke="#fff" stroke-width="4" d="m0 0 24 16m0-16L0 16"/><path stroke="#c8102e" stroke-width="1" d="m0 0 24 16m0-16L0 16"/><path stroke="#fff" stroke-width="6" d="M12 0v16M0 8h24"/><path stroke="#c8102e" stroke-width="3" d="M12 0v16M0 8h24"/></>}</svg>
+            {en ? "ID" : "EN"}
+          </a>
+          <button class="mobile-menu-trigger" type="button" aria-haspopup="dialog" aria-controls="mobile-menu">Menu</button>
+        </div>
+      </div>
+      <dialog class="mobile-menu" id="mobile-menu" aria-labelledby="mobile-menu-title"><div class="mobile-menu-heading"><strong id="mobile-menu-title">{en ? 'Navigation' : 'Navigasi'}</strong><button class="mobile-menu-close" type="button">{en ? 'Close' : 'Tutup'}</button></div>
+        <nav aria-label={en ? 'Mobile navigation' : 'Navigasi seluler'}>
+          <a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a>
+          <a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a>
+          <a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a>
+          <a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a>
+        </nav>
+      </dialog>
+    </header>
     <main id="main">{breadcrumbItems.length>1&&<nav class="breadcrumbs" aria-label={en?'Breadcrumb':'Jejak navigasi'}><ol>{breadcrumbItems.map((item,index)=><li>{index>0&&<span class="breadcrumb-separator" aria-hidden="true">/</span>}{item.url?<a href={new URL(item.url).pathname}>{item.name}</a>:<span aria-current="page">{item.name}</span>}</li>)}</ol></nav>}<slot /><ToolReference lang={lang as Locale} tool={tool} /><SessionTray lang={lang} /></main>
-    <footer class="footer"><div class="wrap"><div><strong>Doculven</strong><p>{en ? 'Precision Image & Document Tools. 100% On Your Device.' : 'Olah Foto & Dokumen Presisi. 100% Aman di Perangkat Anda.'}</p></div><div><nav class="footer-links" aria-label={en ? 'More information' : 'Informasi lainnya'}><a href={en?'/en/info/about/':'/id/info/tentang/'}>{en?'About':'Tentang'}</a><a href={en?'/en/articles/':'/id/articles/'}>{en?'Guides':'Panduan'}</a><a href={en?'/en/info/contact/':'/id/info/kontak/'}>{en?'Contact':'Kontak'}</a><a href={en?'/en/info/help/':'/id/info/bantuan/'}>{en?'Help':'Bantuan'}</a><a href={en?'/en/privacy/':'/id/privasi/'}>{en?'Privacy':'Privasi'}</a><a href={en?'/en/info/terms/':'/id/info/ketentuan/'}>{en?'Terms':'Ketentuan'}</a></nav><p>© {new Date().getFullYear()} Doculven</p></div></div></footer>
+    <footer class="footer">
+      <div class="wrap">
+        <div class="footer-intro">
+          <a class="brand" href={`/${lang}/`}><span class="brand-mark" aria-hidden="true">D</span>Doculven</a>
+          <p>{en ? 'Edit images and documents on your device.' : 'Olah foto dan dokumen langsung di perangkatmu.'}</p>
+          <a class="footer-email" href={`mailto:${siteConfig.contact.email}`}>{siteConfig.contact.email}</a>
+        </div>
+        <div class="footer-directory">
+          <nav class="footer-links" aria-label={en ? 'More information' : 'Informasi lainnya'}>
+            <a href={en?'/en/info/about/':'/id/info/tentang/'}>{en?'About':'Tentang'}</a>
+            <a href={en?'/en/articles/':'/id/articles/'}>{en?'Guides':'Panduan'}</a>
+            <a href={en?'/en/info/contact/':'/id/info/kontak/'}>{en?'Contact':'Kontak'}</a>
+            <a href={en?'/en/info/help/':'/id/info/bantuan/'}>{en?'Help':'Bantuan'}</a>
+            <a href={en?'/en/privacy/':'/id/privasi/'}>{en?'Privacy':'Privasi'}</a>
+            <a href={en?'/en/info/terms/':'/id/info/ketentuan/'}>{en?'Terms':'Ketentuan'}</a>
+          </nav>
+          <p class="footer-copyright">© {new Date().getFullYear()} Doculven</p>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
 <script>
@@ -108,12 +151,14 @@ const documentTitle=article?pageTitle:`${pageTitle} | Doculven`;
       });
     });
   };
-  // Every tool keeps its workspace compact, but the result panel can still be
-  // pushed below the fold on a short window. Bring it into view once so the
-  // download action is never something the visitor has to hunt for.
+  let observedWorkspace: HTMLElement | null = null;
+  let resultObserver: MutationObserver | undefined;
   const initializeResultReveal = () => {
-    if (document.documentElement.dataset.resultReveal === 'true') return;
-    document.documentElement.dataset.resultReveal = 'true';
+    const workspace = document.querySelector<HTMLElement>('.workspace-compact');
+    if (workspace === observedWorkspace) return;
+    resultObserver?.disconnect();
+    observedWorkspace = workspace;
+    if (!workspace) return;
     const revealed = new WeakSet<Element>();
     const reveal = (node: Element) => {
       if (revealed.has(node)) return;
@@ -125,16 +170,19 @@ const documentTitle=article?pageTitle:`${pageTitle} | Doculven`;
       node.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
     };
     const scan = () => {
-      document.querySelectorAll<HTMLElement>('.result').forEach(node => {
+      workspace.querySelectorAll<HTMLElement>('.result').forEach(node => {
         if (!node.textContent?.trim()) return;
         // Prefer the actual download action: the result block may also contain a
         // large comparison preview, and scrolling to its top would still leave
         // the download below the fold.
-        const action = node.querySelector<HTMLElement>('a.download, .button.download') ?? node;
+        const action = node.classList.contains('scanner-result')
+          ? node
+          : node.querySelector<HTMLElement>('a.download, .button.download') ?? node;
         reveal(action);
       });
     };
-    new MutationObserver(scan).observe(document.body, { childList: true, subtree: true, characterData: true });
+    resultObserver = new MutationObserver(scan);
+    resultObserver.observe(workspace, { childList: true, subtree: true, characterData: true });
     scan();
   };
   document.addEventListener('astro:page-load', initializeMobileMenu);

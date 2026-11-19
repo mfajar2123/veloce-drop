@@ -147,4 +147,9 @@ const PER_PAGE = 6;
   .articles-tools h2{margin:0 0 8px;font-size:1.25rem}
   .articles-tools p{margin:0 0 16px;color:var(--text-muted)}
   .articles-tools .button{margin-right:8px}
+  @media(max-width:420px){
+    .article-pagination{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .article-pagination [data-page-status]{grid-column:1/-1;grid-row:1;text-align:center}
+    .article-pagination button{padding-inline:8px}
+  }
 </style>
