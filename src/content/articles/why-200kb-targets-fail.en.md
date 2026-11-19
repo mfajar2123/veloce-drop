@@ -49,7 +49,7 @@ If your 200 KB target is a hard requirement — a job portal that rejects larger
 
 When quality reduction alone cannot reach the target, dimension reduction can. Halving both width and height reduces pixel count by four, which typically cuts file size by a similar order.
 
-The catch is that this genuinely changes your image. A 4000-pixel-wide photo reduced to 1500 pixels is fine for a web upload and unsuitable for print. VeloceDrop treats this as a separate, explicit action rather than doing it silently, which is why the tool offers "try smaller dimensions" as a choice after reporting that the target was not reached.
+The catch is that this genuinely changes your image. A 4000-pixel-wide photo reduced to 1500 pixels is fine for a web upload and unsuitable for print. Doculven treats this as a separate, explicit action rather than doing it silently, which is why the tool offers "try smaller dimensions" as a choice after reporting that the target was not reached.
 
 Before accepting it, ask what the file is for:
 
@@ -70,7 +70,7 @@ When a target seems impossible, work in this order:
 
 ## What the tool reports, and why that matters
 
-When VeloceDrop cannot meet a target, it says so and shows you the smallest result it could produce at full dimensions, with its actual size. That number is useful: it tells you how far you are from the target, which tells you whether a format change alone will be enough or whether dimensions must change.
+When Doculven cannot meet a target, it says so and shows you the smallest result it could produce at full dimensions, with its actual size. That number is useful: it tells you how far you are from the target, which tells you whether a format change alone will be enough or whether dimensions must change.
 
 A tool that silently returns a 340 KB file while displaying "200 KB" would be worse than useless. The honest failure is the feature.
 

@@ -1,6 +1,6 @@
 # Tool selection
 
-VeloceDrop now presents 10 tools. They were selected to cover broad image/PDF search intent, repeat work for sellers and social publishers, and common Indonesian application and print jobs. Related size targets and source formats live inside a single workspace instead of competing as thin near-duplicate pages.
+Doculven now presents 11 tools. They were selected to cover broad image/PDF search intent, repeat work for sellers and social publishers, and common Indonesian application and print jobs. Related size targets and source formats live inside a single workspace instead of competing as thin near-duplicate pages.
 
 | Tool | Why it stays |
 | --- | --- |
@@ -17,7 +17,7 @@ VeloceDrop now presents 10 tools. They were selected to cover broad image/PDF se
 
 ## Demand evidence and limits
 
-The current demand evidence is directional, not a measured VeloceDrop keyword report. A third-party global tool-keyword compilation lists large estimated demand for image compression, resizing, PDF compression, PDF-to-image conversion, background removal, and HEIC conversion. Its estimates are not Google-confirmed, not Indonesia-specific, and can change. Google Trends provides normalized relative interest rather than absolute search counts. Google Ads Keyword Planner is the appropriate source for location-specific monthly-search estimates and advertiser competition; a live account export was not available during this selection.
+The current demand evidence is directional, not a measured Doculven keyword report. A third-party global tool-keyword compilation lists large estimated demand for image compression, resizing, PDF compression, PDF-to-image conversion, background removal, and HEIC conversion. Its estimates are not Google-confirmed, not Indonesia-specific, and can change. Google Trends provides normalized relative interest rather than absolute search counts. Google Ads Keyword Planner is the appropriate source for location-specific monthly-search estimates and advertiser competition; a live account export was not available during this selection.
 
 This means the tool list is a reasoned starting portfolio, not a promise of traffic, AdSense approval, or revenue. After the domain is configured, compare Indonesian and English query estimates in Keyword Planner, then use Search Console impressions and actual tool usage to reorder effort.
 

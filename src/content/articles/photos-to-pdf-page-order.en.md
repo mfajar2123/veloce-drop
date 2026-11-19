@@ -70,4 +70,4 @@ For a photo-only PDF there is no text to lose, so rasterizing is far less damagi
 
 ## What the tool reports
 
-VeloceDrop shows the page count and paper dimensions before export, and the resulting PDF embeds images at their native resolution where possible. It does not verify that your document meets an institution's requirements — that remains your check to make.
+Doculven shows the page count and paper dimensions before export, and the resulting PDF embeds images at their native resolution where possible. It does not verify that your document meets an institution's requirements — that remains your check to make.

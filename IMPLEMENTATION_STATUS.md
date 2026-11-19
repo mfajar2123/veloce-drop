@@ -2,7 +2,7 @@
 
 ## Active scope
 
-The project owner narrowed the product to 10 tool types on 2026-11-10. The catalog has exactly 10 entries and publishes 20 localized tool routes. The selection rationale and ad-network constraints are recorded in [docs/TOOL_SELECTION.md](docs/TOOL_SELECTION.md); the route source of truth is [docs/ROUTES.md](docs/ROUTES.md).
+The project owner narrowed the product to 10 tool types on 2026-11-10. The addition of the document scanner brings the catalog to 11 entries and 22 localized tool routes. The selection rationale and ad-network constraints are recorded in [docs/TOOL_SELECTION.md](docs/TOOL_SELECTION.md); the route source of truth is [docs/ROUTES.md](docs/ROUTES.md).
 
 | Tool | Included behavior |
 | --- | --- |
@@ -16,11 +16,13 @@ The project owner narrowed the product to 10 tool types on 2026-11-10. The catal
 | PDF to JPG | Select pages, export images or ZIP |
 | PDF compression | Editable target, 500 KB default |
 | Photo print sheet | Arrange photos on print layouts |
+| Document scanner | Camera or photo input, perspective correction, JPG and PDF export |
 
-Dedicated routes and workspaces for other tools were removed. Their remaining implementation files are removed when they are not shared with one of these 10 tools. Relevant presets stay within their parent workspace.
+Dedicated routes and workspaces for other tools were removed. Their remaining implementation files are removed when they are not shared with one of these tools. Relevant presets stay within their parent workspace.
 
 ## Verification
 
+- The Doculven build on 2026-11-19 produces 70 pages. The static verifier checks 15 required paths, 68 localized metadata sets, and the camera policy on each HTML route. All 27 unit tests pass. A Chromium run with a simulated camera and the generated production headers received live frames, captured a page, and exported a JPG without console errors.
 - Hardening pass on 2026-11-18, after build and test artifacts and stale documents were removed from the working tree: `pnpm build` emits 36 pages; `pnpm check` reports 0 errors, warnings, or hints across 107 files; `pnpm lint` exits 0; `pnpm test:unit` passes 21/21; `scripts/verify-pages-output.mjs` passes for 13 required paths and 34 localized metadata sets when built with a real `PUBLIC_SITE_URL`.
 - Content Security Policy was previously broken on any host that served `public/_headers`: the hashless `script-src 'self'` blocked all 179 inline script tags, which disabled the catalog filters, the landing search, the mobile navigation, and every React island. Apache, Netlify and Cloudflare Pages all honour `_headers`, so the site would have been non-interactive in production even though local `astro preview` ignored the file and looked fine.
 - The fix enables Astro's `security.csp`, which emits per-page `sha256` hashes, and adds `scripts/generate-headers.mjs` to `postbuild` to merge those hashes into `dist/_headers`. Verified by serving `dist` with the real header: landing search, mobile navigation, catalog filters, and a tool island all initialize with zero blocking violations.

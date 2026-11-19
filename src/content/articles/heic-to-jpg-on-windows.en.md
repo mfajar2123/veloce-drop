@@ -72,7 +72,7 @@ If file size matters and the destination is a modern browser, **WebP** gives bet
 
 ## Why local conversion matters here
 
-Conversion can be done entirely in the browser, and VeloceDrop does it that way. The HEIC decoder runs on your device; the photo is never uploaded.
+Conversion can be done entirely in the browser, and Doculven does it that way. The HEIC decoder runs on your device; the photo is never uploaded.
 
 That is not only a privacy preference. Photos of documents, ID cards, and family members are exactly the files people should not hand to an anonymous website. A local conversion keeps the bytes on your machine, and the only network traffic is loading the decoder itself.
 

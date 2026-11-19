@@ -27,7 +27,7 @@ If your files are named `IMG_2841.jpg` through `IMG_2890.jpg`, output named `com
 
 Two fixes:
 
-- **Keep original names.** Most batch tools, including VeloceDrop, preserve the input filename in the output.
+- **Keep original names.** Most batch tools, including Doculven, preserve the input filename in the output.
 - **Rename deliberately first.** If names are meaningless camera identifiers, rename them to something meaningful — `shirt-blue-front.jpg` — before processing, using a file manager's batch rename.
 
 Duplicate filenames are a real hazard. Two folders each containing `photo.jpg` will collide in a ZIP. A sensible tool disambiguates with a suffix rather than overwriting.
@@ -85,4 +85,4 @@ Organize as: `originals/`, `compressed/`, `watermarked/`. Overwriting in place r
 
 Batch tools cap concurrency and total size for good reasons — memory. A hundred 20-megapixel images cannot all be decoded simultaneously on any normal machine.
 
-VeloceDrop limits a batch to 25 images, 20 MB each, 100 MB total, and processes them sequentially, releasing memory between items. If you have two hundred files, run the batch eight times rather than trying to force everything through at once. That is a deliberate trade-off for not crashing the tab.
+Doculven limits a batch to 25 images, 20 MB each, 100 MB total, and processes them sequentially, releasing memory between items. If you have two hundred files, run the batch eight times rather than trying to force everything through at once. That is a deliberate trade-off for not crashing the tab.

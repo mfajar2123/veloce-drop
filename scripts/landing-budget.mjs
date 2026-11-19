@@ -6,7 +6,7 @@ const basePath = (process.env.PUBLIC_BASE_PATH || '/').replace(/^\/*/, '/').repl
 const page = await readFile(new URL('../dist/id/index.html', import.meta.url), 'utf8');
 const assets = [...new Set([...page.matchAll(/(?:src|href|component-url|renderer-url)="([^"]+\.js)"/g)].map((match) => match[1]))];
 const results = await Promise.all(assets.map(async (asset) => {
-  const pathname = new URL(asset, 'https://velocedrop.invalid').pathname;
+  const pathname = new URL(asset, 'https://doculven.invalid').pathname;
   const relativeAsset = pathname.startsWith(basePath) ? pathname.slice(basePath.length) : pathname.replace(/^\/+/, '');
   const file = new URL(`../dist/${relativeAsset}`, import.meta.url);
   const bytes = await readFile(file);

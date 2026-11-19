@@ -70,4 +70,4 @@ Untuk PDF yang hanya berisi foto tidak ada teks yang hilang, sehingga rasterisas
 
 ## Apa yang dilaporkan alat
 
-VeloceDrop menampilkan jumlah halaman dan dimensi kertas sebelum ekspor, dan PDF yang dihasilkan menyematkan gambar pada resolusi aslinya bila memungkinkan. Alat tidak memverifikasi bahwa dokumen Anda memenuhi persyaratan instansi — itu tetap pemeriksaan Anda.
+Doculven menampilkan jumlah halaman dan dimensi kertas sebelum ekspor, dan PDF yang dihasilkan menyematkan gambar pada resolusi aslinya bila memungkinkan. Alat tidak memverifikasi bahwa dokumen Anda memenuhi persyaratan instansi — itu tetap pemeriksaan Anda.

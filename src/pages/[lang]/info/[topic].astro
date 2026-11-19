@@ -12,7 +12,7 @@ const en = record.lang === 'en';
 
 <Base lang={record.lang} title={record.title} description={record.intro}>
   <article class="wrap panel info-page">
-    <p class="eyebrow">{en ? 'VeloceDrop information' : 'Informasi VeloceDrop'}</p>
+    <p class="eyebrow">{en ? 'Doculven information' : 'Informasi Doculven'}</p>
     <h1>{record.title}</h1>
     <p class="info-intro">{record.intro}</p>
     {record.sections.map(section => <section><h2>{section.title}</h2>{section.body && (section.copyEmail ? <p class="contact-email"><a href={`mailto:${section.body}`}>{section.body}</a></p> : <p>{section.body}</p>)}{section.items && <ul>{section.items.map(item => <li>{item}</li>)}</ul>}{section.copyEmail && section.body && <p><button class="button secondary" type="button" data-copy-contact data-email={section.body}>{en ? 'Copy email address' : 'Salin alamat email'}</button> <span data-copy-state aria-live="polite"></span></p>}</section>)}

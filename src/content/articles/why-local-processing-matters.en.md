@@ -54,7 +54,7 @@ The security model shifts from "trust the operator" to "trust the browser sandbo
 
 ## What local processing does not mean
 
-Being precise matters here, and VeloceDrop's own privacy page states this plainly.
+Being precise matters here, and Doculven's own privacy page states this plainly.
 
 **It does not mean offline.** The page, the fonts, the JavaScript, and any model files still arrive over the network. You are still making requests.
 

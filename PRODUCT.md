@@ -24,7 +24,7 @@ File processing stays on the device. No account, backend processing, paid API or
 
 ## Brand Commitments
 
-VeloceDrop; clear Indonesian and English; the Nordic Emerald & Slate palette and editorial studio direction in [DESIGN.md](DESIGN.md).
+Doculven; clear Indonesian and English; the Nordic Emerald & Slate palette and editorial studio direction in [DESIGN.md](DESIGN.md).
 
 ## Accessibility & Inclusion
 

@@ -1,6 +1,6 @@
 export const siteConfig = {
   contact: {
-    team: 'Tim VeloceDrop',
+    team: 'Tim Doculven',
     email: 'velocedrop2123@gmail.com',
     region: 'Indonesia & global',
   },

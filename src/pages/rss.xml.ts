@@ -4,7 +4,7 @@ import { articlePath } from '../articles';
 
 export const prerender = true;
 
-const siteUrl = new URL(import.meta.env.PUBLIC_SITE_URL || 'https://velocedrop.example').origin;
+const siteUrl = new URL(import.meta.env.PUBLIC_SITE_URL || 'https://doculven.example').origin;
 const basePath = (import.meta.env.BASE_URL || '/').replace(/^\/*/, '/').replace(/\/*$/, '/');
 const escapeXml = (value: string) => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;');
 
@@ -24,6 +24,6 @@ export const GET: APIRoute = async () => {
     ].join('\n');
   }).join('\n');
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n  <channel>\n    <title>VeloceDrop guides</title>\n    <link>${escapeXml(new URL(`${basePath}en/articles/`, `${siteUrl}/`).toString())}</link>\n    <description>Practical guides on compressing, resizing, converting and preparing images and PDFs.</description>\n    <language>en</language>\n${items}\n  </channel>\n</rss>`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n  <channel>\n    <title>Doculven guides</title>\n    <link>${escapeXml(new URL(`${basePath}en/articles/`, `${siteUrl}/`).toString())}</link>\n    <description>Practical guides on compressing, resizing, converting and preparing images and PDFs.</description>\n    <language>en</language>\n${items}\n  </channel>\n</rss>`;
   return new Response(xml, { headers: { 'Content-Type': 'application/rss+xml; charset=utf-8' } });
 };

@@ -51,7 +51,7 @@ WebP is technically superior and operationally riskier in exactly one scenario: 
 
 Converting a PNG with a transparent background to JPEG does not fail loudly. It produces a file that looks correct except that the transparent area is now solid white. If that image sits on a coloured page, the white box becomes obvious later.
 
-If you need a JPEG of a cut-out image, choose a background colour deliberately — match the destination background. VeloceDrop asks for that colour rather than assuming white for this reason.
+If you need a JPEG of a cut-out image, choose a background colour deliberately — match the destination background. Doculven asks for that colour rather than assuming white for this reason.
 
 ## A workflow that avoids the question
 

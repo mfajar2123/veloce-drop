@@ -1,6 +1,6 @@
-# VeloceDrop
+# Doculven
 
-VeloceDrop is a bilingual static site with 10 image and document tools processed in the browser. It has one Indonesian and one English route per tool, with relevant formats and size presets grouped inside shared workspaces. See [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for current scope, verification, and hosting.
+Doculven is a bilingual static site with 11 image and document tools processed in the browser, including a camera document scanner. It has one Indonesian and one English route per tool, with relevant formats and size presets grouped inside shared workspaces. See [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for current scope, verification, and hosting.
 
 ## Development
 
@@ -30,9 +30,9 @@ Install the Playwright browsers before running browser tests: `pnpm exec playwri
 
 Netlify is the deployment target. The site is static; nothing here needs a server runtime.
 
-`netlify.toml` holds the build command (`pnpm build`), the `dist` publish directory, the `/` to `/id/` redirect, and long-lived caching for hashed assets. Netlify also applies `dist/_headers`, so the CSP, framing, and referrer policies are enforced as real response headers.
+`netlify.toml` holds the build command (`pnpm build`), the `dist` publish directory, the `/` to `/en/` redirect, and long-lived caching for hashed assets. The build writes one `Permissions-Policy` per HTML route and allows camera access only on the two scanner pages. Netlify applies these policies and the CSP, framing, and referrer policies from `dist/_headers`.
 
-Set `PUBLIC_SITE_URL` in the Netlify environment to the final HTTPS origin, for example `https://velocedrop.netlify.app` or a custom domain. Without it, canonical and sitemap URLs fall back to `https://velocedrop.example`, which `scripts/verify-pages-output.mjs` rejects on purpose.
+Set `PUBLIC_SITE_URL` in the Netlify environment to the final HTTPS origin, for example `https://doculven.netlify.app` or a custom domain. Without it, canonical and sitemap URLs fall back to `https://doculven.example`, which `scripts/verify-pages-output.mjs` rejects on purpose.
 
 The CSP is hash-based. `pnpm build` emits per-page hashes through Astro's `security.csp`, then `postbuild` merges them into `dist/_headers` with `scripts/generate-headers.mjs`. Rebuild rather than editing `dist` by hand, or the header policy will not match the shipped scripts. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 

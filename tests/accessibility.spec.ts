@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { catalog } from '../src/tool-registry';
 
 const routes = [
   ['Indonesian landing', '/id/'],
@@ -7,6 +8,7 @@ const routes = [
   ['image compression tool', '/id/kompres-foto/'],
   ['background removal studio', '/id/hapus-latar/'],
   ['photo to PDF tool', '/id/foto-ke-pdf/'],
+  ['document scanner', '/id/scan-dokumen/'],
   ['English help page', '/en/info/help/'],
 ] as const;
 
@@ -30,12 +32,12 @@ for (const [name, route] of routes) {
 for (const lang of ['id', 'en'] as const) {
   test(`${lang} tool workspaces have no WCAG 2.2 A/AA axe violations`, async ({ page }) => {
     test.setTimeout(300_000);
-    const catalog = lang === 'en' ? '/en/tools/' : '/id/alat/';
-    await page.goto(catalog);
+    const catalogPath = lang === 'en' ? '/en/tools/' : '/id/alat/';
+    await page.goto(catalogPath);
     const paths = await page.locator('[data-tool-list] a').evaluateAll((links) =>
       links.map((link) => (link as HTMLAnchorElement).getAttribute('href')).filter((path): path is string => Boolean(path)),
     );
-    expect(paths).toHaveLength(10);
+    expect(paths).toHaveLength(catalog.length);
     for (const path of paths) {
       await page.goto(path);
       await expect(page.locator('main h1')).toBeVisible();

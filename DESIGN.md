@@ -1,6 +1,6 @@
 # Design direction
 
-VeloceDrop uses a calm editorial studio for everyday image and document work. The audience needs to trust a file workflow before exploring its controls, so the primary surface is light, the headline is direct, and deep emerald marks actions and the product identity. Mint is reserved for the privacy story; amber is reserved for actual downloads. Measurements use tabular numerals.
+Doculven uses a calm editorial studio for everyday image and document work. The audience needs to trust a file workflow before exploring its controls, so the primary surface is light, the headline is direct, and deep emerald marks actions and the product identity. Mint is reserved for the privacy story; amber is reserved for actual downloads. Measurements use tabular numerals.
 
 Design dials: **ENERGY 2 / RHYTHM 3 / MOTION 1**. The landing sequence alternates a centered image demonstration, a compact tool index, a selectable editorial use case, a two-column privacy explanation, and one quiet closing action. Tool pages remain workspace-first. Motion communicates selection, comparison, or hover only; it does not loop. The recurring identity gesture is a precise vertical comparison line over a real, labeled sample image.
 

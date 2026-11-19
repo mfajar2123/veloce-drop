@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { catalog } from '../src/tool-registry';
 
 async function renderBelowFold(page: import('@playwright/test').Page) {
   const sections = page.locator('.landing-page > section');
@@ -40,8 +41,8 @@ test('landing shows a working before/after demo and all six sections', async ({ 
 test('landing tool search and use-case choices navigate to the selected tools', async ({ page }) => {
   await page.goto('/id/');
   await expect(page.locator('.home-tool-row:visible')).toHaveCount(6);
-  await page.getByRole('button', { name: 'Tampilkan 4 alat lain' }).click();
-  await expect(page.locator('.home-tool-row:visible')).toHaveCount(10);
+  await page.getByRole('button', { name: /Tampilkan \d+ alat lain/ }).click();
+  await expect(page.locator('.home-tool-row:visible')).toHaveCount(catalog.length);
   await expect(page.getByRole('button', { name: 'Tampilkan lebih sedikit' })).toHaveAttribute('aria-expanded', 'true');
   await page.getByRole('searchbox', { name: 'Cari alat' }).fill('HEIC');
   await expect(page.locator('.home-tool-row:visible')).toHaveCount(1);
@@ -59,12 +60,12 @@ test('sample handoff opens compression with the local example and exports a real
   await page.goto('/id/');
   await page.getByRole('button', { name: 'Coba foto contoh' }).click();
   await expect(page).toHaveURL(/kompres-foto/);
-  await expect(page.getByText(/velocedrop\.webp/)).toBeVisible();
+  await expect(page.getByText(/doculven\.webp/)).toBeVisible();
   await page.getByRole('button', { name: 'Kompres gambar' }).click();
   const downloadLink = page.getByRole('link', { name: 'Unduh gambar' });
   await expect(downloadLink).toBeVisible({ timeout: 30_000 });
   const downloadPromise = page.waitForEvent('download');
   await downloadLink.click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe('velocedrop.jpg');
+  expect(download.suggestedFilename()).toBe('doculven.jpg');
 });

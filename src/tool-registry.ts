@@ -106,6 +106,14 @@ export const catalog: CatalogTool[] = [
     keywords: 'print cetak foto photo 4r a4 pas foto passport',
     packages: ['applicant'],
   },
+  {
+    id: 'document-scanner',
+    name: { id: 'Scan dokumen', en: 'Scan a document' },
+    description: { id: 'Arahkan kamera, deteksi tepi otomatis, lalu simpan sebagai JPG atau PDF', en: 'Point your camera, detect the edges automatically, then save as JPG or PDF' },
+    path: localized('scan-dokumen', 'scan-document'),
+    keywords: 'scan scanner dokumen document kamera camera foto kertas ktp ijazah kwitansi nota pdf jpg ocr crop perspektif',
+    packages: ['applicant', 'seller'],
+  },
 ];
 
 for (const tool of catalog) {
@@ -115,9 +123,11 @@ for (const tool of catalog) {
   else if (tool.id === 'photo-pdf' || tool.id === 'pdf-jpg' || tool.id.startsWith('pdf-')) tool.category = 'documents';
   else if (tool.id === 'print') tool.category = 'print';
   else if (tool.id === 'image-converter') tool.category = 'conversion';
+  else if (tool.id === 'document-scanner') tool.category = 'documents';
   else tool.category = 'compression';
 
-  tool.engine = tool.category === 'background' ? 'local-onnx-worker'
+  tool.engine = tool.id === 'document-scanner' ? 'local-canvas-and-pdf'
+    : tool.category === 'background' ? 'local-onnx-worker'
     : tool.category === 'documents' ? 'local-pdf'
       : tool.category === 'compression' ? 'browser-image-encoder'
         : tool.category === 'resize' ? 'browser-canvas'
@@ -127,44 +137,48 @@ for (const tool of catalog) {
 
   const seoCopy: Record<string, { title: Text; description: Text }> = {
     'compress-image': {
-      title: { id: 'Kompres Foto Online hingga 200 KB', en: 'Compress Images Online to 200 KB' },
-      description: { id: 'Kompres JPG, PNG, atau WebP ke ukuran yang ditargetkan. Atur kualitas dan unduh langsung dari browser.', en: 'Compress JPG, PNG, or WebP to a target file size. Adjust quality and download directly from your browser.' },
+      title: { id: 'Kompres Foto Online sampai 200 KB Gratis', en: 'Compress Image Online to 200 KB Free' },
+      description: { id: 'Kompres JPG, PNG, atau WebP ke target KB yang Anda tentukan. Tanpa unggah, diproses di browser dan langsung diunduh.', en: 'Compress JPG, PNG, or WebP to your own KB target. No upload, processed in your browser, downloaded straight away.' },
     },
     batch: {
-      title: { id: 'Kompres Banyak Foto Sekaligus', en: 'Batch Image Compressor Online' },
-      description: { id: 'Kecilkan ukuran banyak foto sekaligus, atur target, lalu unduh hasilnya dalam satu file ZIP.', en: 'Reduce the size of multiple images at once, set a target, and download the results in one ZIP.' },
+      title: { id: 'Kompres Foto Massal Sekaligus, Unduh ZIP', en: 'Batch Compress Images and Download a ZIP' },
+      description: { id: 'Kompres hingga 25 foto sekaligus dengan target per gambar, lalu unduh semua hasil sebagai satu file ZIP.', en: 'Compress up to 25 images at once with a per-image target, then download every result as one ZIP file.' },
     },
     'resize-image': {
-      title: { id: 'Ubah Ukuran Foto dan Crop Online', en: 'Resize and Crop Images Online' },
-      description: { id: 'Ubah dimensi foto atau crop ke ukuran pas foto, 3×4, 4×6, Instagram, dan kebutuhan cetak.', en: 'Resize photos or crop to passport, 3×4, 4×6, Instagram, and print dimensions.' },
+      title: { id: 'Ubah Ukuran Foto: 3x4, 4x6, Pas Foto', en: 'Resize Image: 3x4, 4x6 and Passport Sizes' },
+      description: { id: 'Ubah dimensi atau crop foto ke ukuran pas foto 3x4, 4x6, 35x45 mm, 4R, A4, Instagram, dan ukuran khusus.', en: 'Set dimensions or crop a photo to 3x4, 4x6, 35x45 mm, 4R, A4, Instagram and custom pixel sizes.' },
     },
     'image-converter': {
-      title: { id: 'Konverter JPG, PNG, WebP, HEIC Online', en: 'JPG, PNG, WebP and HEIC Converter' },
-      description: { id: 'Konversi format foto JPG, PNG, WebP, HEIC, SVG, atau ICO langsung di browser.', en: 'Convert JPG, PNG, WebP, HEIC, SVG, or ICO images directly in your browser.' },
+      title: { id: 'Konverter JPG, PNG, WebP, HEIC ke JPG', en: 'HEIC to JPG, PNG and WebP Image Converter' },
+      description: { id: 'Konversi JPG, PNG, WebP, HEIC, SVG, atau ICO di browser. Foto iPhone HEIC langsung jadi JPG tanpa unggah.', en: 'Convert JPG, PNG, WebP, HEIC, SVG or ICO in your browser. Turn iPhone HEIC photos into JPG without uploading.' },
     },
     background: {
-      title: { id: 'Hapus Background Foto Online', en: 'Remove Image Background Online' },
-      description: { id: 'Hapus latar belakang potret secara lokal, periksa hasilnya, dan rapikan mask sebelum mengunduh.', en: 'Remove a portrait background locally, inspect the result, and refine the mask before downloading.' },
+      title: { id: 'Hapus Background Foto Online, Latar RGB', en: 'Remove Image Background Online with Any Colour' },
+      description: { id: 'Hapus latar potret otomatis di browser, lalu ganti dengan warna RGB pilihan. Resolusi asli dipertahankan.', en: 'Remove a portrait background automatically in your browser, then fill it with any RGB colour. Original resolution kept.' },
     },
     'logo-watermark': {
-      title: { id: 'Tambah Watermark Logo ke Banyak Foto', en: 'Add a Logo Watermark to Images' },
-      description: { id: 'Pasang logo sebagai watermark pada banyak foto sekaligus. Atur posisi, ukuran, margin, dan opasitas.', en: 'Add a logo watermark to multiple photos at once. Set its position, size, margin, and opacity.' },
+      title: { id: 'Tambah Watermark Logo ke Banyak Foto', en: 'Add a Logo Watermark to Many Photos at Once' },
+      description: { id: 'Pasang logo sebagai watermark pada hingga 25 foto sekaligus. Atur posisi, ukuran relatif, margin, dan opasitas.', en: 'Apply a logo watermark to up to 25 photos at once. Set position, relative size, margin and opacity.' },
     },
     'photo-pdf': {
-      title: { id: 'Gabungkan Foto Menjadi PDF Online', en: 'Combine Photos into a PDF Online' },
-      description: { id: 'Susun beberapa foto JPG, PNG, atau WebP menjadi PDF. Pilih urutan, ukuran kertas, dan margin.', en: 'Arrange JPG, PNG, or WebP photos into a PDF. Choose page order, paper size, and margins.' },
+      title: { id: 'Gabungkan Foto Jadi PDF: JPG ke PDF A4', en: 'JPG to PDF: Combine Photos into One PDF' },
+      description: { id: 'Susun JPG, PNG, atau WebP menjadi PDF dengan urutan halaman, ukuran kertas A4 atau F4, dan margin.', en: 'Arrange JPG, PNG or WebP photos into a PDF with page order, A4 or F4 paper size and margins.' },
     },
     'pdf-jpg': {
-      title: { id: 'Konversi PDF ke JPG per Halaman', en: 'Convert PDF Pages to JPG Images' },
-      description: { id: 'Pilih halaman PDF, atur resolusi, lalu unduh halaman terpilih sebagai gambar JPG.', en: 'Select PDF pages, set resolution, and download the chosen pages as JPG images.' },
+      title: { id: 'Konversi PDF ke JPG per Halaman Online', en: 'Convert PDF Pages to JPG Images Online' },
+      description: { id: 'Pilih halaman atau rentang PDF, atur 72 sampai 200 DPI, lalu unduh halaman terpilih sebagai gambar JPG.', en: 'Select PDF pages or ranges, choose 72 to 200 DPI, then download the chosen pages as JPG images.' },
     },
     'pdf-500kb': {
-      title: { id: 'Kompres PDF hingga 500 KB', en: 'Compress PDF to 500 KB' },
-      description: { id: 'Atur target ukuran PDF hingga 500 KB. Halaman dirasterkan secara lokal; tinjau batas kualitas sebelum ekspor.', en: 'Set a PDF size target up to 500 KB. Pages are rasterized locally; review the quality tradeoff before export.' },
+      title: { id: 'Kompres PDF sampai 500 KB Online', en: 'Compress PDF to 500 KB Online' },
+      description: { id: 'Atur target ukuran PDF hingga 500 KB. Halaman dirasterkan lokal; teks tidak lagi bisa dipilih setelahnya.', en: 'Set a PDF size target up to 500 KB. Pages are rasterized locally, so text stops being selectable afterwards.' },
     },
     print: {
-      title: { id: 'Buat Lembar Cetak Foto 4R dan A4', en: 'Create 4R and A4 Photo Print Sheets' },
-      description: { id: 'Susun beberapa foto dalam lembar cetak ukuran 4R atau A4, lalu unduh sebagai PDF.', en: 'Arrange multiple photos on a 4R or A4 print sheet, then download it as a PDF.' },
+      title: { id: 'Cetak Lembar Foto 4R dan A4 untuk Pas Foto', en: '4R and A4 Photo Print Sheet for Passport Photos' },
+      description: { id: 'Susun pas foto 2x3, 3x4, atau 4x6 cm pada lembar 4R atau A4 dengan tanda potong, lalu unduh sebagai PDF.', en: 'Arrange 2x3, 3x4 or 4x6 cm photos on a 4R or A4 sheet with cut marks, then download it as a PDF.' },
+    },
+    'document-scanner': {
+      title: { id: 'Scan Dokumen pakai Kamera HP jadi PDF', en: 'Scan a Document with Your Phone Camera' },
+      description: { id: 'Arahkan kamera ke kertas, tepi dokumen dideteksi otomatis, lalu hasilnya dirapikan jadi JPG atau PDF. Tidak ada unggahan.', en: 'Point your camera at paper, the page edges are detected automatically, then straighten the result into JPG or PDF. Nothing is uploaded.' },
     },
   };
   tool.seo = seoCopy[tool.id];
@@ -209,6 +223,11 @@ for (const tool of catalog) {
       { question: { id: 'Berapa pas foto yang muat dalam satu lembar?', en: 'How many passport photos fit on one sheet?' }, answer: { id: 'Jumlah dihitung dari ukuran kertas 4R atau A4, ukuran foto 2×3, 3×4, atau 4×6 cm, margin, jarak, dan orientasi yang dipilih. Kapasitas yang tersedia ditampilkan sebelum ekspor.', en: 'Capacity is calculated from the selected 4R or A4 paper, 2×3, 3×4, or 4×6 cm photo size, margins, spacing, and orientation. The available count is shown before export.' } },
       { question: { id: 'Apakah ukuran cetak pasti akurat di printer saya?', en: 'Will the print size be exact on my printer?' }, answer: { id: 'PDF memakai ukuran halaman fisik, tetapi driver printer dapat menambahkan margin atau mengecilkan halaman. Cetak pada skala 100% dan periksa pengaturan printer; aplikasi tidak memverifikasi aturan resmi foto.', en: 'The PDF uses physical page dimensions, but printer drivers may add margins or scale the page down. Print at 100% and check printer settings; the tool does not verify official photo requirements.' } },
     ],
+    'document-scanner': [
+      { question: { id: 'Apakah kamera didukung di semua browser?', en: 'Does the camera work in every browser?' }, answer: { id: 'Kamera hanya tersedia melalui HTTPS atau localhost, dan browser harus mengizinkannya. Safari iOS mendukungnya sejak 14.1. Jika kamera diblokir atau tidak tersedia, Anda tetap bisa memilih foto dari galeri lalu memprosesnya dengan cara yang sama.', en: 'The camera is only available over HTTPS or localhost, and the browser must grant permission. iOS Safari supports it from 14.1. If the camera is blocked or unavailable, you can still choose a photo from the gallery and process it identically.' } },
+      { question: { id: 'Apakah foto dari kamera diunggah?', en: 'Is the camera photo uploaded?' }, answer: { id: 'Tidak. Bingkai kamera, deteksi tepi, koreksi perspektif, dan penyusunan PDF seluruhnya berjalan di memori browser pada perangkat Anda. Tidak ada unggahan ke server.', en: 'No. The camera frame, edge detection, perspective correction, and PDF assembly all run in browser memory on your device. Nothing is uploaded to a server.' } },
+      { question: { id: 'Hasil scan saya miring atau tepinya salah. Kenapa?', en: 'My scan is skewed or the edges were wrong. Why?' }, answer: { id: 'Deteksi tepi bekerja paling baik saat kertas kontras dengan latar dan keempat sudutnya terlihat. Anda dapat mengoreksi keempat sudut secara manual sebelum menyimpan. Jika sudut tidak terdeteksi, seluruh bingkai dipakai apa adanya.', en: 'Edge detection works best when the paper contrasts with the background and all four corners are visible. You can correct all four corners manually before saving. If no document is found, the whole frame is used as-is.' } },
+    ],
   };
   tool.faq = faqCopy[tool.id];
 }
@@ -224,6 +243,7 @@ const nextToolIds: Record<string, string[]> = {
   'pdf-jpg': ['photo-pdf', 'compress-image'],
   'pdf-500kb': ['photo-pdf', 'pdf-jpg'],
   print: ['resize-image', 'photo-pdf'],
+  'document-scanner': ['photo-pdf', 'compress-image'],
 };
 
 for (const tool of catalog) {

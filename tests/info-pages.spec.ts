@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('support pages explain actual limits and retain localized routes', async ({ page }) => {
   await page.goto('/id/info/tentang/');
-  await expect(page.getByRole('heading', { level: 1, name: 'Tentang VeloceDrop' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Tentang Doculven' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'EN', exact: true })).toHaveAttribute('href', '/en/info/about/');
   await expect(page.getByRole('contentinfo').getByRole('link', { name: 'Kontak' })).toHaveAttribute('href', '/id/info/kontak/');
 

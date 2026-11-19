@@ -1,5 +1,6 @@
 import { expect, test, type Locator } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
+import { catalog } from '../src/tool-registry';
 
 const base = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${process.env.PLAYWRIGHT_PORT ?? '4321'}`;
 
@@ -95,23 +96,18 @@ for (const lang of ['id', 'en'] as const) {
     test.setTimeout(180_000);
     await page.setViewportSize({ width: 390, height: 844 });
     const errors: string[] = [];
-    page.on('pageerror', error => {
-      // Browsers can surface these while Playwright changes pages, aborting the prior
-      // same-origin transition or hiding the old document. Destination checks below
-      // verify that the navigation itself completed.
+    function recordError(message: string) {
+      // Browsers can abort the previous transition during navigation.
       if (
-        !error.message.includes('Skipped ViewTransition due to document being hidden') &&
-        !error.message.includes('due to access control checks.')
+        !message.includes('Skipped ViewTransition due to document being hidden') &&
+        !message.includes('due to access control checks.')
       ) {
-        errors.push(`${page.url()}: ${error.message}`);
+        errors.push(`${page.url()}: ${message}`);
       }
-    });
+    }
+    page.on('pageerror', error => recordError(error.message));
     page.on('console', message => {
-      if (message.type() !== 'error') return;
-      const text = message.text();
-      // A back navigation can abort Astro's same-origin prefetch in WebKit. The destination is
-      // still asserted below; keep reporting other console errors from the interaction checks.
-      if (!text.includes('due to access control checks.')) errors.push(`${page.url()}: ${text}`);
+      if (message.type() === 'error') recordError(message.text());
     });
     await page.goto(lang === 'id' ? '/id/alat/' : '/en/tools/');
     const paths = await page.locator('[data-tool-list] a').evaluateAll(nodes => nodes.map(node => (node as HTMLAnchorElement).getAttribute('href')!));
@@ -196,7 +192,7 @@ for (const lang of ['id', 'en'] as const) {
       }
     }
 
-    expect(paths).toHaveLength(10);
+    expect(paths).toHaveLength(catalog.length);
     expect(errors).toEqual([]);
     const report = { locale: lang, browser: testInfo.project.name, routeCount: paths.length, uniqueInternalLinkCount: visitedLinks.size, interactionCount: checked.length, interactions: checked };
     const reportDirectory = 'test-results/interaction-audit';

@@ -21,7 +21,7 @@ Removing a background used to require an hour of careful pen-tool work. Automati
 
 ## How the segmentation actually works
 
-VeloceDrop uses MODNet, a portrait matting model, running locally through ONNX Runtime. It predicts, for every pixel, how much it belongs to the foreground subject versus the background. The output is an alpha mask: opaque where the subject is, transparent where it is not, and partially transparent along soft edges.
+Doculven uses MODNet, a portrait matting model, running locally through ONNX Runtime. It predicts, for every pixel, how much it belongs to the foreground subject versus the background. The output is an alpha mask: opaque where the subject is, transparent where it is not, and partially transparent along soft edges.
 
 That description already tells you the strengths and weaknesses. The model was trained primarily on people. It looks for a human figure, understands that hair has soft edges, and produces reasonable alpha around shoulders and arms.
 

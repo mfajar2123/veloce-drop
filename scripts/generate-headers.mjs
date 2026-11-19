@@ -1,5 +1,5 @@
 import { readFile, readdir, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 
 async function collectHtml(directory) {
   const files = [];
@@ -27,8 +27,19 @@ if (scriptHashes.size === 0) {
 }
 
 const sourceHeaders = await readFile('public/_headers', 'utf8');
+const [globalHeaders, ...routeHeaders] = sourceHeaders.trim().split(/\r?\n\r?\n/);
+const permissions = /^\s*Permissions-Policy: (.+)$/m;
+const defaultPolicy = globalHeaders.match(permissions)?.[1].trim();
+if (!defaultPolicy) throw new Error('Missing default Permissions-Policy.');
+const routePolicies = new Map(routeHeaders.map(block => {
+  const route = block.split(/\r?\n/, 1)[0].replace(/\*$/, '');
+  const policy = block.match(permissions)?.[1].trim();
+  if (!policy) throw new Error(`Missing Permissions-Policy for ${route}.`);
+  return [route, policy];
+}));
 const output = [];
-for (const line of sourceHeaders.split(/\r?\n/)) {
+for (const line of globalHeaders.split(/\r?\n/)) {
+  if (permissions.test(line)) continue;
   if (!line.trim().startsWith('Content-Security-Policy:')) {
     output.push(line);
     continue;
@@ -41,6 +52,15 @@ for (const line of sourceHeaders.split(/\r?\n/)) {
     return ['script-src', ...sources, ...scriptHashes].join(' ');
   });
   output.push(`  Content-Security-Policy: ${merged.join('; ')}`);
+}
+
+for (const file of htmlFiles.sort()) {
+  const url = '/' + relative('dist', file).replaceAll('\\', '/');
+  const route = url.replace(/index\.html$/, '');
+  const policy = routePolicies.get(route) ?? defaultPolicy;
+  const paths = new Set([route, url]);
+  if (route !== '/' && route.endsWith('/')) paths.add(route.slice(0, -1));
+  for (const path of paths) output.push('', path, `  Permissions-Policy: ${policy}`);
 }
 
 await writeFile('dist/_headers', output.join('\n'), 'utf8');

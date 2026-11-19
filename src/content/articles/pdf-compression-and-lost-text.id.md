@@ -43,7 +43,7 @@ Rasterisasi punya konsekuensi yang permanen:
 - Kualitas bergantung DPI yang Anda pilih. Teks pada 72 DPI terlihat jelas lembut.
 - Ukuran berkas bergantung jumlah halaman, karena setiap halaman menjadi gambar terpisah.
 
-VeloceDrop memakai rasterisasi dan menyatakannya di halaman alat. Itulah sebabnya entri FAQ menjelaskan pertukarannya daripada menyembunyikannya.
+Doculven memakai rasterisasi dan menyatakannya di halaman alat. Itulah sebabnya entri FAQ menjelaskan pertukarannya daripada menyembunyikannya.
 
 ## Memilih resolusi
 

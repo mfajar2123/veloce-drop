@@ -25,7 +25,7 @@ const pageDescription=tool?.seo?.description[lang as Locale]??description;
 const infoRoutes:Record<string,string>={'/id/privasi/':'/en/privacy/','/en/privacy/':'/id/privasi/','/id/info/tentang/':'/en/info/about/','/en/info/about/':'/id/info/tentang/','/id/info/bantuan/':'/en/info/help/','/en/info/help/':'/id/info/bantuan/','/id/info/kontak/':'/en/info/contact/','/en/info/contact/':'/id/info/kontak/','/id/info/ketentuan/':'/en/info/terms/','/en/info/terms/':'/id/info/ketentuan/'};
 const catalogRoutes:Record<string,string>={'/id/alat/':'/en/tools/','/en/tools/':'/id/alat/'};
 const alternate=tool?.path[targetLang]??catalogRoutes[pathname]??infoRoutes[pathname]??pathname.replace(en?'/en/':'/id/',`/${targetLang}/`);
-const site=Astro.site??new URL('https://velocedrop.example');
+const site=Astro.site??new URL('https://doculven.example');
 const siteOrigin=site.origin;
 const publicUrl=(path:string)=>new URL(`${basePath}${path.replace(/^\/+/, '')}`,`${siteOrigin}/`).toString();
 const canonical=publicUrl(pathname);
@@ -51,7 +51,7 @@ const faqSchema=tool?.faq?.length?{
 const idAlternate=lang==='id'?canonical:publicUrl(alternate);
 const enAlternate=lang==='en'?canonical:publicUrl(alternate);
 const socialImage=ogImage?publicUrl(ogImage):publicUrl('/images/og-share.png');
-const documentTitle=article?pageTitle:`${pageTitle} | VeloceDrop`;
+const documentTitle=article?pageTitle:`${pageTitle} | Doculven`;
 ---
 <!doctype html>
 <html lang={lang}>
@@ -59,21 +59,21 @@ const documentTitle=article?pageTitle:`${pageTitle} | VeloceDrop`;
     <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="theme-color" content="#065F46"/><meta name="description" content={pageDescription}/>
     <title>{documentTitle}</title><link rel="canonical" href={canonical}/>
     <link rel="alternate" hreflang="id" href={idAlternate}/><link rel="alternate" hreflang="en" href={enAlternate}/><link rel="alternate" hreflang="x-default" href={enAlternate}/>
-    <meta property="og:type" content={article?'article':'website'}/><meta property="og:site_name" content="VeloceDrop"/><meta property="og:title" content={documentTitle}/><meta property="og:description" content={pageDescription}/><meta property="og:url" content={canonical}/><meta property="og:locale" content={en?'en_US':'id_ID'}/><meta property="og:image" content={socialImage}/><meta property="og:image:alt" content="VeloceDrop image and document tools"/>
+    <meta property="og:type" content={article?'article':'website'}/><meta property="og:site_name" content="Doculven"/><meta property="og:title" content={documentTitle}/><meta property="og:description" content={pageDescription}/><meta property="og:url" content={canonical}/><meta property="og:locale" content={en?'en_US':'id_ID'}/><meta property="og:image" content={socialImage}/><meta property="og:image:alt" content="Doculven image and document tools"/>
     <meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={documentTitle}/><meta name="twitter:description" content={pageDescription}/><meta name="twitter:image" content={socialImage}/>
-    <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebSite', name: 'VeloceDrop', url: publicUrl('/'), inLanguage: [ 'id', 'en' ] })}/>
+    <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebSite', name: 'Doculven', url: publicUrl('/'), inLanguage: [ 'id', 'en' ] })}/>
     {isProductPage && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebApplication', name: pageTitle, applicationCategory: 'MultimediaApplication', operatingSystem: 'Any modern browser', description: pageDescription, url: canonical, image: socialImage })}/>}
     {breadcrumbItems.length>1 && <script type="application/ld+json" set:html={JSON.stringify({ '@context':'https://schema.org', '@type':'BreadcrumbList', itemListElement:breadcrumbItems.map((item,index)=>({ '@type':'ListItem', position:index+1, name:item.name, ...(item.url?{item:item.url}:{}) })) })}/>} 
     {faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}/>}
-    {article && <script type="application/ld+json" set:html={JSON.stringify({ '@context':'https://schema.org', '@type':'Article', headline:pageTitle, description:pageDescription, datePublished:new Date(article.publishedAt).toISOString(), ...(article.updatedAt?{dateModified:new Date(article.updatedAt).toISOString()}:{}), inLanguage:lang, mainEntityOfPage:{'@type':'WebPage','@id':canonical}, author:{'@type':'Organization',name:'VeloceDrop'}, publisher:{'@type':'Organization',name:'VeloceDrop'}, image:socialImage })}/>}
+    {article && <script type="application/ld+json" set:html={JSON.stringify({ '@context':'https://schema.org', '@type':'Article', headline:pageTitle, description:pageDescription, datePublished:new Date(article.publishedAt).toISOString(), ...(article.updatedAt?{dateModified:new Date(article.updatedAt).toISOString()}:{}), inLanguage:lang, mainEntityOfPage:{'@type':'WebPage','@id':canonical}, author:{'@type':'Organization',name:'Doculven'}, publisher:{'@type':'Organization',name:'Doculven'}, image:socialImage })}/>}
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}/>}
-    <link rel="icon" href={`${basePath}favicon-96.png`} type="image/png" sizes="96x96"/><link rel="alternate" type="application/rss+xml" title="VeloceDrop guides" href={`${basePath}rss.xml`}/>{tool && <ClientRouter />}
+    <link rel="icon" href={`${basePath}favicon-96.png`} type="image/png" sizes="96x96"/><link rel="alternate" type="application/rss+xml" title="Doculven guides" href={`${basePath}rss.xml`}/>{tool && <ClientRouter />}
   </head>
   <body>
     <a class="skip" href="#main">{en ? 'Skip to content' : 'Lewati ke konten'}</a>
-    <header class="header"><div class="wrap nav"><a class="brand" href={`/${lang}/`}><span class="brand-mark">V</span>VeloceDrop</a><nav class="links" aria-label={en ? 'Main navigation' : 'Navigasi utama'}><a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a><a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a><a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a><a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a><a href={alternate} lang={targetLang}>{en ? 'ID' : 'EN'}</a></nav><button class="mobile-menu-trigger" type="button" aria-haspopup="dialog" aria-controls="mobile-menu">{en ? 'Menu' : 'Menu'}</button></div><dialog class="mobile-menu" id="mobile-menu" aria-labelledby="mobile-menu-title"><div class="mobile-menu-heading"><strong id="mobile-menu-title">{en ? 'Navigation' : 'Navigasi'}</strong><button class="mobile-menu-close" type="button">{en ? 'Close' : 'Tutup'}</button></div><nav aria-label={en ? 'Mobile navigation' : 'Navigasi seluler'}><a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a><a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a><a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a><a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a><a href={alternate} lang={targetLang}>{en ? 'ID' : 'EN'}</a></nav></dialog></header>
+    <header class="header"><div class="wrap nav"><a class="brand" href={`/${lang}/`}><span class="brand-mark" aria-hidden="true">D</span>Doculven</a><nav class="links" aria-label={en ? 'Main navigation' : 'Navigasi utama'}><a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a><a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a><a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a><a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a><a href={alternate} lang={targetLang}>{en ? 'ID' : 'EN'}</a></nav><button class="mobile-menu-trigger" type="button" aria-haspopup="dialog" aria-controls="mobile-menu">{en ? 'Menu' : 'Menu'}</button></div><dialog class="mobile-menu" id="mobile-menu" aria-labelledby="mobile-menu-title"><div class="mobile-menu-heading"><strong id="mobile-menu-title">{en ? 'Navigation' : 'Navigasi'}</strong><button class="mobile-menu-close" type="button">{en ? 'Close' : 'Tutup'}</button></div><nav aria-label={en ? 'Mobile navigation' : 'Navigasi seluler'}><a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a><a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a><a href={`/${lang}/#how`}>{en ? 'How it works' : 'Cara kerja'}</a><a href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'Privacy' : 'Privasi'}</a><a href={alternate} lang={targetLang}>{en ? 'ID' : 'EN'}</a></nav></dialog></header>
     <main id="main">{breadcrumbItems.length>1&&<nav class="breadcrumbs" aria-label={en?'Breadcrumb':'Jejak navigasi'}><ol>{breadcrumbItems.map((item,index)=><li>{index>0&&<span class="breadcrumb-separator" aria-hidden="true">/</span>}{item.url?<a href={new URL(item.url).pathname}>{item.name}</a>:<span aria-current="page">{item.name}</span>}</li>)}</ol></nav>}<slot /><ToolReference lang={lang as Locale} tool={tool} /><SessionTray lang={lang} /></main>
-    <footer class="footer"><div class="wrap"><div><strong>VeloceDrop</strong><p>{en ? 'Precision Image & Document Tools. 100% On Your Device.' : 'Olah Foto & Dokumen Presisi. 100% Aman di Perangkat Anda.'}</p></div><div><nav class="footer-links" aria-label={en ? 'More information' : 'Informasi lainnya'}><a href={en?'/en/info/about/':'/id/info/tentang/'}>{en?'About':'Tentang'}</a><a href={en?'/en/articles/':'/id/articles/'}>{en?'Guides':'Panduan'}</a><a href={en?'/en/info/contact/':'/id/info/kontak/'}>{en?'Contact':'Kontak'}</a><a href={en?'/en/info/help/':'/id/info/bantuan/'}>{en?'Help':'Bantuan'}</a><a href={en?'/en/privacy/':'/id/privasi/'}>{en?'Privacy':'Privasi'}</a><a href={en?'/en/info/terms/':'/id/info/ketentuan/'}>{en?'Terms':'Ketentuan'}</a></nav><p>© {new Date().getFullYear()} VeloceDrop</p></div></div></footer>
+    <footer class="footer"><div class="wrap"><div><strong>Doculven</strong><p>{en ? 'Precision Image & Document Tools. 100% On Your Device.' : 'Olah Foto & Dokumen Presisi. 100% Aman di Perangkat Anda.'}</p></div><div><nav class="footer-links" aria-label={en ? 'More information' : 'Informasi lainnya'}><a href={en?'/en/info/about/':'/id/info/tentang/'}>{en?'About':'Tentang'}</a><a href={en?'/en/articles/':'/id/articles/'}>{en?'Guides':'Panduan'}</a><a href={en?'/en/info/contact/':'/id/info/kontak/'}>{en?'Contact':'Kontak'}</a><a href={en?'/en/info/help/':'/id/info/bantuan/'}>{en?'Help':'Bantuan'}</a><a href={en?'/en/privacy/':'/id/privasi/'}>{en?'Privacy':'Privasi'}</a><a href={en?'/en/info/terms/':'/id/info/ketentuan/'}>{en?'Terms':'Ketentuan'}</a></nav><p>© {new Date().getFullYear()} Doculven</p></div></div></footer>
   </body>
 </html>
 <script>
@@ -108,8 +108,39 @@ const documentTitle=article?pageTitle:`${pageTitle} | VeloceDrop`;
       });
     });
   };
+  // Every tool keeps its workspace compact, but the result panel can still be
+  // pushed below the fold on a short window. Bring it into view once so the
+  // download action is never something the visitor has to hunt for.
+  const initializeResultReveal = () => {
+    if (document.documentElement.dataset.resultReveal === 'true') return;
+    document.documentElement.dataset.resultReveal = 'true';
+    const revealed = new WeakSet<Element>();
+    const reveal = (node: Element) => {
+      if (revealed.has(node)) return;
+      const rect = node.getBoundingClientRect();
+      const alreadyVisible = rect.top >= 0 && rect.top < window.innerHeight * 0.6;
+      if (alreadyVisible) { revealed.add(node); return; }
+      revealed.add(node);
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      node.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+    };
+    const scan = () => {
+      document.querySelectorAll<HTMLElement>('.result').forEach(node => {
+        if (!node.textContent?.trim()) return;
+        // Prefer the actual download action: the result block may also contain a
+        // large comparison preview, and scrolling to its top would still leave
+        // the download below the fold.
+        const action = node.querySelector<HTMLElement>('a.download, .button.download') ?? node;
+        reveal(action);
+      });
+    };
+    new MutationObserver(scan).observe(document.body, { childList: true, subtree: true, characterData: true });
+    scan();
+  };
   document.addEventListener('astro:page-load', initializeMobileMenu);
   document.addEventListener('astro:page-load', initializeFileDrops);
+  document.addEventListener('astro:page-load', initializeResultReveal);
   initializeMobileMenu();
   initializeFileDrops();
+  initializeResultReveal();
 </script>

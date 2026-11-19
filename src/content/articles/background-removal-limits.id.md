@@ -21,7 +21,7 @@ Menghapus latar dulu menuntut satu jam kerja pen tool yang teliti. Segmentasi ot
 
 ## Cara kerja segmentasinya
 
-VeloceDrop memakai MODNet, model matting potret, yang berjalan lokal melalui ONNX Runtime. Model memprediksi, untuk setiap piksel, seberapa besar piksel itu milik subjek depan versus latar. Outputnya adalah mask alpha: opak di tempat subjek, transparan di tempat bukan, dan setengah transparan di sepanjang tepi lembut.
+Doculven memakai MODNet, model matting potret, yang berjalan lokal melalui ONNX Runtime. Model memprediksi, untuk setiap piksel, seberapa besar piksel itu milik subjek depan versus latar. Outputnya adalah mask alpha: opak di tempat subjek, transparan di tempat bukan, dan setengah transparan di sepanjang tepi lembut.
 
 Deskripsi itu sudah menunjukkan kekuatan dan kelemahannya. Model dilatih terutama pada orang. Ia mencari sosok manusia, memahami bahwa rambut punya tepi lembut, dan menghasilkan alpha yang wajar di sekitar bahu dan lengan.
 

@@ -22,7 +22,7 @@ test('expired items and their pending handoff are discarded',()=>{
   globalThis.window={};
   const id=addSessionFile(new Blob(['x'],{type:'image/png'}),1,1);
   handoffSessionFile(id,'/target/');
-  window.__veloceSession.files[0].created=Date.now()-31*60*1000;
+  window.__doculvenSession.files[0].created=Date.now()-31*60*1000;
   assert.equal(listSessionFiles().length,0);
   assert.equal(takeSessionFile('/target/'),null);
   clearSessionFiles();
@@ -44,7 +44,7 @@ test('handoff filenames keep the Blob format extension',()=>{
     const id=addSessionFile(blob,10,20);
     assert.equal(handoffSessionFile(id,'/format/'),true);
     const file=takeSessionFile('/format/');
-    assert.equal(file.name,`velocedrop.${extension}`);
+    assert.equal(file.name,`doculven.${extension}`);
     assert.equal(file.type,type);
   }
   clearSessionFiles();

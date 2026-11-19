@@ -1,7 +1,7 @@
 ---
 lang: en
 translationKey: image-formats-explained
-title: PNG, JPEG, WebP, HEIC, SVG, ICO — when to use which
+title: "PNG, JPEG, WebP, HEIC, SVG and ICO: when to use which"
 summary: Six formats, six different purposes. Most conversion problems come from using the right tool for the wrong job.
 category: conversion
 toolId: image-converter
@@ -67,7 +67,7 @@ SVG is not an image in the pixel sense. It is a set of instructions: draw a circ
 **Avoid for:** photographs. An SVG of a photo is usually a wrapper around an embedded raster image, gaining nothing.
 **Typical size:** tiny for simple shapes.
 
-SVG can contain scripts, external references, and embedded HTML, which makes it a security concern. Sanitization before rasterizing is not optional — a malicious SVG can execute script in some contexts. VeloceDrop rejects SVG files containing scripts or external resources rather than trying to strip them.
+SVG can contain scripts, external references, and embedded HTML, which makes it a security concern. Sanitization before rasterizing is not optional — a malicious SVG can execute script in some contexts. Doculven rejects SVG files containing scripts or external resources rather than trying to strip them.
 
 ## ICO — Windows icons
 

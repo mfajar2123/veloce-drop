@@ -2,7 +2,7 @@
 
 ## Pages and routing
 
-Astro builds a static site with Indonesian and English routes. `src/tool-registry.ts` defines the 10 bilingual tools, their categories, engines, SEO copy, FAQs, and next steps. The registry generates the catalog, tool routes, language alternates, and sitemap entries. Format and size variants are selected inside shared converter and resize workspaces. `ToolReference.astro` renders localized guidance on tool pages. `src/info-pages.ts` contains the bilingual About, Help, Contact, and Terms content; `site-config.ts` is the source for sample contact details and the default-disabled advertising slot. `/` redirects to `/id/`; `/404.html`, `/robots.txt`, and `/sitemap.xml` are generated at build time.
+Astro builds a static site with Indonesian and English routes. `src/tool-registry.ts` defines the 11 bilingual tools, their categories, engines, SEO copy, FAQs, and next steps. The registry generates the catalog, tool routes, language alternates, and sitemap entries. Format and size variants are selected inside shared converter and resize workspaces. `ToolReference.astro` renders localized guidance on tool pages. `src/info-pages.ts` contains the bilingual About, Help, Contact, and Terms content; `site-config.ts` is the source for sample contact details and the default-disabled advertising slot. `/` redirects to `/en/`; `/404.html`, `/robots.txt`, and `/sitemap.xml` are generated at build time.
 
 Astro renders page content and layout to HTML. React islands provide interactive workspaces; the layout is not hydrated as one React application. Catalog and landing searches use client-side scripts. Internal client navigation is enabled by Astro's router, and components reinitialize on Astro navigation events.
 
@@ -36,7 +36,7 @@ Each article carries an `image` field pointing at a WebP file in `public/images/
 
 Images are self-hosted on purpose. The CSP allows `img-src 'self'` only, so a hot-linked image would be blocked, and third-party image requests would contradict the privacy claims on the tool pages. Candidates were collected from Openverse with `license_type=commercial`, filtered to CC0, CC BY, CC BY-SA and Public Domain Mark, reviewed visually, then re-encoded to WebP locally. Attribution for every file is in [ASSET_CREDITS.md](../ASSET_CREDITS.md).
 
-Article pages intentionally omit the `| VeloceDrop` title suffix. The added characters would push long headlines past the 70-character budget and cost space in search results.
+Article pages intentionally omit the `| Doculven` title suffix. The added characters would push long headlines past the 70-character budget and cost space in search results.
 
 `src/pages/rss.xml.ts` publishes an English feed of the most recent articles, discovered through a `<link rel="alternate">` in the document head.
 

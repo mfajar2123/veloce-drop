@@ -49,7 +49,7 @@ This catches people constantly on YouTube banners, Facebook covers, and Instagra
 
 The upload canvas is large. The *visible* area across all devices is a subset of it. A YouTube banner uploaded at 2560 × 1440 is only guaranteed to show a central region of roughly 1546 × 423 pixels on some screens. Text placed near the edges vanishes on phones.
 
-VeloceDrop's YouTube banner preset draws the safe area as a guide, scaled from the published region, so you can see what will actually remain visible.
+Doculven's YouTube banner preset draws the safe area as a guide, scaled from the published region, so you can see what will actually remain visible.
 
 ## Choosing the export size
 

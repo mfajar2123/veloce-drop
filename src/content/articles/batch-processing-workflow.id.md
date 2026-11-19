@@ -27,7 +27,7 @@ Jika berkas Anda bernama `IMG_2841.jpg` sampai `IMG_2890.jpg`, keluaran bernama 
 
 Dua solusi:
 
-- **Pertahankan nama asli.** Sebagian besar alat batch, termasuk VeloceDrop, mempertahankan nama berkas masukan pada keluarannya.
+- **Pertahankan nama asli.** Sebagian besar alat batch, termasuk Doculven, mempertahankan nama berkas masukan pada keluarannya.
 - **Ganti nama dengan sengaja lebih dulu.** Jika nama hanya pengenal kamera tanpa makna, ganti menjadi sesuatu yang bermakna — `kemeja-biru-depan.jpg` — sebelum diproses, memakai fitur ganti nama massal di pengelola berkas.
 
 Nama berkas duplikat adalah bahaya nyata. Dua folder yang masing-masing berisi `foto.jpg` akan bertabrakan di ZIP. Alat yang baik membedakannya dengan akhiran daripada menimpa.
@@ -85,4 +85,4 @@ Susun sebagai: `asli/`, `terkompresi/`, `berwatermark/`. Menimpa di tempat mengh
 
 Alat batch membatasi konkurensi dan ukuran total dengan alasan bagus — memori. Seratus gambar 20 megapiksel tidak bisa semuanya didekode bersamaan di mesin normal mana pun.
 
-VeloceDrop membatasi satu batch hingga 25 gambar, 20 MB per gambar, 100 MB total, dan memprosesnya berurutan, melepaskan memori antar item. Jika Anda punya dua ratus berkas, jalankan batch delapan kali daripada memaksa semuanya sekaligus. Itu pertukaran yang disengaja agar tab tidak crash.
+Doculven membatasi satu batch hingga 25 gambar, 20 MB per gambar, 100 MB total, dan memprosesnya berurutan, melepaskan memori antar item. Jika Anda punya dua ratus berkas, jalankan batch delapan kali daripada memaksa semuanya sekaligus. Itu pertukaran yang disengaja agar tab tidak crash.

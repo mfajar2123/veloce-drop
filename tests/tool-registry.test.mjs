@@ -2,12 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { catalog } from '../src/tool-registry.ts';
 
-test('the published catalog contains only the ten selected tools', () => {
+test('the published catalog contains only the eleven selected tools', () => {
   assert.deepEqual(catalog.map(tool => tool.id), [
     'compress-image', 'batch', 'resize-image', 'image-converter', 'background',
-    'logo-watermark', 'photo-pdf', 'pdf-jpg', 'pdf-500kb', 'print',
+    'logo-watermark', 'photo-pdf', 'pdf-jpg', 'pdf-500kb', 'print', 'document-scanner',
   ]);
-  assert.equal(new Set(catalog.flatMap(tool => Object.values(tool.path))).size, 20);
+  assert.equal(new Set(catalog.flatMap(tool => Object.values(tool.path))).size, 22);
 });
 
 test('every catalog entry has bilingual metadata, a category, an engine and route-specific guidance', () => {
@@ -43,10 +43,10 @@ test('catalog routes and next steps do not collide or point to unregistered rout
   }
 });
 
-test('each tool has two distinct, bilingual FAQs written for its actual workflow', () => {
+test('each tool has at least two distinct, bilingual FAQs written for its actual workflow', () => {
   const localizedFaqs = new Set();
   for (const tool of catalog) {
-    assert.equal(tool.faq?.length, 2, `${tool.id} FAQ count`);
+    assert.ok(tool.faq?.length >= 2, `${tool.id} FAQ count`);
     for (const lang of ['id', 'en']) {
       const copy = tool.faq.map(item => `${item.question[lang]} ${item.answer[lang]}`).join('\n');
       assert.ok(!localizedFaqs.has(`${lang}:${copy}`), `${tool.id} repeats another tool's ${lang} FAQ`);

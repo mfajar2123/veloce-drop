@@ -49,7 +49,7 @@ Ini sering menangkap orang pada banner YouTube, sampul Facebook, dan story Insta
 
 Kanvas unggahan besar. Area *terlihat* di semua perangkat adalah bagian darinya. Banner YouTube yang diunggah 2560 × 1440 hanya dijamin menampilkan wilayah tengah sekitar 1546 × 423 piksel di sebagian layar. Teks yang ditempatkan di dekat tepi menghilang di ponsel.
 
-Preset banner YouTube di VeloceDrop menggambar area aman sebagai panduan, diskalakan dari wilayah yang dipublikasikan, sehingga Anda bisa melihat apa yang benar-benar akan tetap terlihat.
+Preset banner YouTube di Doculven menggambar area aman sebagai panduan, diskalakan dari wilayah yang dipublikasikan, sehingga Anda bisa melihat apa yang benar-benar akan tetap terlihat.
 
 ## Memilih ukuran ekspor
 

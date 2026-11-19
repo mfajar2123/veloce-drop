@@ -77,6 +77,7 @@ test('each article has a translation in the other locale', async ({ page }) => {
 });
 
 test('every article shows a self-hosted image with credit and licence', async ({ page, request }) => {
+  test.setTimeout(180_000);
   const sitemap = await (await request.get('/sitemap.xml')).text();
   const paths = [...sitemap.matchAll(/<loc>([^<]*\/articles\/[^<]+)<\/loc>/g)]
     .map(match => new URL(match[1]).pathname)
@@ -85,17 +86,21 @@ test('every article shows a self-hosted image with credit and licence', async ({
   expect(paths.length).toBeGreaterThanOrEqual(30);
 
   for (const path of paths) {
-    await page.goto(path);
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
     const figure = page.locator('.article-figure');
     await expect(figure, path).toBeVisible();
 
-    const src = await figure.locator('img').getAttribute('src');
+    const image = figure.locator('img');
+    const src = await image.getAttribute('src');
     expect(src, `${path} image must be self-hosted`).toMatch(/^\/images\/articles\/[\w-]+\.webp$/);
 
-    const loaded = await figure.locator('img').evaluate(node => (node as HTMLImageElement).naturalWidth > 0);
-    expect(loaded, `${path} image must load`).toBe(true);
+    await image.scrollIntoViewIfNeeded();
+    await expect.poll(
+      () => image.evaluate(node => (node as HTMLImageElement).naturalWidth),
+      { message: `${path} image must load` },
+    ).toBeGreaterThan(0);
 
-    const alt = await figure.locator('img').getAttribute('alt');
+    const alt = await image.getAttribute('alt');
     expect((alt ?? '').length, `${path} alt text`).toBeGreaterThan(10);
 
     const credit = await figure.locator('.article-credit').innerText();

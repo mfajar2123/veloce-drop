@@ -72,7 +72,7 @@ Jika ukuran berkas penting dan tujuan adalah browser modern, **WebP** memberi ko
 
 ## Kenapa konversi lokal penting di sini
 
-Konversi bisa dilakukan sepenuhnya di browser, dan VeloceDrop melakukannya begitu. Dekoder HEIC berjalan di perangkat Anda; foto tidak pernah diunggah.
+Konversi bisa dilakukan sepenuhnya di browser, dan Doculven melakukannya begitu. Dekoder HEIC berjalan di perangkat Anda; foto tidak pernah diunggah.
 
 Itu bukan hanya preferensi privasi. Foto dokumen, KTP, dan anggota keluarga adalah tepat berkas yang seharusnya tidak diserahkan ke situs anonim. Konversi lokal menjaga byte tetap di mesin Anda, dan satu-satunya lalu lintas jaringan adalah memuat dekodernya sendiri.
 

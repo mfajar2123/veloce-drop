@@ -51,7 +51,7 @@ const licenseLabel = (license?: string) => {
   jsonLd={{
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: trail.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, ...(item.path ? { item: new URL(item.path, Astro.site ?? 'https://velocedrop.example').toString() } : {}) })),
+    itemListElement: trail.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, ...(item.path ? { item: new URL(item.path, Astro.site ?? 'https://doculven.example').toString() } : {}) })),
   }}
 >
   <div class="wrap article-page">

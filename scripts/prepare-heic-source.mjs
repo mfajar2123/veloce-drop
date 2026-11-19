@@ -37,7 +37,7 @@ for (const file of files) {
 }
 entries['heic-to-1.6.7/README.txt'] = new TextEncoder().encode(
   'heic-to 1.6.7 LGPL-3.0 corresponding source files\n\n' +
-  'This archive contains the source files used by the VeloceDrop browser build, including the generated libheif JavaScript module. ' +
+  'This archive contains the source files used by the Doculven browser build, including the generated libheif JavaScript module. ' +
   'The package build script uses esbuild 0.25 to rebuild its browser module. The package license is included as LICENSE. ' +
   'To rebuild in a copy of this package, install its declared development dependencies and run `node esbuild.mjs`.\n',
 );

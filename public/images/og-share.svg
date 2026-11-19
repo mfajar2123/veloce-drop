@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
-  <title id="title">VeloceDrop</title>
+  <title id="title">Doculven</title>
   <desc id="description">Precision image and document tools that process files on your device.</desc>
   <rect width="1200" height="630" fill="#f8fafc"/>
   <path d="M900 0h300v630H780c171-117 246-279 120-630Z" fill="#e2e8f0"/>
   <path d="M1010 0h190v630H930c105-144 152-315 80-630Z" fill="#d1fae5"/>
   <rect x="84" y="76" width="52" height="52" rx="14" fill="#065f46"/>
-  <path d="M98 91h23l-11.5 24L98 91Z" fill="#fff"/>
-  <text x="154" y="115" fill="#065f46" font-family="Arial,sans-serif" font-size="30" font-weight="700">VeloceDrop</text>
+  <path d="M99 90h8c6 0 10 5 10 12s-4 12-10 12h-8V90Zm5 5v14h3c3 0 5-3 5-7s-2-7-5-7h-3Z" fill="#fff"/>
+  <text x="154" y="115" fill="#065f46" font-family="Arial,sans-serif" font-size="30" font-weight="700">Doculven</text>
   <text x="84" y="275" fill="#0f172a" font-family="Arial,sans-serif" font-size="66" font-weight="700" letter-spacing="-2">Precision image</text>
   <text x="84" y="352" fill="#0f172a" font-family="Arial,sans-serif" font-size="66" font-weight="700" letter-spacing="-2">&amp; document tools.</text>
   <text x="88" y="420" fill="#475569" font-family="Arial,sans-serif" font-size="28">Files are processed on your device.</text>

@@ -43,7 +43,7 @@ Rasterization has consequences that are permanent:
 - Quality depends on the DPI you chose. Text at 72 DPI is noticeably soft.
 - File size depends on page count, since each page becomes a separate image.
 
-VeloceDrop uses rasterization and says so on the tool page. That is why the FAQ entry explains the trade-off rather than hiding it.
+Doculven uses rasterization and says so on the tool page. That is why the FAQ entry explains the trade-off rather than hiding it.
 
 ## Choosing a resolution
 

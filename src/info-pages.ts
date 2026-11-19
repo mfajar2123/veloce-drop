@@ -5,12 +5,12 @@ export type InfoSection = { title: string; body?: string; items?: string[]; copy
 export type InfoPage = { lang: Locale; topic: string; title: string; intro: string; sections: InfoSection[] };
 
 export const infoPages: InfoPage[] = [
-  { lang: 'id', topic: 'tentang', title: 'Tentang VeloceDrop', intro: 'VeloceDrop membantu menyiapkan foto dan dokumen untuk lamaran, toko online, cetak, serta kebutuhan sehari-hari.', sections: [
+  { lang: 'id', topic: 'tentang', title: 'Tentang Doculven', intro: 'Doculven membantu menyiapkan foto dan dokumen untuk lamaran, toko online, cetak, serta kebutuhan sehari-hari.', sections: [
     { title: 'Alat yang bisa digunakan', body: 'Kompres foto satu per satu atau massal, ubah ukuran, konversi format, hapus latar potret, tambahkan watermark logo, susun foto ke PDF, ubah PDF ke JPG, kompres PDF, atau siapkan lembar cetak. Format dan batas dijelaskan pada setiap alat.' },
     { title: 'Pemrosesan di perangkat', body: 'Berkas diproses oleh browser pada perangkat Anda. Memuat situs, font, model lokal yang Anda setujui, dan aset publik tetap memakai jaringan. Kami tidak menyediakan akun atau server unggah dalam versi ini.' },
     { title: 'Batas yang perlu diketahui', body: 'Hasil bergantung pada kemampuan browser, memori, format berkas, dan ukuran gambar. Preset dimensi bukan jaminan diterima oleh instansi atau platform. Simpan salinan asli sebelum mengedit.' },
   ] },
-  { lang: 'en', topic: 'about', title: 'About VeloceDrop', intro: 'VeloceDrop helps prepare photos and documents for applications, online shops, printing, and everyday tasks.', sections: [
+  { lang: 'en', topic: 'about', title: 'About Doculven', intro: 'Doculven helps prepare photos and documents for applications, online shops, printing, and everyday tasks.', sections: [
     { title: 'Available tools', body: 'Compress single or multiple photos, resize images, convert formats, remove portrait backgrounds, add logo watermarks, arrange photos into PDFs, convert PDF pages to JPG, compress PDFs, or prepare photo sheets. Each tool explains its formats and limits.' },
     { title: 'Processing on your device', body: 'Your browser processes files on your device. Loading the site, fonts, a local model you approve, and public assets still uses a network connection. This version has no account or file-upload server.' },
     { title: 'Know the limits', body: 'Results depend on browser support, memory, file format, and image dimensions. Size presets do not guarantee acceptance by an institution or platform. Keep an original copy before editing.' },
@@ -33,20 +33,20 @@ export const infoPages: InfoPage[] = [
     { title: 'Ukuran foto', body: 'Preset foto hanya membantu ukuran awal; verifikasi persyaratan penerima.' },
     { title: 'Salinan berkas', body: 'Simpan sumber asli sebelum mengedit. Unduhan berada di bawah pengaturan browser Anda.' },
   ] },
-  { lang: 'en', topic: 'terms', title: 'Terms of use', intro: 'Use VeloceDrop’s image and PDF tools only with files you own or have permission to process. Check rights and review each result before sharing or printing it.', sections: [
+  { lang: 'en', topic: 'terms', title: 'Terms of use', intro: 'Use Doculven’s image and PDF tools only with files you own or have permission to process. Check rights and review each result before sharing or printing it.', sections: [
     { title: 'Rights and responsibility', body: 'You are responsible for copyright, permission, consent, and the contents of files you process. Review the downloaded result before sending or printing it.' },
     { title: 'Service limits', body: 'Tools run in your browser and may vary by device. We do not guarantee that every file can be read, every byte target will be reached, segmentation will be perfect, or presets will meet another party’s requirements.' },
     { title: 'Photo sizes', body: 'Photo presets provide a starting size; confirm the recipient requirements before using the result.' },
     { title: 'File copies', body: 'Keep an original before editing. Downloads follow your browser settings.' },
   ] },
-  { lang: 'id', topic: 'kontak', title: 'Kontak', intro: 'Ada pertanyaan, laporan masalah, atau masukan tentang VeloceDrop? Kirim email ke alamat di bawah ini.', sections: [
+  { lang: 'id', topic: 'kontak', title: 'Kontak', intro: 'Ada pertanyaan, laporan masalah, atau masukan tentang Doculven? Kirim email ke alamat di bawah ini.', sections: [
     { title: 'Pengelola', body: `${siteConfig.contact.team} · ${siteConfig.contact.region}` },
     { title: 'Email', body: siteConfig.contact.email, copyEmail: true },
     { title: 'Cara menghubungi', body: 'Tulis tujuan Anda pada subjek email. Sertakan nama alat yang dipakai bila Anda melaporkan masalah. Situs ini dikelola perorangan, jadi tidak ada dukungan langsung 24 jam.' },
     { title: 'Informasi yang perlu disertakan', body: 'Sebutkan browser, sistem operasi, nama alat, langkah yang dilakukan, dan pesan kesalahan yang muncul. Tangkapan layar membantu, selama tidak memuat data pribadi.' },
     { title: 'Yang sebaiknya tidak dikirim', body: 'Jangan lampirkan foto identitas, tanda tangan, dokumen asli, atau nama file sensitif. Berkas Anda diproses di perangkat sendiri, jadi kami tidak memerlukannya untuk menelusuri masalah.' },
   ] },
-  { lang: 'en', topic: 'contact', title: 'Contact', intro: 'Have a question, a problem to report, or feedback about VeloceDrop? Send an email to the address below.', sections: [
+  { lang: 'en', topic: 'contact', title: 'Contact', intro: 'Have a question, a problem to report, or feedback about Doculven? Send an email to the address below.', sections: [
     { title: 'Operator', body: `${siteConfig.contact.team} · ${siteConfig.contact.region}` },
     { title: 'Email', body: siteConfig.contact.email, copyEmail: true },
     { title: 'How to reach us', body: 'State your purpose in the subject line. Mention the tool you were using if you are reporting a problem. The site is run by one person, so there is no live 24-hour support.' },

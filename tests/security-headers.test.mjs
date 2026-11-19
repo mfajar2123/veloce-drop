@@ -6,7 +6,9 @@ import test from 'node:test';
 const headersPath = fileURLToPath(new URL('../public/_headers', import.meta.url));
 
 test('static host policy blocks active content and limits browser capabilities', async () => {
-  const lines = (await readFile(headersPath, 'utf8')).split(/\r?\n/).map(line => line.trim());
+  const source = await readFile(headersPath, 'utf8');
+  const [rootBlock] = source.split(/\n(?=\S)/);
+  const lines = rootBlock.split(/\r?\n/).map(line => line.trim());
   const values = new Map(lines.filter(line => line && !line.startsWith('/*') && !line.startsWith('*/')).map(line => {
     const separator = line.indexOf(':');
     return [line.slice(0, separator), line.slice(separator + 1).trim()];
@@ -17,7 +19,15 @@ test('static host policy blocks active content and limits browser capabilities',
   assert.equal(values.get('X-Content-Type-Options'), 'nosniff');
   assert.equal(values.get('Referrer-Policy'), 'strict-origin-when-cross-origin');
   assert.equal(values.get('X-Frame-Options'), 'DENY');
+  // Camera stays denied site-wide; only the scanner routes may request it.
   assert.equal(values.get('Permissions-Policy'), 'camera=(), microphone=(), geolocation=()');
+
+  for (const route of ['/en/scan-document/*', '/id/scan-dokumen/*']) {
+    assert.ok(source.includes(route), `scanner route must opt in to the camera: ${route}`);
+  }
+  const cameraGrants = source.match(/camera=\(self\)/g) ?? [];
+  assert.equal(cameraGrants.length, 2, 'only the two scanner routes may allow the camera');
+  assert(!/microphone=\(self\)/.test(source), 'microphone must stay blocked everywhere');
 
   const directives = new Map(values.get('Content-Security-Policy').split(';').map(part => {
     const [name, ...sources] = part.trim().split(/\s+/);

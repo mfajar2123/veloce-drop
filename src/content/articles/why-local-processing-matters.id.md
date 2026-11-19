@@ -54,7 +54,7 @@ Model keamanan bergeser dari "percaya operator" menjadi "percaya sandbox browser
 
 ## Apa yang tidak berarti pemrosesan lokal
 
-Ketepatan penting di sini, dan halaman privasi VeloceDrop sendiri menyatakannya dengan jelas.
+Ketepatan penting di sini, dan halaman privasi Doculven sendiri menyatakannya dengan jelas.
 
 **Bukan berarti offline.** Halaman, font, JavaScript, dan berkas model tetap datang lewat jaringan. Anda tetap membuat permintaan.
 

@@ -20,7 +20,7 @@ test('background result continues to 3x4 and compression without selecting files
   await page.getByRole('button',{name:'Pratinjau hasil'}).click();
   await page.getByRole('button',{name:'Buat pas foto 3x4'}).click();
   await expect(page).toHaveURL(/ubah-ukuran-gambar/);
-  await expect(page.getByText(/Gambar dipilih: velocedrop\.png/)).toBeVisible();
+  await expect(page.getByText(/Gambar dipilih: doculven\.png/)).toBeVisible();
   await expect(page.getByRole('heading',{name:'Pratinjau crop'})).toBeVisible({timeout:30_000});
   await expect(page.getByRole('button',{name:'Buat gambar'})).toBeEnabled();
   await page.getByRole('button',{name:'Buat gambar'}).click();

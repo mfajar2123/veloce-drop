@@ -23,7 +23,7 @@ A watermark has one job: to stay on the image, readable, without ruining it. Doi
 
 If you place a 200-pixel-wide logo on a 4000-pixel photo, it occupies 5% of the width. On a 1000-pixel thumbnail, the same 200 pixels occupy 20% — five times more visually dominant.
 
-This is why professional watermark tools size the logo **relative to the image width**. Set 15% and it stays 15% whether the photo is 800 pixels or 8000. VeloceDrop uses relative width for exactly this reason, within a 5–50% range.
+This is why professional watermark tools size the logo **relative to the image width**. Set 15% and it stays 15% whether the photo is 800 pixels or 8000. Doculven uses relative width for exactly this reason, within a 5–50% range.
 
 The same logic applies to position: a margin specified in pixels drifts visually as dimensions change. A margin expressed as a percentage of the shorter side stays proportional.
 
@@ -73,7 +73,7 @@ What it does not do:
 - Survive a determined edit.
 - Replace proper licensing or a visible copyright notice.
 
-VeloceDrop's own documentation makes this point rather than overselling the feature.
+Doculven's own documentation makes this point rather than overselling the feature.
 
 ## Batch workflow
 

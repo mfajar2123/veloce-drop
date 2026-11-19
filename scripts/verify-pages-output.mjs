@@ -17,6 +17,8 @@ const requiredFiles = [
   'ort/ort-wasm-simd-threaded.wasm',
   'robots.txt',
   'sitemap.xml',
+  'en/scan-document/index.html',
+  'id/scan-dokumen/index.html',
 ];
 
 for (const file of requiredFiles) await access(join(root, file));
@@ -54,9 +56,28 @@ async function collectHtml(directory) {
 }
 
 const htmlFiles = await collectHtml(root);
+const headers = await readFile(join(root, '_headers'), 'utf8');
+const cameraRoutes = new Set(['/en/scan-document', '/id/scan-dokumen']);
+const policies = new Map();
+for (const block of headers.trim().split(/\r?\n\r?\n/)) {
+  const [path, ...lines] = block.split(/\r?\n/);
+  const policy = lines.find(line => line.trim().startsWith('Permissions-Policy:'));
+  if (!policy) continue;
+  if (policies.has(path)) throw new Error(`Duplicate Permissions-Policy for ${path}`);
+  policies.set(path, policy);
+}
 for (const file of htmlFiles) {
   const source = await readFile(file, 'utf8');
   const pagePath = file.slice(root.length).replaceAll('\\', '/').replace(/^\/+/, '');
+  const route = ('/' + pagePath).replace(/\/index\.html$/, '') || '/';
+  const expectedCamera = cameraRoutes.has(route) ? 'camera=(self)' : 'camera=()';
+  const paths = new Set(['/' + pagePath, route]);
+  if (pagePath.endsWith('/index.html')) paths.add(route + '/');
+  for (const path of paths) {
+    if (policies.get('/*') || !policies.get(path)?.includes(expectedCamera)) {
+      throw new Error(`Incorrect Permissions-Policy for ${path}`);
+    }
+  }
   const pageUrl = new URL(`${basePath}${pagePath}`, 'https://pages.invalid');
   for (const [, reference] of source.matchAll(/(?:src|href)="([^"]+)"/g)) {
     if (!reference || /^(?:#|[a-z][a-z\d+.-]*:|\/\/)/i.test(reference)) continue;
@@ -112,7 +133,7 @@ for (const file of localizedPages) {
     if (previous) throw new Error(`${page} duplicates ${label} from ${previous}: ${value}`);
     index.set(value, page);
   }
-  if (/rel="canonical" href="https?:\/\/[^" ]*velocedrop\.example/.test(source)) {
+  if (/rel="canonical" href="https?:\/\/[^" ]*doculven\.example/.test(source)) {
     throw new Error(`${page} still uses the placeholder canonical domain.`);
   }
   const isHome = /\/(?:id|en)\/index\.html$/.test(page);

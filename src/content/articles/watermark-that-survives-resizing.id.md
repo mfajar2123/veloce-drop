@@ -23,7 +23,7 @@ Watermark punya satu tugas: tetap berada di gambar, terbaca, tanpa merusaknya. M
 
 Jika Anda menempatkan logo selebar 200 piksel pada foto 4000 piksel, ia menempati 5% lebar. Pada thumbnail 1000 piksel, 200 piksel yang sama menempati 20% — lima kali lebih dominan secara visual.
 
-Inilah sebabnya alat watermark profesional mengukur logo **relatif terhadap lebar gambar**. Setel 15% dan ia tetap 15% apakah fotonya 800 piksel atau 8000. VeloceDrop memakai lebar relatif karena alasan ini, dalam rentang 5–50%.
+Inilah sebabnya alat watermark profesional mengukur logo **relatif terhadap lebar gambar**. Setel 15% dan ia tetap 15% apakah fotonya 800 piksel atau 8000. Doculven memakai lebar relatif karena alasan ini, dalam rentang 5–50%.
 
 Logika yang sama berlaku untuk posisi: margin yang dinyatakan dalam piksel bergeser secara visual saat dimensi berubah. Margin yang dinyatakan sebagai persentase sisi terpendek tetap proporsional.
 
@@ -73,7 +73,7 @@ Yang tidak ia lakukan:
 - Bertahan terhadap penyuntingan yang gigih.
 - Menggantikan lisensi yang tepat atau pemberitahuan hak cipta.
 
-Dokumentasi VeloceDrop menyatakan hal ini daripada menjual fiturnya secara berlebihan.
+Dokumentasi Doculven menyatakan hal ini daripada menjual fiturnya secara berlebihan.
 
 ## Alur kerja batch
 

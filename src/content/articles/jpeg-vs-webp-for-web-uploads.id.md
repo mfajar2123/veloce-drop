@@ -51,7 +51,7 @@ WebP secara teknis lebih unggul dan secara operasional lebih berisiko tepat pada
 
 Mengubah PNG dengan latar transparan menjadi JPEG tidak gagal secara berisik. Ia menghasilkan berkas yang tampak benar kecuali bahwa area transparan kini berwarna putih padat. Jika gambar itu diletakkan di halaman berwarna, kotak putihnya menjadi jelas belakangan.
 
-Jika Anda butuh JPEG dari gambar potongan, pilih warna latar dengan sengaja — samakan dengan latar tujuan. VeloceDrop menanyakan warna itu daripada mengasumsikan putih, karena alasan ini.
+Jika Anda butuh JPEG dari gambar potongan, pilih warna latar dengan sengaja — samakan dengan latar tujuan. Doculven menanyakan warna itu daripada mengasumsikan putih, karena alasan ini.
 
 ## Alur kerja yang menghindari pertanyaan
 

@@ -3,9 +3,9 @@ const MAX_FILES = 5;
 const MAX_BYTES = 50_000_000;
 const TTL = 30 * 60 * 1000;
 type State = { files: SessionFile[]; pending: { id: string; path: string } | null; listeners: Set<() => void>; timer: ReturnType<typeof setTimeout> | null };
-declare global { interface Window { __veloceSession?: State } }
+declare global { interface Window { __doculvenSession?: State } }
 function state(): State {
-  return window.__veloceSession ??= {files: [], pending: null, listeners: new Set(), timer: null};
+  return window.__doculvenSession ??= {files: [], pending: null, listeners: new Set(), timer: null};
 }
 function emit(s: State) { for (const listener of s.listeners) listener(); }
 function schedule(s: State) {
@@ -24,7 +24,7 @@ export function addSessionFile(blob: Blob, width?: number, height?: number): str
   if (!blob.size || blob.size > MAX_BYTES) return null;
   prune(); const s = state(); const id = crypto.randomUUID();
   const extension: Record<string,string> = {'image/png':'png','image/jpeg':'jpg','image/webp':'webp','application/pdf':'pdf','application/zip':'zip'};
-  const name = `velocedrop.${extension[blob.type] ?? 'bin'}`;
+  const name = `doculven.${extension[blob.type] ?? 'bin'}`;
   s.files.push({id, blob, name, width, height, created: Date.now()});
   while (s.files.length > MAX_FILES || s.files.reduce ( (sum, item) => sum + item.blob.size, 0) > MAX_BYTES) s.files.shift();
   if (s.pending && !s.files.some(file => file.id === s.pending!.id)) s.pending = null;

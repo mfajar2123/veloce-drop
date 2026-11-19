@@ -49,7 +49,7 @@ Jika target 200 KB adalah syarat keras — portal lamaran kerja yang menolak ber
 
 Saat penurunan kualitas saja tidak cukup, pengurangan dimensi bisa. Memangkas lebar dan tinggi menjadi separuh mengurangi jumlah piksel menjadi seperempat, yang biasanya memotong ukuran berkas pada orde serupa.
 
-Persoalannya, ini benar-benar mengubah gambar Anda. Foto selebar 4000 piksel yang diperkecil ke 1500 piksel layak untuk unggahan web dan tidak layak untuk cetak. VeloceDrop memperlakukan ini sebagai tindakan terpisah dan eksplisit, bukan diam-diam, itulah sebabnya alat menawarkan "coba perkecil dimensi" sebagai pilihan setelah melaporkan bahwa target tidak tercapai.
+Persoalannya, ini benar-benar mengubah gambar Anda. Foto selebar 4000 piksel yang diperkecil ke 1500 piksel layak untuk unggahan web dan tidak layak untuk cetak. Doculven memperlakukan ini sebagai tindakan terpisah dan eksplisit, bukan diam-diam, itulah sebabnya alat menawarkan "coba perkecil dimensi" sebagai pilihan setelah melaporkan bahwa target tidak tercapai.
 
 Sebelum menerimanya, tanyakan untuk apa berkas itu:
 
@@ -70,7 +70,7 @@ Saat target terasa mustahil, kerjakan dengan urutan ini:
 
 ## Kenapa laporan alat itu penting
 
-Saat VeloceDrop tidak bisa mencapai target, ia mengatakannya dan menunjukkan hasil terkecil yang bisa dibuat pada dimensi penuh, beserta ukuran sebenarnya. Angka itu berguna: ia memberi tahu seberapa jauh Anda dari target, yang menunjukkan apakah perubahan format saja cukup atau dimensi harus berubah.
+Saat Doculven tidak bisa mencapai target, ia mengatakannya dan menunjukkan hasil terkecil yang bisa dibuat pada dimensi penuh, beserta ukuran sebenarnya. Angka itu berguna: ia memberi tahu seberapa jauh Anda dari target, yang menunjukkan apakah perubahan format saja cukup atau dimensi harus berubah.
 
 Alat yang diam-diam mengembalikan berkas 340 KB sambil menampilkan "200 KB" jauh lebih buruk daripada tidak berguna. Kegagalan yang jujur adalah fiturnya.
 

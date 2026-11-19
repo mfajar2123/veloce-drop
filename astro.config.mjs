@@ -3,7 +3,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 const publicBasePath = process.env.PUBLIC_BASE_PATH || '/';
-const siteUrl = process.env.PUBLIC_SITE_URL || 'https://velocedrop.example';
+const siteUrl = process.env.PUBLIC_SITE_URL || 'https://doculven.example';
 
 export default defineConfig({
   site: siteUrl,
@@ -19,6 +19,7 @@ export default defineConfig({
         "object-src 'none'",
         "form-action 'self'",
         "img-src 'self' blob: data:",
+        "media-src 'self' blob:",
         "font-src 'self' data:",
         "connect-src 'self' blob: data:",
         "worker-src 'self' blob:",

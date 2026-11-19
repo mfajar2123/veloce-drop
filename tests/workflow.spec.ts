@@ -8,7 +8,7 @@ test('resize result continues to compression and session is cleared on reload',a
   await page.getByRole('button',{name:'Berkas sesi (1)'}).click();
   await expect(page.getByRole('button',{name:'Hapus hasil 1'})).toBeVisible();
   const [sessionDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Unduh',exact:true}).click()]);
-  expect(sessionDownload.suggestedFilename()).toBe('velocedrop.png');
+  expect(sessionDownload.suggestedFilename()).toBe('doculven.png');
   await page.getByRole('button',{name:'Berkas sesi (1)'}).click();
   await page.getByRole('button',{name:'Kompres 200 KB'}).click();
   await expect(page).toHaveURL(/kompres-foto/);
@@ -27,7 +27,7 @@ test('photo PDF continues to PDF-to-JPG without opening a file picker',async({pa
   await expect(page.getByRole('link',{name:'Unduh PDF'})).toBeVisible({timeout:20_000});
   await page.getByRole('button',{name:'Ubah PDF ke JPG'}).click();
   await expect(page).toHaveURL(/pdf-ke-jpg/);
-  await expect(page.getByText(/velocedrop\.pdf.*1 halaman/)).toBeVisible();
+  await expect(page.getByText(/doculven\.pdf.*1 halaman/)).toBeVisible();
   await page.getByRole('button',{name:'Konversi halaman'}).click();
   await expect(page.getByRole('heading',{name:'Halaman hasil'})).toBeVisible();
   const [download]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Unduh halaman 1'}).click()]);

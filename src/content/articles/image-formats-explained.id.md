@@ -1,7 +1,7 @@
 ---
 lang: id
 translationKey: image-formats-explained
-title: PNG, JPEG, WebP, HEIC, SVG, ICO — kapan memakai yang mana
+title: "PNG, JPEG, WebP, HEIC, SVG, ICO: kapan memakai yang mana"
 summary: Enam format, enam tujuan berbeda. Sebagian besar masalah konversi muncul karena memakai alat yang tepat untuk pekerjaan yang salah.
 category: conversion
 toolId: image-converter
@@ -67,7 +67,7 @@ SVG bukan gambar dalam pengertian piksel. Ia sekumpulan instruksi: gambar lingka
 **Hindari untuk:** foto. SVG dari foto biasanya pembungkus gambar raster sematan, tidak memberi keuntungan apa pun.
 **Ukuran tipikal:** sangat kecil untuk bentuk sederhana.
 
-SVG bisa memuat skrip, referensi eksternal, dan HTML sematan, yang menjadikannya masalah keamanan. Sanitasi sebelum rasterisasi bukan opsional — SVG berbahaya bisa mengeksekusi skrip dalam beberapa konteks. VeloceDrop menolak berkas SVG yang berisi skrip atau sumber eksternal daripada mencoba membersihkannya.
+SVG bisa memuat skrip, referensi eksternal, dan HTML sematan, yang menjadikannya masalah keamanan. Sanitasi sebelum rasterisasi bukan opsional — SVG berbahaya bisa mengeksekusi skrip dalam beberapa konteks. Doculven menolak berkas SVG yang berisi skrip atau sumber eksternal daripada mencoba membersihkannya.
 
 ## ICO — ikon Windows
 

@@ -1,4 +1,4 @@
-# SEO keyword research — VeloceDrop
+# SEO keyword research — Doculven
 
 Updated: 2026-11-10. Market focus: Indonesia first, English pages for international discovery.
 
@@ -25,6 +25,7 @@ Qualitative recommendation: lead Indonesian pages with task phrases used in ever
 | PDF to JPG | ubah PDF ke JPG, konversi PDF ke gambar | PDF to JPG, convert PDF pages to images | Extract page images |
 | PDF size target | kompres PDF 500 KB, perkecil ukuran PDF | compress PDF to 500 KB, reduce PDF file size | Meet an upload limit |
 | Print sheets | cetak foto 4R A4, susun foto untuk dicetak | photo print sheet, 4R photo layout | Prepare print output |
+| Document scanner | scan dokumen ke PDF, scan dokumen dengan kamera | scan document to PDF, scan document with camera | Turn a paper document into a JPG or PDF |
 
 ## Trends comparison set
 

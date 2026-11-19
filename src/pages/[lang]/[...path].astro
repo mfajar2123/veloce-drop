@@ -10,6 +10,7 @@ import PhotoPdfStudio from '../../components/PhotoPdfStudio';
 import PdfToImages from '../../components/PdfToImages';
 import PdfCompressor from '../../components/PdfCompressor';
 import PrintSheetUpload from '../../components/PrintSheetUpload';
+import DocumentScanner from '../../components/DocumentScanner';
 import { catalog, type Locale } from '../../tool-registry';
 
 type ToolProps = {
@@ -42,6 +43,7 @@ export function getStaticPaths() {
     'pdf-jpg': { id: 'Pilih halaman dan resolusi, lalu unduh gambar.', en: 'Select pages and resolution, then download the images.' },
     'pdf-500kb': { id: 'Pilih target, baca penjelasan rasterisasi, lalu buat PDF.', en: 'Choose a target, review the rasterization warning, then create a PDF.' },
     print: { id: 'Pilih foto dan buat PDF sesuai ukuran cetak.', en: 'Choose a photo and create a print-sized PDF.' },
+    'document-scanner': { id: 'Arahkan kamera ke kertas, periksa sudutnya, lalu simpan sebagai JPG atau PDF.', en: 'Aim the camera at paper, check the corners, then save as JPG or PDF.' },
   };
 
   const privacyCopy = {
@@ -118,7 +120,7 @@ const en = lang === 'en';
   </Base>
 ) : (
   <Base lang={lang} title={props.title} description={props.description}>
-    <div class={`wrap workspace${props.toolId === 'background' ? ' workspace-compact' : ''}`}>
+    <div class="wrap workspace workspace-compact">
       <h1>{props.title}</h1>
       <p class="lead">{props.lead}</p>
       {props.toolId === 'compress-image' && <Compressor lang={lang} initialTarget={props.targetKB ?? 200} client:load />}
@@ -131,6 +133,7 @@ const en = lang === 'en';
       {props.toolId === 'pdf-jpg' && <PdfToImages lang={lang} client:load />}
       {props.toolId === 'pdf-500kb' && <PdfCompressor lang={lang} initialTarget={props.targetKB ?? 500} client:load />}
       {props.toolId === 'print' && <PrintSheetUpload lang={lang} client:load />}
+      {props.toolId === 'document-scanner' && <DocumentScanner lang={lang} client:only="react" />}
     </div>
   </Base>
 )}

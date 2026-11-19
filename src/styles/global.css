@@ -99,9 +99,10 @@ label:has(input:disabled,select:disabled,textarea:disabled){cursor:not-allowed}
 .section{padding-block:52px}
 .workspace{min-height:56vh;padding-block:clamp(32px,5vw,64px)}
 .workspace>h1,.workspace>article>h1{max-width:22ch;margin:0 0 12px;font-size:clamp(2rem,4.2vw,3.25rem);line-height:1.12;letter-spacing:-.035em;text-wrap:balance}
-.workspace-compact{padding-block:clamp(18px,2.4vw,28px)}
-.workspace-compact>h1{max-width:none;font-size:clamp(1.5rem,2.4vw,1.9rem);letter-spacing:-.025em;margin-bottom:4px}
-.workspace-compact>.lead{margin-bottom:14px;font-size:.95rem}
+.workspace-compact{padding-block:clamp(14px,2vw,22px)}
+.workspace-compact>h1{max-width:none;font-size:clamp(1.45rem,2.2vw,1.8rem);letter-spacing:-.025em;margin-bottom:4px}
+.workspace-compact>.lead{margin-bottom:12px;font-size:.94rem}
+.workspace-compact>.panel{margin-top:0}
 .workspace>.lead,.workspace>p.lead{max-width:68ch;margin:0 0 26px;color:#334155;font-size:1.05rem}
 .workspace>section.info,.workspace>article.info{max-width:78ch}
 .info-page h2,.privacy-page h2{margin:2rem 0 .55rem;font-size:1.3rem;line-height:1.3;letter-spacing:-.02em;text-wrap:balance}
@@ -118,6 +119,31 @@ input:not([type=range]):not([type=checkbox]):not([type=radio]),select,textarea{m
 input[type=range]{accent-color:var(--brand)}
 .result{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
 .result img{display:block;max-height:520px;width:auto;margin:16px auto;object-fit:contain}
+.scanner-workspace{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,1fr);gap:24px;align-items:start}
+.scanner-view{display:grid;gap:10px;justify-items:start;min-width:0}
+.scanner-side{display:grid;gap:12px;align-content:start}
+.scanner-side .button{width:100%}
+.scanner-side .notice{margin:0}
+.scanner-field{display:grid;gap:6px;color:#334155;font-weight:600}
+.scanner-file{display:grid;gap:6px;padding:12px;border:1px dashed #64748b;border-radius:var(--radius-small);background:#fff;font-weight:600;color:#334155}
+.scanner-empty{display:grid;place-content:center;gap:6px;min-height:180px;padding:24px;text-align:center;color:#cbd5e1}
+.scanner-empty p{margin:0}
+.scanner-empty .notice{color:#94a3b8}
+/* The stage shrink-wraps the media so the overlay SVG and the photo share
+   exactly the same box. Letterboxing would silently misplace every corner. */
+.scanner-stage{position:relative;display:inline-block;max-width:100%;margin:18px;border-radius:var(--radius-small);line-height:0}
+.scanner-stage video,.scanner-stage img{display:block;width:auto;max-width:100%;height:auto;max-height:min(58vh,520px);border-radius:var(--radius-small);background:#0f172a}
+.scanner-quad{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.scanner-notice{margin:10px 0 0;font-size:.88rem}
+.scanner-quad polygon{fill:rgb(16 185 129 / 18%);stroke:#10b981;stroke-width:2;vector-effect:non-scaling-stroke}
+.scanner-corner{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;padding:0;border:2px solid #065f46;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgb(15 23 42 / 35%);color:#065f46;font-size:.72rem;font-weight:800;touch-action:none;cursor:grab}
+.scanner-corner:focus-visible{outline:3px solid #065f46;outline-offset:2px}
+.scanner-corner span{pointer-events:none}
+.scanner-live-controls .notice{flex-basis:100%;margin:0}
+.scanner-check{display:flex!important;align-items:center;gap:8px;font-weight:600;color:#334155}
+.scanner-check input{min-height:0}
+@media(max-width:820px){.scanner-workspace{grid-template-columns:1fr;gap:16px}.scanner-stage{max-height:46vh}}
+@media(max-width:650px){.scanner-corner{width:30px;height:30px;margin:-15px 0 0 -15px}}
 .tool-list{display:grid;border-top:1px solid var(--line)}
 .tool-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 4px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}
 .tool-row strong{color:var(--brand)}
