@@ -7,6 +7,11 @@ category: resize
 toolId: resize-image
 publishedAt: 2026-11-15
 readingMinutes: 9
+image: /images/articles/passport-photo-sizes-explained.webp
+imageAlt: "Black and white portrait against a plain background"
+imageCredit: "Portrait practice session by James Willamor"
+imageCreditUrl: "https://www.flickr.com/photos/81464596@N00/5367086798"
+imageLicense: "by-sa 2.0"
 related:
   - print-photo-sheet-layouts
   - heic-to-jpg-on-windows

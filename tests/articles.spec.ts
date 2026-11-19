@@ -76,6 +76,53 @@ test('each article has a translation in the other locale', async ({ page }) => {
   }
 });
 
+test('every article shows a self-hosted image with credit and licence', async ({ page, request }) => {
+  const sitemap = await (await request.get('/sitemap.xml')).text();
+  const paths = [...sitemap.matchAll(/<loc>([^<]*\/articles\/[^<]+)<\/loc>/g)]
+    .map(match => new URL(match[1]).pathname)
+    .filter(path => path.endsWith('/') && !path.endsWith('/articles/'));
+
+  expect(paths.length).toBeGreaterThanOrEqual(30);
+
+  for (const path of paths) {
+    await page.goto(path);
+    const figure = page.locator('.article-figure');
+    await expect(figure, path).toBeVisible();
+
+    const src = await figure.locator('img').getAttribute('src');
+    expect(src, `${path} image must be self-hosted`).toMatch(/^\/images\/articles\/[\w-]+\.webp$/);
+
+    const loaded = await figure.locator('img').evaluate(node => (node as HTMLImageElement).naturalWidth > 0);
+    expect(loaded, `${path} image must load`).toBe(true);
+
+    const alt = await figure.locator('img').getAttribute('alt');
+    expect((alt ?? '').length, `${path} alt text`).toBeGreaterThan(10);
+
+    const credit = await figure.locator('.article-credit').innerText();
+    expect(credit, `${path} credit`).toMatch(/CC |CC0|Public Domain/i);
+  }
+});
+
+test('landing page highlights recent guides with images', async ({ page }) => {
+  for (const [route, heading] of [['/en/', 'Answers before you upload.'], ['/id/', 'Jawaban sebelum Anda mengunggah.']] as const) {
+    await page.goto(route);
+    await expect(page.getByRole('heading', { name: heading })).toBeVisible();
+    const highlights = page.locator('.guide-highlight');
+    await expect(highlights).toHaveCount(3);
+    for (const link of await highlights.locator('a').all()) {
+      await expect(link).toHaveAttribute('href', /\/articles\/[\w-]+\/$/);
+    }
+    // WebKit does not start native lazy loading from scrollIntoViewIfNeeded;
+    // a real window scroll is what triggers the intersection observer there.
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    const highlightImages = page.locator('.guide-highlight img');
+    await expect.poll(
+      () => highlightImages.evaluateAll(nodes => nodes.every(node => (node as HTMLImageElement).naturalWidth > 0)),
+      { timeout: 20_000 },
+    ).toBe(true);
+  }
+});
+
 test('every article body is substantial and unique', async ({ request }) => {
   const sitemap = await (await request.get('/sitemap.xml')).text();
   const paths = [...sitemap.matchAll(/<loc>([^<]*\/articles\/[^<]+)<\/loc>/g)].map(match => new URL(match[1]).pathname).filter(path => path.endsWith('/'));

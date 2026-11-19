@@ -9,6 +9,11 @@ publishedAt: 2026-11-18
 readingMinutes: 8
 diagram: compression-curve
 diagramAlt: Chart showing how JPEG quality reduction lowers file size quickly at first, then flattens out
+image: /images/articles/why-200kb-targets-fail.webp
+imageAlt: "Close-up of a camera lens and aperture ring"
+imageCredit: "Vintage Camera Lens Macro by jcubic"
+imageCreditUrl: "https://www.flickr.com/photos/56196558@N08/50132360368"
+imageLicense: "by-sa 2.0"
 related:
   - compress-image-without-losing-quality
   - jpeg-vs-webp-for-web-uploads

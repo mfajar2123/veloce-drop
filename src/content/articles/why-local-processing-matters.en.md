@@ -7,6 +7,11 @@ category: privacy
 toolId: compress-image
 publishedAt: 2026-11-08
 readingMinutes: 6
+image: /images/articles/why-local-processing-matters.webp
+imageAlt: "A desk with monitors, keyboard and computer tower"
+imageCredit: "Full Desk by Hexidecimal"
+imageCreditUrl: "https://www.flickr.com/photos/7655955@N07/7015159835"
+imageLicense: "by-sa 2.0"
 related:
   - background-removal-limits
   - pdf-compression-and-lost-text

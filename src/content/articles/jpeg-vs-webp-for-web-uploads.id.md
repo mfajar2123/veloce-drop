@@ -7,6 +7,11 @@ category: compression
 toolId: image-converter
 publishedAt: 2026-11-16
 readingMinutes: 6
+image: /images/articles/jpeg-vs-webp-for-web-uploads.webp
+imageAlt: "Halaman web yang ditampilkan di layar tablet"
+imageCredit: "Johnnydoes website on iPad by Johnny does"
+imageCreditUrl: "https://www.flickr.com/photos/25516351@N04/4621251358"
+imageLicense: "by 2.0"
 related:
   - compress-image-without-losing-quality
   - why-200kb-targets-fail

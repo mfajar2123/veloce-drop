@@ -7,6 +7,11 @@ category: print
 toolId: print
 publishedAt: 2026-11-11
 readingMinutes: 5
+image: /images/articles/print-photo-sheet-layouts.webp
+imageAlt: "Printer format besar di percetakan"
+imageCredit: "printers by Muffet"
+imageCreditUrl: "https://www.flickr.com/photos/53133240@N00/1816120150"
+imageLicense: "by 2.0"
 related:
   - passport-photo-sizes-explained
   - photos-to-pdf-page-order

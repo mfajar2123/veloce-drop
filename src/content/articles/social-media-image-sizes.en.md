@@ -7,6 +7,11 @@ category: resize
 toolId: resize-image
 publishedAt: 2026-11-06
 readingMinutes: 6
+image: /images/articles/social-media-image-sizes.webp
+imageAlt: "A hand holding a smartphone showing an app screen"
+imageCredit: "smartphone-in-hand-mockup by CCØBAY"
+imageCreditUrl: "https://www.flickr.com/photos/151198978@N08/31572507974"
+imageLicense: "cc0 1.0"
 related:
   - passport-photo-sizes-explained
   - compress-image-without-losing-quality

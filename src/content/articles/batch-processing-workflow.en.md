@@ -7,6 +7,11 @@ category: compression
 toolId: batch
 publishedAt: 2026-11-05
 readingMinutes: 6
+image: /images/articles/batch-processing-workflow.webp
+imageAlt: "A collection of small photographs arranged together"
+imageCredit: "Wrapping It Up by jeff_golden"
+imageCreditUrl: "https://www.flickr.com/photos/46868900@N00/4231395515"
+imageLicense: "by-sa 2.0"
 related:
   - watermark-that-survives-resizing
   - compress-image-without-losing-quality

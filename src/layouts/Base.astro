@@ -5,13 +5,14 @@ import {ClientRouter} from 'astro:transitions';
 import SessionTray from '../components/SessionTray.astro';
 import ToolReference from '../components/ToolReference.astro';
 import {catalog, type Locale} from '../tool-registry';
-const { lang = 'id', title, description = 'Local image tools', trail, article, jsonLd } = Astro.props as {
+const { lang = 'id', title, description = 'Local image tools', trail, article, jsonLd, ogImage } = Astro.props as {
   lang?: Locale;
   title: string;
   description?: string;
   trail?: Array<{ name: string; path?: string }>;
   article?: { publishedAt: Date; updatedAt?: Date };
   jsonLd?: Record<string, unknown>;
+  ogImage?: string;
 };
 const en = lang === 'en';
 const targetLang:Locale = en ? 'id' : 'en';
@@ -49,7 +50,7 @@ const faqSchema=tool?.faq?.length?{
 }:null;
 const idAlternate=lang==='id'?canonical:publicUrl(alternate);
 const enAlternate=lang==='en'?canonical:publicUrl(alternate);
-const socialImage=publicUrl('/images/og-share.png');
+const socialImage=ogImage?publicUrl(ogImage):publicUrl('/images/og-share.png');
 const documentTitle=article?pageTitle:`${pageTitle} | VeloceDrop`;
 ---
 <!doctype html>

@@ -7,6 +7,11 @@ category: background
 toolId: background
 publishedAt: 2026-11-10
 readingMinutes: 7
+image: /images/articles/background-removal-limits.webp
+imageAlt: "Softbox studio lighting kit for product photography"
+imageCredit: "PhotoSEL LS21E52 Softbox Studio Lighting Kit (2) by Katie Chan"
+imageCreditUrl: "https://commons.wikimedia.org/w/index.php?curid=30107820"
+imageLicense: "by-sa 3.0"
 related:
   - watermark-that-survives-resizing
   - compress-image-without-losing-quality

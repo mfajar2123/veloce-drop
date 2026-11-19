@@ -7,6 +7,11 @@ category: documents
 toolId: photo-pdf
 publishedAt: 2026-11-12
 readingMinutes: 6
+image: /images/articles/photos-to-pdf-page-order.webp
+imageAlt: "A stack of paper sheets seen from the side"
+imageCredit: "Stack of Papers by jenni from the block"
+imageCreditUrl: "https://www.flickr.com/photos/27624680@N02/7827785878"
+imageLicense: "by 2.0"
 related:
   - pdf-compression-and-lost-text
   - passport-photo-sizes-explained

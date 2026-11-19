@@ -7,6 +7,11 @@ category: documents
 toolId: pdf-jpg
 publishedAt: 2026-11-04
 readingMinutes: 5
+image: /images/articles/pdf-to-jpg-resolution.webp
+imageAlt: "Pemindai flatbed dengan penutup terbuka"
+imageCredit: "Flatbed Scanner by askhpnl"
+imageCreditUrl: "https://www.flickr.com/photos/25896822@N06/7408052878"
+imageLicense: "by 2.0"
 related:
   - pdf-compression-and-lost-text
   - photos-to-pdf-page-order

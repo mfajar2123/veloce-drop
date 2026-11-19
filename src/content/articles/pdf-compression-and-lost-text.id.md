@@ -7,6 +7,11 @@ category: documents
 toolId: pdf-500kb
 publishedAt: 2026-11-14
 readingMinutes: 7
+image: /images/articles/pdf-compression-and-lost-text.webp
+imageAlt: "Tumpukan koran hitam putih dengan teks tercetak"
+imageCredit: "Newspapers B&W (5) by NS Newsflash"
+imageCreditUrl: "https://www.flickr.com/photos/62693815@N03/6277209256"
+imageLicense: "by 2.0"
 related:
   - photos-to-pdf-page-order
   - passport-photo-sizes-explained

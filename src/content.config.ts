@@ -20,6 +20,11 @@ const articles = defineCollection({
     readingMinutes: z.number().int().min(3).max(40),
     diagram: z.string().optional(),
     diagramAlt: z.string().optional(),
+    image: z.string().optional(),
+    imageAlt: z.string().optional(),
+    imageCredit: z.string().optional(),
+    imageCreditUrl: z.string().optional(),
+    imageLicense: z.string().optional(),
     related: z.array(z.string()).default([]),
   }),
 });

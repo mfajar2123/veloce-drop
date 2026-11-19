@@ -7,6 +7,11 @@ category: conversion
 toolId: image-converter
 publishedAt: 2026-11-07
 readingMinutes: 8
+image: /images/articles/image-formats-explained.webp
+imageAlt: "Kisi ikon tipe berkas"
+imageCredit: "Speed-Dial-2-Text-Icons by joergermeister"
+imageCreditUrl: "https://www.flickr.com/photos/61928961@N00/6899657941"
+imageLicense: "by 2.0"
 related:
   - jpeg-vs-webp-for-web-uploads
   - heic-to-jpg-on-windows

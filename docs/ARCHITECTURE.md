@@ -32,6 +32,10 @@ The schema enforces the constraints that matter for search results: title up to 
 
 Routes: `/[lang]/articles/` is the index with client-side search, category filters, and pagination; `/[lang]/articles/[slug]/` renders the article with a table of contents generated from its `h2` headings, related-guide links, and `Article` plus `BreadcrumbList` structured data.
 
+Each article carries an `image` field pointing at a WebP file in `public/images/articles/`, plus `imageAlt`, `imageCredit`, `imageCreditUrl`, and `imageLicense`. The detail page renders it as a captioned figure with a link back to the source record, and passes it to the layout as `ogImage` so social previews use the article image instead of the site-wide one.
+
+Images are self-hosted on purpose. The CSP allows `img-src 'self'` only, so a hot-linked image would be blocked, and third-party image requests would contradict the privacy claims on the tool pages. Candidates were collected from Openverse with `license_type=commercial`, filtered to CC0, CC BY, CC BY-SA and Public Domain Mark, reviewed visually, then re-encoded to WebP locally. Attribution for every file is in [ASSET_CREDITS.md](../ASSET_CREDITS.md).
+
 Article pages intentionally omit the `| VeloceDrop` title suffix. The added characters would push long headlines past the 70-character budget and cost space in search results.
 
 `src/pages/rss.xml.ts` publishes an English feed of the most recent articles, discovered through a `<link rel="alternate">` in the document head.

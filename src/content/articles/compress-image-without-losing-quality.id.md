@@ -7,6 +7,11 @@ category: compression
 toolId: compress-image
 publishedAt: 2026-11-17
 readingMinutes: 7
+image: /images/articles/compress-image-without-losing-quality.webp
+imageAlt: "Lanskap batu merah dengan detail halus pada batu dan langit"
+imageCredit: "Sedona in the Fall by John-Morgan"
+imageCreditUrl: "https://www.flickr.com/photos/24742305@N00/5459347350"
+imageLicense: "by 2.0"
 related:
   - why-200kb-targets-fail
   - jpeg-vs-webp-for-web-uploads

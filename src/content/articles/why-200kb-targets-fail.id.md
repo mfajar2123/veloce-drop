@@ -9,6 +9,11 @@ publishedAt: 2026-11-18
 readingMinutes: 8
 diagram: compression-curve
 diagramAlt: Grafik yang menunjukkan penurunan ukuran file secara cepat saat kualitas JPEG diturunkan, lalu mendatar
+image: /images/articles/why-200kb-targets-fail.webp
+imageAlt: "Tampak dekat lensa kamera dan cincin diafragma"
+imageCredit: "Vintage Camera Lens Macro by jcubic"
+imageCreditUrl: "https://www.flickr.com/photos/56196558@N08/50132360368"
+imageLicense: "by-sa 2.0"
 related:
   - compress-image-without-losing-quality
   - jpeg-vs-webp-for-web-uploads

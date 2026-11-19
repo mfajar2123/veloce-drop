@@ -7,6 +7,11 @@ category: conversion
 toolId: image-converter
 publishedAt: 2026-11-13
 readingMinutes: 6
+image: /images/articles/heic-to-jpg-on-windows.webp
+imageAlt: "Dua orang memotret dengan ponsel di luar ruangan"
+imageCredit: "smartphone cameras on refuge by USFWS Headquarters"
+imageCreditUrl: "https://www.flickr.com/photos/50838842@N06/7029496999"
+imageLicense: "by 2.0"
 related:
   - jpeg-vs-webp-for-web-uploads
   - compress-image-without-losing-quality

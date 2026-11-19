@@ -4,6 +4,7 @@ import Base from '../../layouts/Base.astro';
 import LandingDemo from '../../components/LandingDemo.astro';
 import LandingScenarios from '../../components/LandingScenarios.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import { articlesFor, articlePath, categoryLabel } from '../../articles';
 import { catalog, type Locale } from '../../tool-registry';
 
 export function getStaticPaths() { return [{ params: { lang: 'id' } }, { params: { lang: 'en' } }]; }
@@ -15,6 +16,7 @@ const compressed = 'landing-workspace-compressed.webp';
 const originalBytes = statSync(`public/images/${original}`).size;
 const compressedBytes = statSync(`public/images/${compressed}`).size;
 const curated = catalog;
+const latestGuides = (await articlesFor(lang)).slice(0, 3);
 ---
 
 <Base lang={lang} title={en ? 'Precision image and document tools, on your device' : 'Olah foto dan dokumen, tetap di perangkatmu'} description={en ? 'Prepare photos and documents with local browser tools. Files are processed on your device.' : 'Siapkan foto dan dokumen dengan alat lokal di browser. Berkas diproses di perangkat Anda.'}>
@@ -79,6 +81,29 @@ const curated = catalog;
         <img src="/images/landing-product-sample.webp" srcset="/images/landing-product-sample-768.webp 768w, /images/landing-product-sample.webp 1536w" sizes="(max-width: 768px) 100vw, 42vw" alt={en ? 'Synthetic illustration of a small shop preparing a product photo and parcel' : 'Ilustrasi sintetis toko kecil menyiapkan foto produk dan kemasan'} width="1536" height="1024" loading="lazy" />
         <figcaption>{en ? 'Illustrative scene · no customer files' : 'Ilustrasi · bukan berkas pelanggan'}</figcaption>
       </figure>
+    </section>
+
+    <section class="landing-section landing-guides" aria-labelledby="guides-title">
+      <div class="landing-section-heading">
+        <p class="eyebrow">{en ? 'Practical guides' : 'Panduan praktis'}</p>
+        <h2 id="guides-title">{en ? 'Answers before you upload.' : 'Jawaban sebelum Anda mengunggah.'}</h2>
+        <p>{en ? 'Short, specific guides on file sizes, formats and the rules that reject a file. Written from how these tools actually behave.' : 'Panduan singkat dan spesifik tentang ukuran berkas, format, dan aturan yang membuat berkas ditolak. Ditulis dari perilaku nyata alat ini.'}</p>
+      </div>
+      <ul class="guide-highlights">
+        {latestGuides.map(guide => (
+          <li class="guide-highlight">
+            <a href={articlePath(guide)}>
+              {guide.data.image && <img src={guide.data.image} alt="" width="1200" height="800" loading="lazy" decoding="async" />}
+              <span class="guide-highlight-body">
+                <span class="guide-highlight-topic">{categoryLabel[guide.data.category]?.[lang] ?? guide.data.category}</span>
+                <strong>{guide.data.title}</strong>
+                <span class="guide-highlight-summary">{guide.data.summary}</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="home-catalog-link"><a class="text-link" href={`/${lang}/articles/`}>{en ? 'Read all guides' : 'Baca semua panduan'}</a></p>
     </section>
 
     <section class="landing-close" aria-labelledby="close-title">

@@ -7,6 +7,11 @@ category: watermark
 toolId: logo-watermark
 publishedAt: 2026-11-09
 readingMinutes: 5
+image: /images/articles/watermark-that-survives-resizing.webp
+imageAlt: "Vintage printed label with lettering and ornament"
+imageCredit: "From Harpel's Typograph by Double--M"
+imageCreditUrl: "https://www.flickr.com/photos/49879584@N00/4619270851"
+imageLicense: "by 2.0"
 related:
   - background-removal-limits
   - compress-image-without-losing-quality
