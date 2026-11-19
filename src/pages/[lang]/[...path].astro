@@ -118,7 +118,7 @@ const en = lang === 'en';
   </Base>
 ) : (
   <Base lang={lang} title={props.title} description={props.description}>
-    <div class="wrap workspace">
+    <div class={`wrap workspace${props.toolId === 'background' ? ' workspace-compact' : ''}`}>
       <h1>{props.title}</h1>
       <p class="lead">{props.lead}</p>
       {props.toolId === 'compress-image' && <Compressor lang={lang} initialTarget={props.targetKB ?? 200} client:load />}

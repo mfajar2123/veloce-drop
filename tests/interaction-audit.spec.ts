@@ -59,7 +59,15 @@ async function exerciseControl(control: Locator, kind: string, label: string) {
   if (kind === 'number') {
     const initial = await control.inputValue();
     const minimum = Number(await control.getAttribute('min') ?? 0);
-    const candidate = String(Math.max(minimum, Number(initial || 0) + 1));
+    const maximum = Number(await control.getAttribute('max') ?? Number.POSITIVE_INFINITY);
+    const next = Number(initial || 0) + 1;
+    // Stay inside [min, max]: controls like the RGB fields clamp out-of-range
+    // values on purpose, so testing beyond the ceiling asserts the wrong thing.
+    if (next > maximum) {
+      await expect(control).toHaveValue(initial);
+      return;
+    }
+    const candidate = String(Math.max(minimum, next));
     await control.fill(candidate);
     await expect(control).toHaveValue(candidate);
     if (initial) await control.fill(initial);

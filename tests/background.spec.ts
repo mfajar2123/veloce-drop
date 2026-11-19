@@ -6,14 +6,15 @@ const baseURL=process.env.PLAYWRIGHT_BASE_URL??`http://127.0.0.1:${process.env.P
 
 test('portrait model runs locally and exports an alpha mask',async({page},testInfo)=>{
   test.setTimeout(180_000);
+  await page.setViewportSize({width:1440,height:1000});
   const requests:string[]=[];page.on('request',request=>requests.push(`${request.method()} ${request.url()}`));
   await page.goto('/id/hapus-latar/');
-  expect(requests.some(url=>url.includes('/models/modnet.onnx')||url.includes('/ort/ort-wasm'))).toBe(false);
-  await page.getByRole('button',{name:'Unduh dan muat model'}).click();
-  await expect(page.getByText('Model siap di perangkat ini.')).toBeVisible({timeout:120_000});
+  // The model now downloads on page open, so wait for that request instead of
+  // clicking a load button.
+  await expect.poll(() => requests.some(url => url.includes('/models/modnet.onnx')), { timeout: 30_000 }).toBe(true);
+  await expect(page.getByText(/Model siap|Siap diunduh/)).toBeVisible({timeout:120_000});
   await page.locator('input[type=file]').setInputFiles('tests/fixtures/portrait.jpg');
-  await page.getByRole('button',{name:'Hapus latar',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'Perbaiki mask'})).toBeVisible({timeout:120_000});
+  await expect(page.getByRole('application',{name:'Pratinjau penyuntingan mask'})).toBeVisible({timeout:120_000});
   await page.screenshot({path:testInfo.outputPath('portrait-mask.png'),fullPage:true});
   const preview=page.getByLabel('Pratinjau penyuntingan mask');await preview.scrollIntoViewIfNeeded();const box=await preview.boundingBox();if(!box)throw new Error('Missing preview');
   const before=await preview.evaluate(node=>{const c=node as HTMLCanvasElement;return c.getContext('2d')!.getImageData(Math.floor(c.width*.52),Math.floor(c.height*.35),1,1).data[3]});
@@ -38,23 +39,23 @@ test('portrait model runs locally and exports an alpha mask',async({page},testIn
   await preview.focus();const beforePan=await preview.getAttribute('style');await page.keyboard.press('ArrowRight');await expect.poll(()=>preview.getAttribute('style')).not.toBe(beforePan);
   await page.getByRole('button',{name:'Reset tampilan'}).click();await expect(page.getByLabel('Zoom pratinjau mask')).toHaveValue('1');
   await page.getByRole('button',{name:'Mode geser aktif'}).click();
-  await page.getByRole('button',{name:'Buat PNG'}).click();
+  await page.getByRole('button',{name:'Pratinjau hasil'}).click();
   const [download]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Unduh PNG'}).click()]);
   const chunks:Buffer[]=[];for await(const chunk of await download.createReadStream())chunks.push(Buffer.from(chunk));const output=Buffer.concat(chunks);
   expect([...output.subarray(0,8)]).toEqual([137,80,78,71,13,10,26,10]);
   const alpha=await page.evaluate(async data=>{const image=await createImageBitmap(await(await fetch(`data:image/png;base64,${data}`)).blob());const c=document.createElement('canvas');c.width=image.width;c.height=image.height;const x=c.getContext('2d')!;x.drawImage(image,0,0);return {width:c.width,height:c.height,corner:x.getImageData(20,20,1,1).data[3],subject:x.getImageData(Math.floor(c.width*.52),Math.floor(c.height*.35),1,1).data[3]}},output.toString('base64'));
   expect(alpha.width).toBe(768);expect(alpha.height).toBeGreaterThan(768);expect(alpha.corner).toBeLessThan(100);expect(alpha.subject).toBeGreaterThan(150);
+  await page.locator('summary').filter({hasText:'Tepi dan bayangan'}).click();
   await page.getByLabel('Bayangan produk').check();
   await page.getByLabel('Opasitas bayangan').fill('60');await page.getByLabel('Blur bayangan').fill('30');await page.getByLabel('Offset bayangan horizontal').fill('24');await page.getByLabel('Offset bayangan vertikal').fill('32');
   const shadowDelta=await preview.evaluate(async(node,source)=>{const c=node as HTMLCanvasElement,ctx=c.getContext('2d')!,image=await createImageBitmap(await(await fetch(`data:image/png;base64,${source}`)).blob()),before=document.createElement('canvas');before.width=c.width;before.height=c.height;before.getContext('2d')!.drawImage(image,0,0,c.width,c.height);const a=before.getContext('2d')!.getImageData(0,0,c.width,c.height).data,b=ctx.getImageData(0,0,c.width,c.height).data;let count=0;for(let i=0;i<b.length;i+=4)if(a[i+3]<10&&b[i+3]>30)count++;return count},output.toString('base64'));
   expect(shadowDelta).toBeGreaterThan(20);
-  await page.getByRole('button',{name:'Buat PNG'}).click();const [shadowDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Unduh PNG'}).click()]);const shadowChunks:Buffer[]=[];for await(const chunk of await shadowDownload.createReadStream())shadowChunks.push(Buffer.from(chunk));
+  await page.getByRole('button',{name:'Pratinjau hasil'}).click();const [shadowDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Unduh PNG'}).click()]);const shadowChunks:Buffer[]=[];for await(const chunk of await shadowDownload.createReadStream())shadowChunks.push(Buffer.from(chunk));
   expect([...Buffer.concat(shadowChunks).subarray(0,8)]).toEqual([137,80,78,71,13,10,26,10]);
-  await page.getByText('Pengaturan tepi').click();
   await page.getByLabel('Kehalusan tepi (px)').fill('4');await page.getByLabel('Outline (px)').fill('12');await page.getByLabel('Warna outline').fill('#ff0000');
   await expect(page.getByRole('link',{name:'Unduh PNG'})).toHaveCount(0);
   await expect.poll(()=>preview.evaluate(node=>{const c=node as HTMLCanvasElement;const data=c.getContext('2d')!.getImageData(0,0,c.width,c.height).data;let count=0;for(let i=0;i<data.length;i+=4)if(data[i]>200&&data[i+1]<50&&data[i+2]<50&&data[i+3]>50)count++;return count})).toBeGreaterThan(50);
-  await page.getByRole('button',{name:'Buat PNG'}).click();const [effectDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Unduh PNG'}).click()]);
+  await page.getByRole('button',{name:'Pratinjau hasil'}).click();const [effectDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Unduh PNG'}).click()]);
   const effectChunks:Buffer[]=[];for await(const chunk of await effectDownload.createReadStream())effectChunks.push(Buffer.from(chunk));
   const outlinePixels=await page.evaluate(async ([before,after])=>{async function pixels(data:string){const image=await createImageBitmap(await(await fetch(`data:image/png;base64,${data}`)).blob());const c=document.createElement('canvas');c.width=image.width;c.height=image.height;const ctx=c.getContext('2d')!;ctx.drawImage(image,0,0);return ctx.getImageData(0,0,c.width,c.height).data}const a=await pixels(before),b=await pixels(after);let count=0;for(let i=0;i<b.length;i+=4)if(a[i+3]<20&&b[i+3]>50&&b[i]>200&&b[i+1]<50&&b[i+2]<50)count++;return count},[output.toString('base64'),Buffer.concat(effectChunks).toString('base64')]);
   expect(outlinePixels).toBeGreaterThan(50);
@@ -69,9 +70,11 @@ test('portrait model runs locally and exports an alpha mask',async({page},testIn
   expect(requests.filter(value=>!value.startsWith('GET ')||value.includes('portrait.jpg'))).toEqual([]);
   expect(requests.filter(value=>!value.startsWith(`GET ${baseURL}/`)&&!value.startsWith(`GET blob:${baseURL}/`))).toEqual([]);
   expect(requests.some(value=>value.includes('/models/modnet.onnx'))).toBe(true);
-  await page.getByRole('button',{name:'Unduh dan muat model'}).click();
-  await expect(page.getByText('Model siap di perangkat ini.')).toBeVisible({timeout:120_000});
-  await page.getByRole('button',{name:'Tutup model dan bersihkan gambar'}).click();
-  await expect(page.getByRole('button',{name:'Unduh dan muat model'})).toBeVisible();
-  await expect(page.getByRole('heading',{name:'Perbaiki mask'})).toHaveCount(0);
+  // The model loads on page open and stays resident, so a second photo is
+  // processed without another 40 MB download. Pick a new file through the
+  // hidden input used by the drop zone.
+  const modelRequests=requests.filter(value=>value.includes('/models/modnet.onnx')).length;
+  await page.getByLabel('Pilih foto lain').setInputFiles('tests/fixtures/portrait.jpg');
+  await expect(page.getByRole('application',{name:'Pratinjau penyuntingan mask'})).toBeVisible({timeout:120_000});
+  expect(requests.filter(value=>value.includes('/models/modnet.onnx')).length).toBe(modelRequests);
 });

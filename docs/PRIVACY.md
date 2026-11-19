@@ -10,7 +10,7 @@ The app does not intentionally put user file bytes, thumbnails, filenames, or re
 
 ## Public model and processing assets
 
-Background removal requests the public MODNet model and ONNX Runtime WASM from this site's origin only after the user activates model loading. The request is for application assets, not for the user's photo. The model files may be cached by the browser as public static assets. HEIC and PDF/WASM code is loaded from the application origin when the related tool is used.
+Background removal loads the public MODNet model and ONNX Runtime WASM from this site's origin when the tool page opens, so a photo can be processed without an extra step. The request is for application assets, not for the user's photo. The model files may be cached by the browser as public static assets. HEIC and PDF/WASM code is loaded from the application origin when the related tool is used.
 
 ## Limits and verification
 

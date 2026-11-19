@@ -38,7 +38,7 @@ The CSP is hash-based. `pnpm build` emits per-page hashes through Astro's `secur
 
 If the site is ever served under a path prefix instead of a domain root, set `PUBLIC_BASE_PATH` to that prefix. At the domain root the default `/` needs no rewriting.
 
-The deployment must include `public/models/modnet.onnx` and `public/ort/ort-wasm-simd-threaded.wasm` at their existing paths. The portrait tool requests these public assets from the same origin only after the user presses its model-loading button; together they are 40,737,492 bytes. Users' files are processed in the browser and are not intentionally uploaded. See [docs/PRIVACY.md](docs/PRIVACY.md) for the implementation limits and [ASSET_CREDITS.md](ASSET_CREDITS.md) for asset provenance and licenses.
+The deployment must include `public/models/modnet.onnx` and `public/ort/ort-wasm-simd-threaded.wasm` at their existing paths. The portrait tool loads these public assets from the same origin automatically when the tool page opens, then keeps them resident for further photos; together they are 40,737,492 bytes. Users' files are processed in the browser and are not intentionally uploaded. See [docs/PRIVACY.md](docs/PRIVACY.md) for the implementation limits and [ASSET_CREDITS.md](ASSET_CREDITS.md) for asset provenance and licenses.
 
 Contact details live in `src/site-config.ts` and are used by the localized Contact pages, which link to `mailto:` and offer a copy button. Ads are disabled there with no publisher ID; do not set them up until a real provider, consent policy, and network/privacy disclosures are configured.
 
