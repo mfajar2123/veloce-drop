@@ -5,11 +5,11 @@ const browser = await chromium.launch({ headless: true });
 try {
   const page = await browser.newPage();
   for (const [source, outputs] of [
-    ['landing-workspace-sample', [['landing-workspace-sample.webp', 0.84], ['landing-workspace-sample-768.webp', 0.82, 768], ['landing-workspace-compressed.webp', 0.42], ['landing-workspace-compressed-768.webp', 0.4, 768]]],
-    ['landing-product-sample', [['landing-product-sample.webp', 0.8], ['landing-product-sample-768.webp', 0.78, 768]]],
+    ['compress-image-without-losing-quality', [['landing-workspace-sample.webp', 0.84], ['landing-workspace-sample-768.webp', 0.82, 768], ['landing-workspace-compressed.webp', 0.42], ['landing-workspace-compressed-768.webp', 0.4, 768]]],
+    ['why-local-processing-matters', [['landing-product-sample.webp', 0.8], ['landing-product-sample-768.webp', 0.78, 768]]],
   ]) {
-    const base64 = (await readFile(`scripts/assets/${source}.png`)).toString('base64');
-    await page.setContent(`<img id="source" src="data:image/png;base64,${base64}">`);
+    const base64 = (await readFile(`public/images/articles/${source}.webp`)).toString('base64');
+    await page.setContent(`<img id="source" src="data:image/webp;base64,${base64}">`);
     const result = await page.evaluate(async (variants) => {
       const image = document.querySelector('#source');
       await image.decode();

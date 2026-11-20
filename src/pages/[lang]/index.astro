@@ -23,12 +23,11 @@ const latestGuides = (await articlesFor(lang)).slice(0, 3);
   <div class="landing-page" data-lang={lang}>
     <section class="landing-hero" aria-labelledby="landing-title">
       <div class="landing-hero-copy">
-        <p class="eyebrow">{en ? 'Doculven · image and document studio' : 'Doculven · studio foto dan dokumen'}</p>
         <h1 id="landing-title">{en ? 'Files ready. Still on your device.' : 'Berkas beres. Tetap di perangkatmu.'}</h1>
-        <p class="landing-lede">{en ? 'Precision Image & Document Tools. 100% On Your Device.' : 'Olah Foto & Dokumen Presisi. 100% Aman di Perangkat Anda.'}</p>
+        <p class="landing-lede">{en ? 'Resize a portrait, compress a photo or scan a page to PDF in your browser.' : 'Atur ukuran pas foto, kecilkan berkas, atau pindai halaman jadi PDF langsung di browser.'}</p>
         <div class="actions">
           <a class="button" href="#tools">{en ? 'Choose a tool' : 'Pilih alat'}</a>
-          <a class="button secondary" href={en ? '/en/tools/' : '/id/alat/'}>{en ? 'Browse all tools' : 'Jelajahi semua alat'}</a>
+          <a class="button secondary" href={`/${lang}/articles/`}>{en ? 'Read the guides' : 'Baca panduan'}</a>
         </div>
       </div>
       <LandingDemo lang={lang} original={`${assets}${original}`} compressed={`${assets}${compressed}`} originalBytes={originalBytes} compressedBytes={compressedBytes} />
@@ -36,7 +35,6 @@ const latestGuides = (await articlesFor(lang)).slice(0, 3);
 
     <section class="landing-section landing-tools" id="tools" aria-labelledby="tools-title">
       <div class="landing-section-heading">
-        <p class="eyebrow">{en ? 'Start with a task' : 'Mulai dari kebutuhan'}</p>
         <h2 id="tools-title">{en ? 'Find the right tool.' : 'Temukan alat yang pas.'}</h2>
         <p>{en ? 'Search by format or purpose. The full catalog stays one step away.' : 'Cari berdasarkan format atau tujuan. Katalog lengkap tetap mudah dibuka.'}</p>
       </div>
@@ -59,15 +57,13 @@ const latestGuides = (await articlesFor(lang)).slice(0, 3);
 
     <section class="landing-section landing-use-cases" aria-labelledby="use-cases-title">
       <div class="landing-section-heading">
-        <p class="eyebrow">{en ? 'Made for everyday files' : 'Untuk berkas sehari-hari'}</p>
-        <h2 id="use-cases-title">{en ? 'One workspace, a few useful paths.' : 'Satu tempat kerja, banyak alur berguna.'}</h2>
+        <h2 id="use-cases-title">{en ? 'What are you preparing?' : 'Berkas apa yang sedang Anda siapkan?'}</h2>
       </div>
       <LandingScenarios lang={lang} />
     </section>
 
     <section class="landing-section landing-privacy" id="how" aria-labelledby="privacy-title">
       <div class="privacy-story">
-        <p class="eyebrow">{en ? 'A clear path through each file' : 'Alur berkas yang mudah dipahami'}</p>
         <h2 id="privacy-title">{en ? 'Your browser does the processing.' : 'Browser Anda yang mengolah berkas.'}</h2>
         <ol class="privacy-steps">
           <li><strong>{en ? 'Choose a file' : 'Pilih berkas'}</strong><span>{en ? 'Open a tool and select a local image or document.' : 'Buka alat lalu pilih foto atau dokumen dari perangkat.'}</span></li>
@@ -78,14 +74,13 @@ const latestGuides = (await articlesFor(lang)).slice(0, 3);
         <a class="text-link" href={en ? '/en/privacy/' : '/id/privasi/'}>{en ? 'How local processing works' : 'Pelajari pemrosesan lokal'}</a>
       </div>
       <figure class="privacy-image">
-        <img src="/images/landing-product-sample.webp" srcset="/images/landing-product-sample-768.webp 768w, /images/landing-product-sample.webp 1536w" sizes="(max-width: 768px) 100vw, 42vw" alt={en ? 'Synthetic illustration of a small shop preparing a product photo and parcel' : 'Ilustrasi sintetis toko kecil menyiapkan foto produk dan kemasan'} width="1536" height="1024" loading="lazy" />
-        <figcaption>{en ? 'Illustrative scene · no customer files' : 'Ilustrasi · bukan berkas pelanggan'}</figcaption>
+        <img src="/images/landing-product-sample.webp" srcset="/images/landing-product-sample-768.webp 768w, /images/landing-product-sample.webp 1024w" sizes="(max-width: 768px) 100vw, 42vw" alt={en ? 'A workstation with monitors and a keyboard' : 'Meja kerja dengan monitor dan papan ketik'} width="1024" height="623" loading="lazy" />
+        <figcaption><a href="https://www.flickr.com/photos/7655955@N07/7015159835">Full Desk · Hexidecimal</a> · <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a></figcaption>
       </figure>
     </section>
 
     <section class="landing-section landing-guides" aria-labelledby="guides-title">
       <div class="landing-section-heading">
-        <p class="eyebrow">{en ? 'Practical guides' : 'Panduan praktis'}</p>
         <h2 id="guides-title">{en ? 'Answers before you upload.' : 'Jawaban sebelum Anda mengunggah.'}</h2>
         <p>{en ? 'Short, specific guides on file sizes, formats and the rules that reject a file. Written from how these tools actually behave.' : 'Panduan singkat dan spesifik tentang ukuran berkas, format, dan aturan yang membuat berkas ditolak. Ditulis dari perilaku nyata alat ini.'}</p>
       </div>

@@ -341,3 +341,5 @@ input[type=range]{accent-color:var(--brand)}
     @apply bg-background text-foreground;}
   html {
     @apply font-sans;}}
+
+@media(prefers-reduced-motion:no-preference){.scenario-detail:not([hidden]){animation:scenario-enter .2s ease-out}@keyframes scenario-enter{from{opacity:.7;transform:translateY(5px)}}}

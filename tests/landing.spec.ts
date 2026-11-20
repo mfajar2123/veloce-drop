@@ -19,8 +19,8 @@ test('landing shows a working before/after demo and all six sections', async ({ 
   await page.setViewportSize({ width: 1440, height: 960 });
   await page.goto('/id/');
   await expect(page.getByRole('heading', { level: 1, name: /Berkas beres/ })).toBeVisible();
-  await expect(page.getByRole('img', { name: 'Foto contoh sebelum dikompres' })).toBeVisible();
-  await expect(page.getByText(/81,1 KB → 36,2 KB · 55% lebih kecil/)).toBeVisible();
+  await expect(page.getByRole('img', { name: 'Tebing batu merah Sedona sebelum dikompres' })).toBeVisible();
+  await expect(page.getByText(/103,9 KB → 44,9 KB · 57% lebih kecil/)).toBeVisible();
   await expect(page.locator('.landing-page > section')).toHaveCount(6);
   await expect(page.getByRole('slider', { name: 'Perbandingan sebelum dan sesudah' })).toBeVisible();
   await renderBelowFold(page);

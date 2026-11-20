@@ -92,6 +92,7 @@ const licenseLabel = (license?: string) => {
         </figure>
       )}
 
+      <div class="reading-layout">
       {toc.length > 1 && (
         <nav class="article-toc" aria-label={en ? 'On this page' : 'Di halaman ini'}>
           <p class="eyebrow">{en ? 'On this page' : 'Di halaman ini'}</p>
@@ -103,6 +104,7 @@ const licenseLabel = (license?: string) => {
 
       <div class="article-prose" data-article-prose>
         <Content />
+      </div>
       </div>
 
       {tool && (
@@ -168,4 +170,9 @@ const licenseLabel = (license?: string) => {
     .article-prose :global(table){table-layout:fixed;overflow-wrap:anywhere;font-size:.875rem}
     .article-prose :global(th),.article-prose :global(td){padding:8px 6px}
   }
+  .article-body{width:100%;max-width:1100px;margin-inline:auto;min-width:0}
+  .article-head,.article-figure,.article-cta,.article-related{max-width:760px;margin-inline:auto}
+  .article-toc a{display:block;padding:4px 0;text-underline-offset:.2em}
+  @media(min-width:920px){.reading-layout{display:grid;grid-template-columns:minmax(200px,260px) minmax(0,68ch);gap:clamp(32px,5vw,76px);justify-content:center;align-items:start}.article-toc{position:sticky;top:5rem;max-height:calc(100vh - 6rem);overflow:auto}.article-prose{grid-column:2}.article-prose :global(h2:first-child){margin-top:0}}
+  @media(prefers-reduced-motion:no-preference){.article-toc a{transition:transform .16s ease}.article-toc a:is(:hover,:focus-visible){transform:translateX(3px)}}
 </style>

@@ -9,8 +9,8 @@ const toolPath = en ? '/en/compress-image/' : '/id/kompres-foto/';
 
 <div class="landing-demo" data-landing-demo data-tool-path={toolPath}>
   <div class="landing-comparison" style="aspect-ratio: 3 / 2">
-    <img src={original} srcset={`${original.replace('.webp', '-768.webp')} 768w, ${original} 1536w`} sizes="(max-width: 768px) 100vw, 50vw" alt={en ? 'Sample portrait before compression' : 'Foto contoh sebelum dikompres'} width="1536" height="1024" fetchpriority="high" />
-    <img class="landing-comparison-after" src={compressed} srcset={`${compressed.replace('.webp', '-768.webp')} 768w, ${compressed} 1536w`} sizes="(max-width: 768px) 100vw, 50vw" alt="" aria-hidden="true" width="1536" height="1024" style="clip-path: inset(0 0 0 52%)" />
+    <img src={original} srcset={`${original.replace('.webp', '-768.webp')} 768w, ${original} 1024w`} sizes="(max-width: 768px) 100vw, 50vw" alt={en ? 'Red sandstone in Sedona before compression' : 'Tebing batu merah Sedona sebelum dikompres'} width="1024" height="1024" fetchpriority="high" />
+    <img class="landing-comparison-after" src={compressed} srcset={`${compressed.replace('.webp', '-768.webp')} 768w, ${compressed} 1024w`} sizes="(max-width: 768px) 100vw, 50vw" alt="" aria-hidden="true" width="1024" height="1024" style="clip-path: inset(0 0 0 52%)" />
     <span class="landing-divider" style="left: 52%" aria-hidden="true"></span>
     <span class="landing-image-label before">{en ? 'Original' : 'Asli'}</span>
     <span class="landing-image-label after">{en ? 'Compressed' : 'Terkompresi'}</span>
@@ -20,10 +20,10 @@ const toolPath = en ? '/en/compress-image/' : '/id/kompres-foto/';
     </label>
   </div>
   <div class="landing-demo-caption">
-    <p>{en ? 'A real sample, encoded in the browser' : 'Contoh nyata, dikodekan di browser'}<br /><strong>{formatBytes(originalBytes)} KB → {formatBytes(compressedBytes)} KB</strong> · {saved}% {en ? 'smaller' : 'lebih kecil'}</p>
+    <p>{en ? 'Drag to compare the rock texture' : 'Geser untuk membandingkan tekstur batu'}<br /><strong>{formatBytes(originalBytes)} KB → {formatBytes(compressedBytes)} KB</strong> · {saved}% {en ? 'smaller' : 'lebih kecil'}</p>
     <button class="button" type="button" data-landing-try>{en ? 'Try this sample' : 'Coba foto contoh'}</button>
   </div>
-  <p class="notice">{en ? 'Synthetic demonstration image. Your own files stay on this device while processing.' : 'Foto ilustrasi sintetis. Berkas Anda tetap di perangkat saat diproses.'}</p>
+  <p class="notice"><a href="https://www.flickr.com/photos/24742305@N00/5459347350">Sedona in the Fall · John-Morgan</a> · <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a> · WebP</p>
 </div>
 
 <script>
