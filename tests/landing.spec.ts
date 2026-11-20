@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-import { catalog } from '../src/tool-registry';
 
 async function renderBelowFold(page: import('@playwright/test').Page) {
   const sections = page.locator('.landing-page > section');
@@ -44,14 +43,9 @@ test('landing shows a working before/after demo and all seven sections', async (
 
 test('landing tool search and use-case choices navigate to the selected tools', async ({ page }) => {
   await page.goto('/id/');
-  await expect(page.locator('.home-tool-row:visible')).toHaveCount(6);
-  await page.getByRole('button', { name: /Tampilkan \d+ alat lain/ }).click();
-  await expect(page.locator('.home-tool-row:visible')).toHaveCount(catalog.length);
-  await expect(page.getByRole('button', { name: 'Tampilkan lebih sedikit' })).toHaveAttribute('aria-expanded', 'true');
-  await page.getByRole('searchbox', { name: 'Cari alat' }).fill('HEIC');
-  await expect(page.locator('.home-tool-row:visible')).toHaveCount(1);
-  await expect(page.getByRole('link', { name: 'Konversi format gambar' })).toHaveAttribute('href', '/id/konversi/gambar/');
-
+  await expect(page.locator('#tools .featured-tool')).toHaveCount(3);
+  await expect(page.locator('#tools').getByRole('searchbox')).toHaveCount(0);
+  await expect(page.getByRole('link', {name:'Lihat semua alat'})).toHaveAttribute('href','/id/alat/');
   await page.getByRole('button', { name: 'Menyiapkan foto produk' }).click();
   await expect(page.getByRole('heading', { name: 'Menyiapkan foto produk' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Resize & watermark logo' })).toHaveAttribute('href', '/id/watermark-logo-massal/');
