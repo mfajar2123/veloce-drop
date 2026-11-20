@@ -375,3 +375,9 @@ input[type=range]{accent-color:var(--brand)}
 .footer .footer-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 24px}
 .footer .footer-email{overflow-wrap:anywhere}
 @media(max-width:650px){.landing-tools .home-tool-list{grid-template-columns:1fr}.footer .footer-links{grid-template-columns:1fr 1fr}.info-index{display:grid;gap:0}}
+
+@media(max-width:700px){
+  .breadcrumbs a{display:inline-flex;align-items:center;min-height:32px}
+  .mobile-menu{overflow-y:auto;overscroll-behavior:contain;padding-bottom:max(24px,env(safe-area-inset-bottom))}
+  .workspace :is(input[type=text],input[type=number],select,textarea),input[type=search]{font-size:1rem}
+}

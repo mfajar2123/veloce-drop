@@ -1,0 +1,65 @@
+﻿---
+const { en } = Astro.props as { en: boolean };
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const catalog = base + (en ? '/en/tools/' : '/id/alat/');
+const inCatalog = Astro.url.pathname === catalog;
+---
+<aside class="welcome" data-welcome hidden aria-labelledby="welcome-title">
+  <div class="welcome-head">
+    <img src={base + '/brand/doculven-mark.svg'} width="40" height="40" alt="" />
+    <button class="welcome-close" type="button" data-dismiss aria-label={en ? 'Close welcome message' : 'Tutup pesan sambutan'}>×</button>
+  </div>
+  <h2 id="welcome-title">{en ? 'Welcome to Doculven' : 'Selamat datang di Doculven'}</h2>
+  <p>{en ? 'Crop a photo, scan a page or make a PDF. Your files are processed right here on your device.' : 'Potong pas foto, pindai dokumen, atau buat PDF. Berkas Anda diproses langsung di perangkat ini.'}</p>
+  {inCatalog ? <button class="welcome-action" type="button" data-dismiss>{en ? 'Choose a tool' : 'Mulai pilih alat'}</button> :
+    <a class="welcome-action" href={catalog}>{en ? 'Explore the tools' : 'Jelajahi alat'} <span aria-hidden="true">→</span></a>}
+</aside>
+
+<script>
+  const key = 'doculven.welcome.seen';
+  let shown = false;
+  function showWelcome() {
+    const card = document.querySelector<HTMLElement>('[data-welcome]');
+    if (!card || shown) return;
+    try {
+      if (localStorage.getItem(key) || sessionStorage.getItem(key)) return;
+    } catch { /* Storage can be disabled in private browsing. */ }
+    shown = true;
+    card.hidden = false;
+    try { localStorage.setItem(key, '1'); }
+    catch { try { sessionStorage.setItem(key, '1'); } catch { /* Use in-memory state. */ } }
+    const events = new AbortController();
+    function dismiss() {
+      const focusInside = card!.contains(document.activeElement);
+      card!.hidden = true;
+      events.abort();
+      if (focusInside) {
+        const main = document.querySelector<HTMLElement>('main');
+        main?.setAttribute('tabindex', '-1');
+        main?.focus({ preventScroll: true });
+      }
+    }
+    card.querySelectorAll('[data-dismiss]').forEach(button => button.addEventListener('click', dismiss));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') dismiss();
+    }, { signal: events.signal });
+    document.addEventListener('pointerdown', event => {
+      if (event.target instanceof Node && !card.contains(event.target)) dismiss();
+    }, { signal: events.signal });
+    document.addEventListener('astro:before-swap', () => events.abort(), { once: true });
+  }
+  showWelcome();
+  document.addEventListener('astro:page-load', showWelcome);
+</script>
+
+<style>
+  .welcome{position:fixed;z-index:20;inset:auto max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) auto;width:min(350px,calc(100% - 32px));box-sizing:border-box;max-height:80dvh;overflow:auto;padding:22px;background:#f8fcf9;color:#183b31;border:1px solid #a7c5b6;border-radius:16px;box-shadow:0 12px 42px #103c3029}
+  .welcome[hidden]{display:none}
+  .welcome-head{display:flex;align-items:center;justify-content:space-between}
+  .welcome-close{display:grid;place-items:center;width:44px;height:44px;color:#34564b;border:0;border-radius:50%;background:transparent;font:400 26px/1 sans-serif}
+  .welcome-close:hover{background:#deeee4}
+  .welcome h2{margin:14px 0 6px;font-size:1.4rem;line-height:1.2;letter-spacing:-.03em}
+  .welcome p{margin:0 0 16px;color:#365448;line-height:1.5}
+  .welcome-action{display:inline-flex;align-items:center;justify-content:space-between;gap:18px;min-height:44px;padding:0 16px;background:#065f46;color:white;font-weight:700;text-decoration:none;border:0;border-radius:7px}
+  @media(prefers-reduced-motion:no-preference){.welcome:not([hidden]){animation:welcome-enter .24s ease-out}.welcome-action span{transition:transform .16s}.welcome-action:is(:hover,:focus-visible) span{transform:translateX(3px)}@keyframes welcome-enter{from{opacity:0;transform:translateY(12px)}}}
+</style>

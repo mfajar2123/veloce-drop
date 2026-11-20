@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import '../styles/presets.css';
+import WelcomeNotice from '../components/WelcomeNotice.astro';
 import {ClientRouter} from 'astro:transitions';
 import SessionTray from '../components/SessionTray.astro';
 import ToolReference from '../components/ToolReference.astro';
@@ -117,6 +118,7 @@ const documentTitle=article?pageTitle:`${pageTitle} | Doculven`;
         </div>
       </div>
     </footer>
+    <WelcomeNotice en={en} />
   </body>
 </html>
 <script>
