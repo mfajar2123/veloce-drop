@@ -5,6 +5,9 @@
 [build.environment]
   NODE_VERSION = "22"
 
+[context.production.environment]
+  PUBLIC_SITE_URL = "https://doculven.biz.id"
+
 # Netlify applies dist/_headers, which the postbuild step regenerates with the
 # script hashes Astro emits. Do not declare Content-Security-Policy here: a
 # second, hashless policy would be enforced alongside it and block the site's
