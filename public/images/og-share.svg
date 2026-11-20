@@ -4,8 +4,10 @@
   <rect width="1200" height="630" fill="#f8fafc"/>
   <path d="M900 0h300v630H780c171-117 246-279 120-630Z" fill="#e2e8f0"/>
   <path d="M1010 0h190v630H930c105-144 152-315 80-630Z" fill="#d1fae5"/>
-  <rect x="84" y="76" width="52" height="52" rx="14" fill="#065f46"/>
-  <path d="M99 90h8c6 0 10 5 10 12s-4 12-10 12h-8V90Zm5 5v14h3c3 0 5-3 5-7s-2-7-5-7h-3Z" fill="#fff"/>
+  <g transform="translate(84 76) scale(.8125)"><rect width="64" height="64" rx="14" fill="#065f46"/>
+  <path fill="#fff" fill-rule="evenodd" d="M14 15h17c13 0 22 8 22 20S44 54 31 54H14V15zm10 10v19h7c7 0 12-3 12-9s-5-10-12-10h-7z"/>
+  <path fill="#a7f3d0" d="M14 15 32 7v12L14 27z"/>
+</g>
   <text x="154" y="115" fill="#065f46" font-family="Arial,sans-serif" font-size="30" font-weight="700">Doculven</text>
   <text x="84" y="275" fill="#0f172a" font-family="Arial,sans-serif" font-size="66" font-weight="700" letter-spacing="-2">Precision image</text>
   <text x="84" y="352" fill="#0f172a" font-family="Arial,sans-serif" font-size="66" font-weight="700" letter-spacing="-2">&amp; document tools.</text>

@@ -6,6 +6,7 @@ summary: "Kompres foto JPG atau WebP sesuai batas formulir, pilih resolusi yang 
 category: compression
 toolId: compress-image
 publishedAt: 2026-11-19
+updatedAt: 2026-11-20
 readingMinutes: 6
 image: /images/articles/why-200kb-targets-fail.webp
 imageAlt: "Tampilan dekat lensa kamera"
@@ -17,6 +18,12 @@ related:
 ---
 
 Formulir bisa menolak foto yang tajam hanya karena ukurannya melewati batas beberapa kilobyte. Sebaliknya, berkas yang berhasil masuk belum tentu masih mudah dibaca. Sebelum kompres foto untuk unggahan, cari tiga informasi pada petunjuk formulir: format yang diterima, batas ukuran berkas, dan batas dimensi dalam piksel. Ketiganya bisa diperiksa secara terpisah. Mengubah resolusi, misalnya, tidak otomatis membuat berkas sesuai apabila format yang dipilih masih salah.
+
+## Kompres foto untuk batas unggah 200 KB
+
+Coba [JPG awal berukuran 243.248 byte](/examples/converted.jpg) di [alat kompres foto](/id/kompres-foto/). Pilih JPEG, isi target 200 KB, lalu kompres. Pada pengujian Chromium di Windows, [JPG hasil kompresi](/examples/upload-200kb.jpg) berukuran **164.025 byte**. Batas alat adalah 200.000 byte. Jadi masih ada ruang 35.975 byte pada contoh ini.
+
+Buka kedua gambar pada pembesaran 100%. Perhatikan batas antarwarna serta detail kecil, lalu cek dimensi di properti berkas. Jika formulir meminta pas foto 3×4 sekaligus JPG maksimal 200 KB, selesaikan crop terlebih dahulu. Gunakan hasil crop sebagai masukan kompresi supaya yang Anda periksa adalah berkas terakhir yang akan diunggah.
 
 ## Catat batas untuk setiap lampiran
 

@@ -6,6 +6,7 @@ summary: "Capture a paper document, straighten the corners, inspect the scan, an
 category: documents
 toolId: document-scanner
 publishedAt: 2026-11-19
+updatedAt: 2026-11-20
 readingMinutes: 6
 image: /images/articles/photos-to-pdf-page-order.webp
 imageAlt: "A stack of paper sheets seen from the side"
@@ -17,6 +18,14 @@ related:
 ---
 
 A photograph can contain all the words on a page and still make a poor document scan. The desk may take up half the frame, the bottom half of the sheet may be wider than the top, and a shadow from the phone can make a signature hard to read. To scan a document to PDF with a phone, start with a clean capture and check the corrected page before deciding how to send it.
+
+## Try a one-page A4 scan before opening the camera
+
+Download the [900 × 1200 sample document image](/examples/scan-page.png) and open the [document scanner](/en/scan-document/). Choose the image from your device. The tilted sheet and dark desk make it easy to see whether the four handles land on the paper. Select PDF, preview the scan and inspect the top and bottom rows before saving.
+
+Open the [actual A4 PDF exported from that image](/examples/scan-a4.pdf). Its single page measures 210 × 297 mm. Compare the edges with the tilted input. A straight border tells you about alignment; it cannot tell you whether small handwriting in a real photograph was in focus.
+
+We tested the file-to-PDF path in Chromium at a 320-pixel viewport on Windows. Camera capture was exercised separately with a simulated video device. On your phone, use a well-lit printed page for the first camera test. If camera access is unavailable, take the picture in your camera app and choose it from the scanner.
 
 ## Decide what the recipient needs
 

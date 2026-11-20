@@ -15,14 +15,16 @@ async function renderBelowFold(page: import('@playwright/test').Page) {
   });
 }
 
-test('landing shows a working before/after demo and all six sections', async ({ page }, testInfo) => {
+test('landing shows a working before/after demo and all seven sections', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 960 });
   await page.goto('/id/');
   await expect(page.getByRole('heading', { level: 1, name: /Berkas beres/ })).toBeVisible();
   await expect(page.getByRole('img', { name: 'Tebing batu merah Sedona sebelum dikompres' })).toBeVisible();
   await expect(page.getByText(/103,9 KB → 44,9 KB · 57% lebih kecil/)).toBeVisible();
-  await expect(page.locator('.landing-page > section')).toHaveCount(6);
+  await expect(page.locator('.landing-page > section')).toHaveCount(7);
   await expect(page.getByRole('slider', { name: 'Perbandingan sebelum dan sesudah' })).toBeVisible();
+  await page.locator("#print-size").selectOption({ index: 2 });
+  await expect(page.locator(".photo-outline")).toBeVisible();
   await renderBelowFold(page);
   await page.screenshot({ path: `test-results/landing-${testInfo.project.name}-desktop.png`, fullPage: true });
   await page.locator('#how').scrollIntoViewIfNeeded();
@@ -31,6 +33,8 @@ test('landing shows a working before/after demo and all six sections', async ({ 
 
   await page.setViewportSize({ width: 320, height: 780 });
   await expect(page.locator('body')).toHaveJSProperty('scrollWidth', 320);
+  await page.locator("#print-size").selectOption({ index: 2 });
+  await expect(page.locator(".photo-outline")).toBeVisible();
   await renderBelowFold(page);
   await page.screenshot({ path: `test-results/landing-${testInfo.project.name}-mobile.png`, fullPage: true });
   await page.locator('#how').scrollIntoViewIfNeeded();

@@ -6,6 +6,7 @@ summary: iPhone photos are HEIC. Windows often cannot open them. Here is what th
 category: conversion
 toolId: image-converter
 publishedAt: 2026-11-13
+updatedAt: 2026-11-20
 readingMinutes: 6
 image: /images/articles/heic-to-jpg-on-windows.webp
 imageAlt: "Two people taking photographs with smartphones outdoors"
@@ -18,6 +19,14 @@ related:
 ---
 
 You copied photos from an iPhone to a Windows PC, double-clicked one, and Windows said it could not open the file. The extension is `.heic`. Nothing is corrupted. Windows simply lacks the codec by default in many configurations.
+
+## Convert an iPhone HEIC to JPG on Windows and check the result
+
+To try the workflow before copying photos from your phone, save the [sample HEIC file](/examples/basic-8bit-srgb.heic). In the [image converter](/en/convert-image/), choose HEIC, select the file and convert it to JPG. Open the downloaded JPG in Windows and compare its dimensions with the preview.
+
+Our Windows Chromium test decoded the primary image in this 8-bit sRGB file and produced a **1600 × 1200 JPEG weighing 243,248 bytes**. You can open the [actual JPEG output](/examples/converted.jpg) for comparison. The test checked the JPEG signature, decoded the downloaded file and verified both dimensions. The JPG was larger than the 183,061-byte HEIC, which matters if you are converting for an upload limit.
+
+The input is a [CC0 test image from heic.fyi](https://heic.fyi/heic-sample-files). This result covers a single SDR image. For an iPhone Live Photo, keep the original assets if you need motion or audio. For an HDR photo, inspect bright highlights on the screen where you intend to share it.
 
 ## What HEIC actually is
 

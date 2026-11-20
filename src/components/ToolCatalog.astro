@@ -75,4 +75,9 @@ const en = lang === 'en';
   .catalog-packages button[aria-pressed="true"]{background:#065f46;color:#fff}
   [data-tool-list]{margin-top:12px}
   [data-tool-list] [hidden],[data-empty][hidden]{display:none!important}
+  [data-tool-list]{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:12px;background:transparent;border:0}
+  [data-tool-list] .tool-row{position:relative;display:grid;align-content:start;gap:6px;border:1px solid var(--line);border-radius:8px;padding:18px 44px 18px 18px;background:white}
+  [data-tool-list] .tool-row span{text-align:start}
+  [data-tool-list] .tool-row::after{content:"→";position:absolute;right:16px;top:18px;color:var(--brand)}
+  [data-tool-list] .tool-row:is(:hover,:focus-visible){border-color:var(--brand);background:#f3faf6}
 </style>

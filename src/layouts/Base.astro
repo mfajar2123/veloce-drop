@@ -68,12 +68,12 @@ const documentTitle=article?pageTitle:`${pageTitle} | Doculven`;
     {faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}/>}
     {article && <script type="application/ld+json" set:html={JSON.stringify({ '@context':'https://schema.org', '@type':'Article', headline:pageTitle, description:pageDescription, datePublished:new Date(article.publishedAt).toISOString(), ...(article.updatedAt?{dateModified:new Date(article.updatedAt).toISOString()}:{}), inLanguage:lang, mainEntityOfPage:{'@type':'WebPage','@id':canonical}, author:{'@type':'Organization',name:'Doculven'}, publisher:{'@type':'Organization',name:'Doculven'}, image:socialImage })}/>}
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}/>}
-    <link rel="icon" href={`${basePath}favicon-96.png`} type="image/png" sizes="96x96"/><link rel="alternate" type="application/rss+xml" title="Doculven guides" href={`${basePath}rss.xml`}/>{tool && <ClientRouter />}
+    <link rel="icon" href={`${basePath}favicon-96.png`} type="image/png" sizes="96x96"/><link rel="icon" href={`${basePath}favicon.svg`} type="image/svg+xml"/><link rel="apple-touch-icon" href={`${basePath}apple-touch-icon.png`}/><link rel="alternate" type="application/rss+xml" title="Doculven guides" href={`${basePath}rss.xml`}/>{tool && <ClientRouter />}
   </head>
   <body>
     <a class="skip" href="#main">{en ? 'Skip to content' : 'Lewati ke konten'}</a>
     <header class="header">
-      <div class="wrap nav"><a class="brand" href={`/${lang}/`}><span class="brand-mark" aria-hidden="true">D</span>Doculven</a>
+      <div class="wrap nav"><a class="brand" href={`/${lang}/`}><img src={`${basePath}brand/doculven-mark.svg`} width="34" height="34" alt="" />Doculven</a>
         <nav class="links" aria-label={en ? 'Main navigation' : 'Navigasi utama'}>
           <a href={`/${lang}/#tools`}>{en ? 'Tools' : 'Alat'}</a>
           <a href={`/${lang}/articles/`}>{en ? 'Guides' : 'Panduan'}</a>
@@ -100,7 +100,7 @@ const documentTitle=article?pageTitle:`${pageTitle} | Doculven`;
     <footer class="footer">
       <div class="wrap">
         <div class="footer-intro">
-          <a class="brand" href={`/${lang}/`}><span class="brand-mark" aria-hidden="true">D</span>Doculven</a>
+          <a class="brand" href={`/${lang}/`}><img src={`${basePath}brand/doculven-mark.svg`} width="34" height="34" alt="" />Doculven</a>
           <p>{en ? 'Edit images and documents on your device.' : 'Olah foto dan dokumen langsung di perangkatmu.'}</p>
           <a class="footer-email" href={`mailto:${siteConfig.contact.email}`}>{siteConfig.contact.email}</a>
         </div>

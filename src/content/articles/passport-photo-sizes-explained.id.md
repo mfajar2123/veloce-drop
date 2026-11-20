@@ -6,6 +6,7 @@ summary: Rujukan praktis untuk 2×3, 3×4, 4×6 cm, 2×2 inci, dan 35×45 mm, pl
 category: resize
 toolId: resize-image
 publishedAt: 2026-11-15
+updatedAt: 2026-11-20
 readingMinutes: 9
 image: /images/articles/passport-photo-sizes-explained.webp
 imageAlt: "Potret hitam putih dengan latar polos"
@@ -18,6 +19,14 @@ related:
 ---
 
 Persyaratan ukuran foto berbeda menurut negara dan instansi yang memintanya. Panduan ini memberikan dimensi umum beserta padanan pikselnya pada 300 DPI, resolusi yang diasumsikan sebagian besar sistem cetak dan unggah. Ini bukan pengganti panduan resmi dari instansi tempat Anda melamar.
+
+## Pas foto 3×4 berapa piksel? Contoh cetak pada 300 DPI
+
+Untuk bidang 30 × 40 mm pada 300 DPI, hasil pembulatan ke piksel terdekat adalah **354 × 472 piksel**. Lebar dihitung dari 30 ÷ 25,4 × 300. Tinggi dihitung dengan cara yang sama dari 40 mm. Jika formulir menentukan ukuran piksel sendiri, ikuti angka pada formulir.
+
+Bandingkan [foto sumber](/images/articles/passport-photo-sizes-explained.webp) dengan [hasil crop PNG 3×4](/examples/pas-foto-3x4.png). Buka properti PNG untuk memeriksa dimensinya. [Lembar PDF A4 contoh](/examples/pas-foto-a4.pdf) menempatkan dua salinan di bagian atas kertas. Pilih kertas A4 dan **Ukuran sebenarnya / Actual size (100%)** saat mencetak. Ukur bidang foto di antara tanda potong dengan penggaris. Lebarnya seharusnya 30 mm dan tingginya 40 mm. Jika ukurannya meleset, cek apakah aplikasi cetak mengaktifkan *Fit to page*.
+
+Untuk membuat lembar sendiri, buka [alat cetak foto](/id/cetak-foto/). Foto contoh dan adaptasi crop berasal dari *Portrait practice session* karya James Willamor, berlisensi [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).
 
 ## Matematika piksel lebih dulu
 

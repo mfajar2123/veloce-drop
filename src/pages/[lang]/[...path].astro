@@ -35,7 +35,7 @@ export function getStaticPaths() {
   const toolLead: Record<string, { id: string; en: string }> = {
     'compress-image': { id: 'Pilih gambar, tentukan target, lalu unduh hasilnya.', en: 'Choose an image, set a target, and download the actual result.' },
     batch: { id: 'Tambahkan gambar, tentukan target, lalu unduh hasil satu per satu atau sebagai ZIP.', en: 'Add images, set a target and download each result or a ZIP.' },
-    'resize-image': { id: 'Atur dimensi hasil, pilih mode crop, lalu unduh PNG.', en: 'Set output dimensions, choose a crop mode, and download a PNG.' },
+    'resize-image': { id: 'Pilih ukuran, geser foto untuk mengatur potongan, lalu unduh PNG.', en: 'Choose a size, drag the photo into position, then download the PNG.' },
     'image-converter': { id: 'Pilih format sumber, periksa pratinjau hasil, lalu unduh berkas konversi.', en: 'Choose a source format, inspect the output preview, and download the converted file.' },
     background: { id: 'Muat model, pilih potret, lalu perbaiki mask.', en: 'Load the model, choose a portrait and refine the mask.' },
     'logo-watermark': { id: 'Tambahkan logo pada beberapa gambar produk, lalu unduh hasilnya.', en: 'Place a logo on multiple product images and download the results.' },
@@ -121,8 +121,11 @@ const en = lang === 'en';
 ) : (
   <Base lang={lang} title={props.title} description={props.description}>
     <div class="wrap workspace workspace-compact">
+      <header class="tool-intro">
+        <a class="text-link" href={en ? "/en/tools/" : "/id/alat/"}>{en ? "← All tools" : "← Semua alat"}</a>
       <h1>{props.title}</h1>
       <p class="lead">{props.lead}</p>
+      </header>
       {props.toolId === 'compress-image' && <Compressor lang={lang} initialTarget={props.targetKB ?? 200} client:load />}
       {props.toolId === 'batch' && <BatchCompressor lang={lang} client:load />}
       {props.toolId === 'resize-image' && <ResizeStudio lang={lang} preset={props.preset ?? '3x4'} client:load />}
