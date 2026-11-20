@@ -1,3 +1,4 @@
+import { withDocuments } from './DocumentWorkspace';
 import { useEffect, useRef, useState } from 'react';
 import type { PDFDocumentLoadingTask, RenderTask } from 'pdfjs-dist';
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -21,7 +22,7 @@ function parsePages(value:string,total:number):number[]{
   return [...pages].sort((a,b)=>a-b);
 }
 
-export default function PdfToImages({lang}:{lang:string}){
+function PdfToImages({lang}:{lang:string}){
   const en=lang==='en';const [file,setFile]=useState<File|null>(null);const [count,setCount]=useState(0);const [pages,setPages]=useState('');
   const [dpi,setDpi]=useState(144);const [busy,setBusy]=useState(false);const [progress,setProgress]=useState('');
   const [outputs,setOutputs]=useState<Output[]>([]);const [archive,setArchive]=useState<Archive|null>(null);const [errors,setErrors]=useState<string[]>([]);
@@ -93,7 +94,7 @@ export default function PdfToImages({lang}:{lang:string}){
     finally{await task?.destroy().catch(()=>{});if(id===generation.current){loading.current=null;rendering.current=null;setBusy(false)}}
   }
   return <section className="panel"><p className="local">{en?'Processed on your device. The PDF is not sent for processing.':'Diproses di perangkat Anda. PDF tidak dikirim untuk pemrosesan.'}</p>
-    <label>{en?'Choose a PDF (up to 20 MB and 30 pages)':'Pilih PDF (maks. 20 MB dan 30 halaman)'} <input type="file" accept="application/pdf" disabled={busy} onChange={e=>void choose(e.target.files?.[0])}/></label>
+    <label>{en?'Choose a PDF (up to 20 MB and 30 pages)':'Pilih PDF (maks. 20 MB dan 30 halaman)'} <input type="file" multiple accept="application/pdf" disabled={busy} onChange={e=>void choose(e.target.files?.[0])}/></label>
     {file&&<><p>{file.name} · {count} {en?'pages':'halaman'}</p><div className="controls"><label>{en?'Pages (empty = all)':'Halaman (kosong = semua)'}<input type="text" maxLength={120} placeholder="1,3-5" value={pages} disabled={busy} onChange={e=>{setPages(e.target.value);clearOutputs()}}/></label><label>{en?'Resolution (DPI)':'Resolusi (DPI)'}<select value={dpi} disabled={busy} onChange={e=>{setDpi(Number(e.target.value));clearOutputs()}}><option value="72">72</option><option value="144">144</option><option value="200">200</option></select></label><button className="button" disabled={busy} onClick={()=>void convert()}>{en?'Convert pages':'Konversi halaman'}</button></div></>}
     {busy&&<button className="button secondary" style={{marginTop:16}} onClick={cancel}>{en?'Cancel':'Batalkan'}</button>}
     <p aria-live="polite">{progress}</p><p className="notice">{en?'Pages render one at a time. Annotations and interactive elements are not included. Large pages may require a lower resolution.':'Halaman dirender satu per satu. Anotasi dan elemen interaktif tidak disertakan. Halaman besar mungkin memerlukan resolusi lebih rendah.'}</p>
@@ -101,3 +102,5 @@ export default function PdfToImages({lang}:{lang:string}){
     {outputs.length>0&&<div className="result"><h2>{en?'Converted pages':'Halaman hasil'}</h2>{archive&&<p><a className="button download" href={archive.url} download="pages.zip">{en?'Download ZIP':'Unduh ZIP'} ({archive.bytes.toLocaleString(en?'en':'id')} bytes)</a></p>}<ul>{outputs.map(item=><li key={item.page}><p>{en?'Page':'Halaman'} {item.page} · {item.width} × {item.height} px · {item.bytes.toLocaleString(en?'en':'id')} bytes</p><img src={item.url} alt={`${en?'Page':'Halaman'} ${item.page}`} loading="lazy" width={item.width} height={item.height}/><p><a className="button download" href={item.url} download={`page-${String(item.page).padStart(3,'0')}.jpg`}>{en?'Download page':'Unduh halaman'} {item.page}</a></p></li>)}</ul><WorkflowActions lang={lang} blob={outputs[0].blob} width={outputs[0].width} height={outputs[0].height} steps={[{path:toolHref('resize-image',lang as 'id'|'en'),id:'Atur ukuran JPG',en:'Resize this JPG'},{path:toolHref('compress-image',lang as 'id'|'en'),id:'Kompres JPG',en:'Compress this JPG'}]}/></div>}
   </section>;
 }
+
+export default withDocuments(PdfToImages);

@@ -5,7 +5,8 @@ import { canvasToBlob, detectDocumentQuad, enhanceDocument, imageDataToCanvas, w
 import WorkflowActions from './WorkflowActions';
 
 type Stage = 'idle' | 'live' | 'review' | 'result';
-type Output = { url: string; preview: string; blob: Blob; width: number; height: number };
+type ScanPage = { jpeg: Blob; png?: Blob; width: number; height: number };
+type Output = ScanPage & { url: string; preview: string; blob: Blob; width: number; height: number };
 
 const MAX_INPUT_PIXELS = 24_000_000;
 const LIVE_INTERVAL = 180;
@@ -60,6 +61,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
   const [frame, setFrame] = useState<{ width: number; height: number } | null>(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [outputs, setOutputs] = useState<Output[]>([]);
+  const [savedPages, setSavedPages] = useState<ScanPage[]>([]);
   const [resultPreviewReady, setResultPreviewReady] = useState(false);
   const [format, setFormat] = useState<'jpeg' | 'pdf'>('jpeg');
   const [enhance, setEnhance] = useState(true);
@@ -359,20 +361,22 @@ export default function DocumentScanner({ lang }: { lang: string }) {
       const warped = warpQuad(image, corners, { maxLongSide: 3200 });
       const processed = enhance ? enhanceDocument(warped) : warped;
       const canvas = imageDataToCanvas(processed);
-      const blob = format === 'jpeg'
-        ? await canvasToBlob(canvas, 'image/jpeg', 0.97)
-        : await buildPdf(canvas);
-      const previewBlob = format === 'pdf' ? await encodePdfPreview(canvas) : blob;
-
+      const jpeg = await canvasToBlob(canvas, 'image/jpeg', 0.97);
+      const png=format==='pdf'?await canvasToBlob(canvas,'image/png',1):undefined;
+      const current = {jpeg,png,width:canvas.width,height:canvas.height};
+      const pages = [...savedPages,current];
+      if (pages.reduce((sum,page)=>sum+page.jpeg.size+(page.png?.size??0),0)>64_000_000) throw new Error('scan-limit');
+      const blob = await packagePages(pages,format);
+      const previewBlob = pages.length>1 || format==='pdf' ? await encodePdfPreview(canvas) : jpeg;
       if (!aliveRef.current) return;
       releaseOutputs();
       const url = URL.createObjectURL(blob);
       const preview = previewBlob === blob ? url : URL.createObjectURL(previewBlob);
       urlsRef.current.add(url).add(preview);
-      setOutputs([{ url, preview, blob, width: processed.width, height: processed.height }]);
+      setOutputs([{ url, preview, blob, jpeg, png, width: processed.width, height: processed.height }]);
       setStage('result');
     } catch (cause) {
-      setError(cause instanceof Error && cause.message === 'empty'
+      setError(cause instanceof Error && cause.message === 'scan-limit' ? (en?'The scans exceed 64 MB. Export the saved pages as a separate document.':'Hasil scan melebihi 64 MB. Ekspor halaman tersimpan sebagai dokumen terpisah.') : cause instanceof Error && cause.message === 'empty'
         ? (en ? 'The selected corners are too small to make a page.' : 'Sudut yang dipilih terlalu kecil untuk membuat halaman.')
         : (en ? 'The page could not be exported. Try again or reset the corners.' : 'Halaman tidak dapat diekspor. Coba lagi atau atur ulang sudutnya.'));
     } finally {
@@ -380,24 +384,26 @@ export default function DocumentScanner({ lang }: { lang: string }) {
     }
   }
 
-  async function buildPdf(canvas: HTMLCanvasElement): Promise<Blob> {
-    const { PDFDocument } = await import('pdf-lib');
-    const document = await PDFDocument.create();
-    const encoded = await canvasToBlob(canvas, 'image/png', 1);
-    const embedded = await document.embedPng(await encoded.arrayBuffer());
-    // A4 in points, then fit the page inside it with a 10 mm margin.
-    const pageWidth = 595.28;
-    const pageHeight = 841.89;
-    const margin = (10 * 72) / 25.4;
-    const scale = Math.min((pageWidth - margin * 2) / canvas.width, (pageHeight - margin * 2) / canvas.height);
-    const width = canvas.width * scale;
-    const height = canvas.height * scale;
-    const page = document.addPage([pageWidth, pageHeight]);
-    page.drawImage(embedded, { x: (page.getWidth() - width) / 2, y: (page.getHeight() - height) / 2, width, height });
-    const bytes = await document.save();
-    return new Blob([bytes as BlobPart], { type: 'application/pdf' });
+  async function packagePages(pages: ScanPage[], type: 'pdf'|'jpeg'): Promise<Blob> {
+    if(type==='jpeg'){
+      if(pages.length===1)return pages[0].jpeg;
+      const {zipSync}=await import('fflate');
+      const entries:Record<string,Uint8Array>={};
+      for(const [i,page] of pages.entries()) entries[`scan-${String(i+1).padStart(2,'0')}.jpg`]=new Uint8Array(await page.jpeg.arrayBuffer());
+      return new Blob([zipSync(entries,{level:0}) as BlobPart],{type:'application/zip'});
+    }
+    const {PDFDocument}=await import('pdf-lib');
+    const pdf=await PDFDocument.create();
+    const margin=10*72/25.4;
+    for(const scan of pages){
+      const image=scan.png ? await pdf.embedPng(await scan.png.arrayBuffer()) : await pdf.embedJpg(await scan.jpeg.arrayBuffer());
+      const page=pdf.addPage([595.28,841.89]);
+      const scale=Math.min((page.getWidth()-2*margin)/scan.width,(page.getHeight()-2*margin)/scan.height);
+      const width=scan.width*scale,height=scan.height*scale;
+      page.drawImage(image,{width,height,x:(page.getWidth()-width)/2,y:(page.getHeight()-height)/2});
+    }
+    return new Blob([await pdf.save() as BlobPart],{type:'application/pdf'});
   }
-
   function reset() {
     stopCamera();
     releaseOutputs();
@@ -411,6 +417,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
     setStage('idle');
   }
 
+  const extension = format==='pdf'?'pdf':savedPages.length?'zip':'jpg';
   const sizeLabel = (bytes: number) => `${new Intl.NumberFormat(en ? 'en' : 'id', { maximumFractionDigits: 1 }).format(bytes / 1000)} KB`;
   const cornerStyle = (point: Point) => frame
     ? { left: `${(point.x / frame.width) * 100}%`, top: `${(point.y / frame.height) * 100}%` }
@@ -419,6 +426,17 @@ export default function DocumentScanner({ lang }: { lang: string }) {
   return <div className="panel scanner-panel">
     <p className="local">{en ? 'The camera frame and the scan stay on this device. Nothing is uploaded.' : 'Bingkai kamera dan hasil scan tetap di perangkat ini. Tidak ada yang diunggah.'}</p>
 
+    {savedPages.length>0 && <p className="notice">{en?'Pages kept in scan order':'Halaman tersimpan sesuai urutan pindai'}: {savedPages.length}. {stage!=='result' && <button type="button" className="text-link" disabled={busy} onClick={async()=>{
+      setBusy(true);
+      try{
+        const blob=await packagePages(savedPages,format);
+        if(!aliveRef.current)return;
+        const url=URL.createObjectURL(blob);urlsRef.current.add(url);
+        const link=document.createElement('a');link.href=url;link.download='scan.'+(format==='pdf'?'pdf':savedPages.length>1?'zip':'jpg');link.click();
+        document.dispatchEvent(new CustomEvent('tool-download',{detail:link}));
+        window.setTimeout(()=>{URL.revokeObjectURL(url);urlsRef.current.delete(url);},30000);
+      }catch{setError(en?'Could not export saved pages.':'Halaman tersimpan gagal diekspor.');}finally{if(aliveRef.current)setBusy(false);}
+    }}>{en?'Download saved pages':'Unduh halaman tersimpan'}</button>}</p>}
     {stage === 'result' && outputs.length > 0
       ? <div className="result scanner-result">
           <figure className="scanner-result-preview">
@@ -435,15 +453,19 @@ export default function DocumentScanner({ lang }: { lang: string }) {
           <div className="scanner-result-actions">
             <h2>{en ? 'Scan preview' : 'Pratinjau hasil scan'}</h2>
             <p>{format === 'pdf'
-              ? (en ? 'One A4 PDF page with at least 10 mm of margin.' : 'Satu halaman PDF A4 dengan margin minimal 10 mm.')
-              : `${outputs[0].width} × ${outputs[0].height} px · JPEG · ${sizeLabel(outputs[0].blob.size)}`}</p>
+              ? (savedPages.length+1)+(en?' A4 page(s)':' halaman A4')
+              : extension==='zip' ? (savedPages.length+1)+' JPG · ZIP' : `${outputs[0].width} × ${outputs[0].height} px · JPEG · ${sizeLabel(outputs[0].blob.size)}`}</p>
             {error && <p className="error" role="alert">{error}</p>}
-            {resultPreviewReady && <p><a className="button download" href={outputs[0].url} download={`scan.${format === 'pdf' ? 'pdf' : 'jpg'}`}>{en ? `Download ${format === 'pdf' ? 'PDF' : 'JPG'}` : `Unduh ${format === 'pdf' ? 'PDF' : 'JPG'}`}</a></p>}
+            {resultPreviewReady && <p><a className="button download" href={outputs[0].url} download={`scan.${extension}`}>{en ? `Download ${extension.toUpperCase()}` : `Unduh ${extension.toUpperCase()}`}</a></p>}
             <div className="controls">
+              {savedPages.length>0 && <button type="button" className="button secondary" onClick={()=>{setSavedPages([]);reset();}}>{en?'New document':'Dokumen baru'}</button>}
               <button className="button secondary" type="button" onClick={() => { setError(''); setStage('review'); releaseOutputs(); }}>{en ? 'Adjust corners' : 'Perbaiki sudut'}</button>
-              <button className="button secondary" type="button" onClick={reset}>{en ? 'Scan another page' : 'Scan halaman lain'}</button>
+              <button className="button secondary" type="button" disabled={!resultPreviewReady || savedPages.length>=19} onClick={()=>{
+                const {jpeg,png,width,height}=outputs[0];
+                setSavedPages(pages=>[...pages,{jpeg,png,width,height}]);reset();
+              }}>{en ? 'Add another page' : 'Tambah halaman berikutnya'}</button>
             </div>
-            {resultPreviewReady && format === 'jpeg' && <WorkflowActions lang={lang} blob={outputs[0].blob} width={outputs[0].width} height={outputs[0].height} steps={[{ path: toolHref('photo-pdf', lang as 'id' | 'en'), id: 'Gabungkan ke PDF', en: 'Combine into a PDF' }, { path: toolHref('compress-image', lang as 'id' | 'en'), id: 'Kompres hasil scan', en: 'Compress the scan' }]} />}
+            {resultPreviewReady && extension === 'jpg' && <WorkflowActions lang={lang} blob={outputs[0].blob} width={outputs[0].width} height={outputs[0].height} steps={[{ path: toolHref('photo-pdf', lang as 'id' | 'en'), id: 'Gabungkan ke PDF', en: 'Combine into a PDF' }, { path: toolHref('compress-image', lang as 'id' | 'en'), id: 'Kompres hasil scan', en: 'Compress the scan' }]} />}
           </div>
         </div>
       : <div className="scanner-workspace" data-stage={stage}>

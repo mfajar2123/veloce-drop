@@ -1,3 +1,4 @@
+import { withDocuments } from './DocumentWorkspace';
 import {useEffect,useRef,useState} from 'react';
 import WorkflowActions from './WorkflowActions';
 import { toolHref } from '../tool-links';
@@ -5,7 +6,7 @@ import { toolHref } from '../tool-links';
 type Result={blob:Blob;url:string;width:number;height:number};
 const MAX_FILE=20_000_000,MAX_PIXELS=20_000_000;
 
-export default function HeicConverter({lang}:{lang:string}){
+function HeicConverter({lang}:{lang:string}){
   const en=lang==='en';
   const [file,setFile]=useState<File|null>(null);
   const [result,setResult]=useState<Result|null>(null);
@@ -43,10 +44,12 @@ export default function HeicConverter({lang}:{lang:string}){
 
   return <section className="panel">
     <p className="local">{en?'Processed on your device. Files are not sent for processing.':'Diproses di perangkat Anda. Berkas tidak dikirim untuk pemrosesan.'}</p>
-    <label>{en?'Choose a HEIC or HEIF image (max 20 MB)':'Pilih gambar HEIC atau HEIF (maks. 20 MB)'} <input type="file" accept=".heic,.heif,image/heic,image/heif" disabled={busy} onChange={event=>{reset();setFile(event.target.files?.[0]??null)}}/></label>
+    <label>{en?'Choose a HEIC or HEIF image (max 20 MB)':'Pilih gambar HEIC atau HEIF (maks. 20 MB)'} <input type="file" multiple accept=".heic,.heif,image/heic,image/heif" disabled={busy} onChange={event=>{reset();setFile(event.target.files?.[0]??null)}}/></label>
     <p className="notice">{en?'The decoder is loaded from this site when you convert. Only the primary still image is exported; motion sequences and auxiliary depth or portrait data are not retained. Output is JPEG at quality 92 with metadata removed.':'Dekoder dimuat dari situs ini saat konversi dimulai. Hanya gambar diam utama yang diekspor; rangkaian gerak serta data kedalaman atau potret tambahan tidak disertakan. Hasilnya JPEG kualitas 92 tanpa metadata.'}</p>
     <div className="controls"><button className="button" disabled={!file||busy} onClick={()=>void convert()}>{busy?(en?'Converting HEIC…':'Mengonversi HEIC…'):(en?'Convert to JPG':'Konversi ke JPG')}</button></div>
     {error&&<p className="error" role="alert">{error}</p>}
     {result&&<div className="result" aria-live="polite"><p>{result.width} × {result.height} px · JPEG · {result.blob.size.toLocaleString(en?'en':'id')} bytes</p><img src={result.url} alt={en?'Converted HEIC preview':'Pratinjau HEIC hasil konversi'} width={result.width} height={result.height}/><p><a className="button download" href={result.url} download="converted.jpg">{en?'Download JPG':'Unduh JPG'}</a></p><WorkflowActions lang={lang} blob={result.blob} width={result.width} height={result.height} steps={[{path:toolHref('resize-image',lang as 'id'|'en'),id:'Atur ukuran foto',en:'Resize image'},{path:toolHref('compress-image',lang as 'id'|'en'),id:'Kompres 200 KB',en:'Compress to 200 KB'}]}/></div>}
   </section>;
 }
+
+export default withDocuments(HeicConverter);

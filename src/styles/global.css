@@ -381,3 +381,4 @@ input[type=range]{accent-color:var(--brand)}
   .mobile-menu{overflow-y:auto;overscroll-behavior:contain;padding-bottom:max(24px,env(safe-area-inset-bottom))}
   .workspace :is(input[type=text],input[type=number],select,textarea),input[type=search]{font-size:1rem}
 }
+.document-list{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.document-list button{max-width:100%;overflow-wrap:anywhere;min-height:44px;padding:8px 12px;color:var(--brand);background:white;border:1px solid var(--line);border-radius:6px}.document-list button[aria-pressed=true]{background:var(--brand);color:white}

@@ -46,9 +46,7 @@ Pratinjau menunjukkan isi gambar yang akan ditempatkan di PDF. Ketika kamu membu
 
 ## Urutkan dokumen yang terdiri dari beberapa lembar
 
-Kalau perlu satu PDF berisi beberapa halaman, simpan setiap scan yang sudah diperiksa sebagai JPG terlebih dahulu. Tambahkan nomor pada nama file, seperti formulir-01 dan formulir-02. Dua digit membantu supaya lembar kesepuluh tidak terselip antara lembar pertama dan kedua saat daftar diurutkan berdasarkan nama. Beri nomor sesuai urutan baca, meskipun kamu mengambil foto sisi belakang belakangan.
-
-Buka [alat foto ke PDF](/id/foto-ke-pdf/) lalu masukkan semua JPG yang akan digabung. Periksa urutannya dari halaman pembuka sampai lembar terakhir. Putar halaman yang terambil menyamping dan setel ukuran kertas sesuai instruksi pengiriman. Setelah mengunduh, buka kembali file dan cek jumlah lembar. Pastikan tidak ada halaman depan yang masuk dua kali sementara sisi belakang justru belum ada.
+Sesudah memeriksa halaman pertama, pilih **Tambah halaman berikutnya**. Pindai sisi belakang atau lembar berikutnya, lalu periksa keempat sudutnya. Lanjutkan dalam urutan baca. Pada halaman terakhir pilih PDF untuk mendapatkan satu dokumen A4, atau JPG untuk menerima ZIP berisi gambar bernomor. Jika sudah menekan tambah dan semua lembar selesai, gunakan **Unduh halaman tersimpan**. Buka PDF di pembaca dokumen dan cocokkan jumlah halaman dengan lembar asli. Periksa halaman yang memuat tanda tangan dan halaman belakang yang sering terlewat. Untuk hasil JPG, ekstrak ZIP ke satu folder. Nomor pada nama berkas menunjukkan urutan pindai sehingga Anda dapat membedakan halaman pertama dengan halaman berikutnya saat melampirkannya ke formulir.
 
 ## Bedakan masalah ukuran, format, dan isi
 

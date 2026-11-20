@@ -55,9 +55,7 @@ A JPG preview shows the corrected sheet itself. In the PDF that sheet is centred
 
 ## Assemble several pages in order
 
-If a submission needs one file with multiple pages, export each corrected page as JPG and give it a short numbered name, such as application-01 and application-02. Use two digits if there may be ten or more sheets so filenames sort in a useful order. Keep pages with matching orientation together when you review them, but preserve the original reading sequence in the submitted file.
-
-Open [Photos to PDF](/en/photos-to-pdf/), add the corrected images and inspect the order shown in the workspace. Rotate individual sheets if you took them sideways, then pick the paper size requested by the recipient. Download the combined PDF and go through it from the first page to the last. Check for a duplicated front page and a missing reverse side before uploading. If a back is blank, follow the recipient's instructions about whether to include it.
+After checking the first preview, choose **Add another page**. Capture the reverse side or the next sheet and inspect its four corners. Continue in reading order. On the final page choose PDF for a single A4 document, or JPG for a ZIP of numbered images. If you have already chosen to add a page and have finished scanning, select **Download saved pages**.
 
 ## Diagnose a scan that passes preview and fails upload
 

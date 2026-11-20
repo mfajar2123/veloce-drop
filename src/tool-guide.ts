@@ -56,6 +56,10 @@ export const toolGuide: Record<string, Section[]> = {
   ],
   'image-converter': [
     {
+      heading: { id: 'Mengubah JFIF ke JPG', en: 'Convert JFIF to JPG' },
+      body: { id: 'Pilih JFIF sebagai format sumber, buka foto, lalu pilih JPEG dan buat pratinjau. Unduhan JPG mempertahankan isi gambar dan metadata asli.', en: 'Select JFIF as the source, open your photo, then choose JPEG and create a preview. Download the JPG to keep the original image data and metadata.' },
+    },
+    {
       heading: { id: 'HEIC dari iPhone', en: 'HEIC from an iPhone' },
       body: {
         id: 'Dekoder HEIC dimuat dari situs ini saat konversi dimulai, dan hanya gambar diam utama yang diekspor. Rangkaian Live Photo serta data kedalaman atau potret tambahan tidak disertakan, jadi efek blur mode potret menjadi gambar datar.',
@@ -167,6 +171,7 @@ export const toolGuide: Record<string, Section[]> = {
     },
   ],
   'document-scanner': [
+    {heading:{id:'Scan beberapa halaman',en:'Scan multiple pages'},body:{id:'Periksa pratinjau, lalu pilih Tambah halaman berikutnya. PDF A4 menyimpan halaman dalam urutan pindai. Untuk JPG, beberapa halaman diunduh bersama sebagai ZIP. Batas sesi adalah 20 halaman dan 64 MB hasil pindai.',en:'Check the preview and choose Add another page. An A4 PDF keeps scan order. Multiple JPG pages download together in a ZIP. A session supports up to 20 pages and 64 MB of scan data.'}},
     {
       heading: { id: 'Cara tepi dokumen dideteksi', en: 'How the page outline is found' },
       body: {

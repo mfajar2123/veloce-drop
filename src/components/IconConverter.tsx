@@ -1,3 +1,4 @@
+import { withDocuments } from './DocumentWorkspace';
 import { useEffect, useState } from 'react';
 import { encodeIco, type IcoFrame } from '../engines/ico';
 import {readImageBlobHeader} from '../engines/image-header';
@@ -7,7 +8,7 @@ const sizes = [16, 32, 48, 64, 128, 256];
 const maxBytes = 20_000_000;
 const maxPixels = 40_000_000;
 
-export default function IconConverter({ lang }: { lang: string }) {
+function IconConverter({ lang }: { lang: string }) {
   const en = lang === 'en';
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<Result | null>(null);
@@ -53,7 +54,7 @@ export default function IconConverter({ lang }: { lang: string }) {
 
   return <section className="panel">
     <p className="local">{en ? 'Processed on your device. Files are not sent for processing.' : 'Diproses di perangkat Anda. Berkas tidak dikirim untuk pemrosesan.'}</p>
-    <label>{en ? 'Choose a JPEG, PNG or WebP image (up to 20 MB)' : 'Pilih gambar JPEG, PNG, atau WebP (maks. 20 MB)'} <input type="file" accept="image/jpeg,image/png,image/webp" onChange={event => choose(event.target.files?.[0])}/></label>
+    <label>{en ? 'Choose a JPEG, PNG or WebP image (up to 20 MB)' : 'Pilih gambar JPEG, PNG, atau WebP (maks. 20 MB)'} <input type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={event => choose(event.target.files?.[0])}/></label>
     <p className="notice">{en ? 'Creates a valid ICO directory with six square PNG images: 16, 32, 48, 64, 128 and 256 px. Images keep their aspect ratio and transparency; empty space is transparent.' : 'Membuat direktori ICO valid dengan enam PNG persegi: 16, 32, 48, 64, 128, dan 256 px. Rasio dan transparansi gambar dipertahankan; ruang kosong tetap transparan.'}</p>
     <div className="controls"><button className="button" disabled={!file || busy} onClick={() => void convert()}>{busy ? (en ? 'Creating icon…' : 'Membuat ikon…') : (en ? 'Create ICO' : 'Buat ICO')}</button></div>
     {busy && <p aria-live="polite">{progress}</p>}
@@ -61,3 +62,5 @@ export default function IconConverter({ lang }: { lang: string }) {
     {result && <div className="result" aria-live="polite"><p>{result.frames.join(', ')} px · ICO · {result.bytes.toLocaleString(en ? 'en' : 'id')} bytes</p><img src={result.preview} alt={en ? 'Largest icon image preview' : 'Pratinjau ukuran ikon terbesar'} width="256" height="256" style={{ width: 'min(256px, 100%)', height: 'auto', imageRendering: 'pixelated', background: '#e2e8f0' }}/><p><a className="button download" href={result.url} download="converted.ico">{en ? 'Download ICO' : 'Unduh ICO'}</a></p></div>}
   </section>;
 }
+
+export default withDocuments(IconConverter);

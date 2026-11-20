@@ -98,3 +98,9 @@ Setiap konversi lossy ke lossy kehilangan kualitas. JPEG → WebP → JPEG menum
 Mengonversi JPEG ke PNG tidak memulihkan kualitas — itu hanya menghentikan kehilangan lebih lanjut. Berkas menjadi lebih besar tanpa lebih tajam.
 
 Perbedaan itu sering menangkap orang: mengonversi foto yang sudah dikompres ke format "lebih baik" tidak bisa membatalkan kompresi yang sudah terjadi.
+
+## Cara mengubah JFIF ke JPG, PNG, atau WebP
+
+Foto dengan ekstensi .jfif sering sudah berisi gambar JPEG. Jika formulir meminta ekstensi .jpg, pilih **JFIF ke JPG, PNG atau WebP** di [konverter gambar](/id/konversi/gambar/). Pilih foto, tetapkan hasil ke JPEG, lalu buat pratinjau dan unduh. Untuk pilihan ini, konverter membaca gambar untuk memeriksa validitasnya dan menyalin byte asli ke berkas .jpg. Ukuran berkas dan metadata tetap sama, termasuk lokasi jika ada pada foto sumber.
+
+Pilih PNG jika editor tujuan memerlukannya, atau WebP jika aplikasi penerima mendukungnya. Keduanya menghasilkan berkas baru. PNG dapat lebih besar, sedangkan pengodean WebP dapat mengubah detail halus. Periksa pratinjau sebelum mengunduh.

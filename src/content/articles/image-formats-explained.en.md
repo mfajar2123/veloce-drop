@@ -98,3 +98,9 @@ Every lossy-to-lossy conversion loses quality. JPEG → WebP → JPEG compounds 
 Converting JPEG to PNG does not restore quality — it just stops further loss. The file gets larger and no sharper.
 
 That distinction catches people out constantly: converting a compressed photo to a "better" format cannot undo the compression that already happened.
+
+## How to convert JFIF to JPG, PNG or WebP
+
+A .jfif photo often already contains JPEG image data. If an upload form asks for a .jpg extension, open the [image converter](/en/convert-image/), select **JFIF to JPG, PNG or WebP**, choose your file and leave the output set to JPEG. Create the preview, then download the JPG. The converter decodes the image to check it and copies its original bytes into the JPG download. File size and metadata stay the same, including location information if the source contains it.
+
+Choose PNG for an editor that needs it or WebP for a destination that supports it. Both create a new file. PNG may take more space, while WebP encoding can change fine detail. Check the preview before downloading.

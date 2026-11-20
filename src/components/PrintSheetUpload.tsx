@@ -1,10 +1,11 @@
+import { withDocuments } from './DocumentWorkspace';
 import {useEffect,useRef,useState} from 'react';
 import PrintSheet from './PrintSheet';
 import {takeSessionFile} from '../engines/session-files';
 import {readImageBlobHeader} from '../engines/image-header';
 
 type Preview={url:string;width:number;height:number};
-export default function PrintSheetUpload({lang}:{lang:string}){
+function PrintSheetUpload({lang}:{lang:string}){
   const en=lang==='en';const [preview,setPreview]=useState<Preview|null>(null);const [error,setError]=useState('');const [busy,setBusy]=useState(false);const [version,setVersion]=useState(0);
   const source=useRef<ImageBitmap|null>(null);const generation=useRef(0);
   useEffect(()=>()=>{if(preview)URL.revokeObjectURL(preview.url)},[preview]);
@@ -22,5 +23,7 @@ export default function PrintSheetUpload({lang}:{lang:string}){
     }catch(cause){image?.close();if(job===generation.current){const code=cause instanceof Error?cause.message:'';setError(code==='size'?(en?'File exceeds 20 MB.':'Berkas melebihi 20 MB.'):code==='pixels'?(en?'Image exceeds 20 megapixels.':'Gambar melebihi 20 megapiksel.'):(en?'Choose a valid JPEG, PNG or WebP image.':'Pilih gambar JPEG, PNG, atau WebP yang valid.'))}}
     finally{if(job===generation.current)setBusy(false)}
   }
-  return <section className="panel"><p className="local">{en?'Processed on your device. Files are not sent for processing.':'Diproses di perangkat Anda. Berkas tidak dikirim untuk pemrosesan.'}</p><label>{en?'Choose a photo (JPEG, PNG, WebP; up to 20 MB)':'Pilih foto (JPEG, PNG, WebP; maks. 20 MB)'} <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e=>void choose(e.target.files?.[0])}/></label><p className="notice">{en?'Maximum 20 megapixels. The photo is not checked against official requirements.':'Maksimal 20 megapiksel. Foto tidak diperiksa terhadap ketentuan resmi.'}</p>{busy&&<p aria-live="polite">{en?'Loading photo…':'Memuat foto…'}</p>}{error&&<p className="error" role="alert">{error}</p>}{preview&&<div className="result"><p>{preview.width} × {preview.height} px</p><img src={preview.url} alt={en?'Photo to print':'Foto untuk dicetak'} width={preview.width} height={preview.height}/><PrintSheet lang={lang} version={String(version)} capture={()=>{const image=source.current;if(!image)return null;const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;const ctx=canvas.getContext('2d');if(!ctx)return null;ctx.drawImage(image,0,0);return canvas}}/></div>}</section>;
+  return <section className="panel"><p className="local">{en?'Processed on your device. Files are not sent for processing.':'Diproses di perangkat Anda. Berkas tidak dikirim untuk pemrosesan.'}</p><label>{en?'Choose a photo (JPEG, PNG, WebP; up to 20 MB)':'Pilih foto (JPEG, PNG, WebP; maks. 20 MB)'} <input type="file" multiple accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e=>void choose(e.target.files?.[0])}/></label><p className="notice">{en?'Maximum 20 megapixels. The photo is not checked against official requirements.':'Maksimal 20 megapiksel. Foto tidak diperiksa terhadap ketentuan resmi.'}</p>{busy&&<p aria-live="polite">{en?'Loading photo…':'Memuat foto…'}</p>}{error&&<p className="error" role="alert">{error}</p>}{preview&&<div className="result"><p>{preview.width} × {preview.height} px</p><img src={preview.url} alt={en?'Photo to print':'Foto untuk dicetak'} width={preview.width} height={preview.height}/><PrintSheet lang={lang} version={String(version)} capture={()=>{const image=source.current;if(!image)return null;const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;const ctx=canvas.getContext('2d');if(!ctx)return null;ctx.drawImage(image,0,0);return canvas}}/></div>}</section>;
 }
+
+export default withDocuments(PrintSheetUpload);

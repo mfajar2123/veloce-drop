@@ -1,3 +1,4 @@
+import { withDocuments } from './DocumentWorkspace';
 import { useEffect, useRef, useState } from 'react';
 import { inspectPng } from '../engines/png';
 import WorkflowActions from './WorkflowActions';
@@ -5,7 +6,7 @@ import { toolHref } from '../tool-links';
 
 type Output = { blob: Blob; url: string; width: number; height: number };
 
-export default function PngOptimizer({ lang }: { lang: string }) {
+function PngOptimizer({ lang }: { lang: string }) {
   const en = lang === 'en';
   const [file, setFile] = useState<File | null>(null);
   const [sourceUrl, setSourceUrl] = useState('');
@@ -74,7 +75,7 @@ export default function PngOptimizer({ lang }: { lang: string }) {
 
   return <section className="panel">
     <p className="local">{en ? 'Processing stays on your device.' : 'Pemrosesan berlangsung di perangkat Anda.'}</p>
-    <label className="drop">{en ? 'Choose a PNG (up to 20 MB)' : 'Pilih PNG (maks. 20 MB)'}<input type="file" accept=".png,image/png" disabled={busy} onChange={event => { clear(); setFile(event.target.files?.[0] ?? null); }}/></label>
+    <label className="drop">{en ? 'Choose a PNG (up to 20 MB)' : 'Pilih PNG (maks. 20 MB)'}<input type="file" multiple accept=".png,image/png" disabled={busy} onChange={event => { clear(); setFile(event.target.files?.[0] ?? null); }}/></label>
     {file && <p>{file.name} · {file.size.toLocaleString(en ? 'en' : 'id')} {en ? 'bytes' : 'byte'}</p>}
     <p className="notice">{en ? 'Lossless optimization keeps image pixels and transparency intact. Text, EXIF, timestamp, and physical-resolution metadata are removed. Animated PNG is not supported.' : 'Optimasi lossless mempertahankan pixel gambar dan transparansi. Metadata teks, EXIF, waktu, dan resolusi fisik dihapus. PNG animasi belum didukung.'}</p>
     <div className="controls"><button className="button" disabled={!file || busy} onClick={() => void optimize()}>{busy ? (en ? 'Optimizing…' : 'Mengoptimalkan…') : (en ? 'Optimize PNG' : 'Optimalkan PNG')}</button><button className="button secondary" disabled={!busy} onClick={() => { clear(); setMessage(en ? 'Optimization cancelled. Your original file is unchanged.' : 'Optimasi dibatalkan. Berkas asli tetap utuh.'); }}>{en ? 'Cancel' : 'Batalkan'}</button></div>
@@ -83,3 +84,5 @@ export default function PngOptimizer({ lang }: { lang: string }) {
     {output && <div className="result"><p>{output.width} × {output.height} px · PNG · {output.blob.size.toLocaleString(en ? 'en' : 'id')} {en ? 'bytes' : 'byte'} ({Math.round((1 - output.blob.size / file!.size) * 100)}% smaller)</p><div className="png-comparison"><figure><figcaption>{en ? 'Before' : 'Sebelum'}</figcaption><img src={sourceUrl} alt={en ? 'Original PNG' : 'PNG asli'} width={output.width} height={output.height}/></figure><figure><figcaption>{en ? 'After' : 'Sesudah'}</figcaption><img src={output.url} alt={en ? 'Optimized PNG' : 'PNG teroptimasi'} width={output.width} height={output.height}/></figure></div><p><a className="button download" href={output.url} download={`${file!.name.replace(/\.png$/i, '')}-optimized.png`}>{en ? 'Download optimized PNG' : 'Unduh PNG teroptimasi'}</a></p><WorkflowActions lang={lang} blob={output.blob} width={output.width} height={output.height} steps={[{path:toolHref('resize-image',lang as 'id'|'en'),id:'Atur ukuran PNG',en:'Resize this PNG'},{path:toolHref('compress-image',lang as 'id'|'en'),id:'Kompres PNG',en:'Compress this PNG'}]}/></div>}
   </section>;
 }
+
+export default withDocuments(PngOptimizer);

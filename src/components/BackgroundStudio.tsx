@@ -1,3 +1,4 @@
+import { withDocuments } from './DocumentWorkspace';
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import PrintSheet from './PrintSheet';
 import WorkflowActions from './WorkflowActions';
@@ -24,7 +25,7 @@ const swatches: Array<{ value: string; id: string; en: string }> = [
   { value: '#db1514', id: 'Merah', en: 'Red' },
 ];
 
-export default function BackgroundStudio({ lang }: { lang: string }) {
+function BackgroundStudio({ lang }: { lang: string }) {
   const en = lang === 'en';
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'processing'>('idle');
   const [loaded, setLoaded] = useState(0);
@@ -453,6 +454,7 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
       anchor.href = next.url;
       anchor.download = 'background-removed.png';
       anchor.click();
+      document.dispatchEvent(new CustomEvent("tool-download", { detail: anchor }));
     } catch {
       setError(en ? 'Could not create PNG.' : 'PNG tidak dapat dibuat.');
     } finally {
@@ -481,7 +483,7 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
           <span className="bg-drop-icon" aria-hidden="true">↑</span>
           <strong>{status === 'processing' ? (en ? 'Removing background…' : 'Menghapus latar…') : (en ? 'Choose a photo' : 'Pilih foto')}</strong>
           <span>{en ? 'JPEG, PNG or WebP · up to 20 MB · original resolution kept' : 'JPEG, PNG, atau WebP · maks. 20 MB · resolusi asli dipertahankan'}</span>
-          <input aria-label={en ? 'Choose a portrait' : 'Pilih potret'} type="file" accept="image/jpeg,image/png,image/webp" disabled={status === 'processing'} onChange={event => {
+          <input aria-label={en ? 'Choose a portrait' : 'Pilih potret'} type="file" multiple accept="image/jpeg,image/png,image/webp" disabled={status === 'processing'} onChange={event => {
             const next = event.target.files?.[0] ?? null;
             resetImage();
             setFile(next);
@@ -554,7 +556,7 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
         </div>
         {hasMask && <div className="bg-block">
           <label className="bg-replace">{en ? 'Use another photo' : 'Gunakan foto lain'}
-            <input aria-label={en ? 'Choose another photo' : 'Pilih foto lain'} type="file" accept="image/jpeg,image/png,image/webp" disabled={status === 'processing'} onChange={event => {
+            <input aria-label={en ? 'Choose another photo' : 'Pilih foto lain'} type="file" multiple accept="image/jpeg,image/png,image/webp" disabled={status === 'processing'} onChange={event => {
               const next = event.target.files?.[0] ?? null;
               event.target.value = '';
               resetImage();
@@ -607,3 +609,5 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
     </div>
   </section>;
 }
+
+export default withDocuments(BackgroundStudio);

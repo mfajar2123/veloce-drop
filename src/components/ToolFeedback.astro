@@ -1,0 +1,85 @@
+﻿---
+const { en } = Astro.props as { en: boolean };
+---
+<div class="tool-feedback" data-tool-feedback>
+  <span class="feedback-check" aria-hidden="true">✓</span>
+  <span role="status" aria-live="polite" aria-atomic="true"></span>
+  <button type="button" aria-label={en ? 'Dismiss notification' : 'Tutup notifikasi'}>×</button>
+</div>
+
+<script>
+  function setupFeedback() {
+    const toast = document.querySelector<HTMLElement>('[data-tool-feedback]');
+    const workspace = document.querySelector('.workspace-compact');
+    if (!toast || !workspace || toast.dataset.ready) return;
+    toast.dataset.ready = 'true';
+    const en = document.documentElement.lang === 'en';
+    const status = toast.querySelector<HTMLElement>('[role=status]')!;
+    const close = toast.querySelector('button')!;
+    let timer: number;
+    let lastDownload = '';
+    function hide() {
+      window.clearTimeout(timer);
+      delete toast!.dataset.visible;
+      status.textContent = '';
+    }
+    function scheduleHide() {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(hide, 5500);
+    }
+    function show(message: string) {
+      status.textContent = message;
+      toast!.dataset.visible = 'true';
+      scheduleHide();
+    }
+    function downloaded(link: HTMLAnchorElement) {
+      lastDownload = link.href;
+      show(en ? 'Download started.' : 'Unduhan dimulai.');
+    }
+    const events = new AbortController();
+    workspace.addEventListener('click', event => {
+      const link = event.target instanceof Element && event.target.closest<HTMLAnchorElement>('a[download]');
+      if (link && !event.defaultPrevented) downloaded(link);
+    }, { signal: events.signal });
+    document.addEventListener('tool-download', event => downloaded((event as CustomEvent<HTMLAnchorElement>).detail), {signal:events.signal});
+
+    // A result is usable once the tool exposes its download, including after scanner preview.
+    const resultLink = 'a[download][href^="blob:"]';
+    const observer = new MutationObserver(records => {
+      for (const record of records) {
+        const nodes = record.type === 'attributes' ? [record.target] : Array.from(record.addedNodes);
+        for (const node of nodes) {
+          if (!(node instanceof Element)) continue;
+          const link = node.matches(resultLink) ? node as HTMLAnchorElement : node.querySelector<HTMLAnchorElement>(resultLink);
+          if (!link || !link.isConnected || link.href === lastDownload) continue;
+          const format = link.download.split('.').pop()?.toUpperCase() || '';
+          show(en ? `Your ${format} file is ready.` : `Berkas ${format} siap diunduh.`);
+          return;
+        }
+      }
+    });
+    observer.observe(workspace, {childList:true, subtree:true, attributes:true, attributeFilter:['href']});
+    close.addEventListener('click', hide);
+    toast.addEventListener('mouseenter', () => window.clearTimeout(timer));
+    toast.addEventListener('mouseleave', scheduleHide);
+    toast.addEventListener('focusin', () => window.clearTimeout(timer));
+    toast.addEventListener('focusout', scheduleHide);
+    document.addEventListener('astro:before-swap', () => {
+      observer.disconnect();
+      events.abort();
+      window.clearTimeout(timer);
+    }, {once:true});
+  }
+  setupFeedback();
+  document.addEventListener('astro:page-load', setupFeedback);
+</script>
+
+<style>
+  .tool-feedback{position:fixed;z-index:30;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;max-width:calc(100vw - 32px);padding:4px 4px 4px 14px;background:#124d3c;color:white;border-radius:12px;box-shadow:0 6px 24px #052e232e;opacity:0;pointer-events:none}
+  .tool-feedback[data-visible]{opacity:1;pointer-events:auto}
+  .tool-feedback button{visibility:hidden;background:transparent;color:inherit;border:0;min-width:44px;min-height:44px;font-size:22px}
+  .tool-feedback[data-visible] button{visibility:visible}
+  .feedback-check{border-radius:50%;background:#caf4df;color:#124d3c;width:23px;height:23px;display:grid;place-items:center;flex:none}
+  @media(max-width:640px){.tool-feedback{bottom:auto;top:max(12px,env(safe-area-inset-top));left:50%;right:auto;transform:translateX(-50%);width:max-content}}
+  @media(prefers-reduced-motion:no-preference){.tool-feedback[data-visible]{animation:toast-in .18s ease-out}@keyframes toast-in{from{opacity:0;translate:0 5px}}}
+</style>

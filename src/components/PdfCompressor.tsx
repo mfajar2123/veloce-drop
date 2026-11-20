@@ -1,3 +1,4 @@
+import { withDocuments } from './DocumentWorkspace';
 import { useEffect, useRef, useState } from 'react';
 import type { PDFDocumentLoadingTask, RenderTask } from 'pdfjs-dist';
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -9,7 +10,7 @@ type Result = { url:string; blob:Blob; bytes:number; pages:number; met:boolean; 
 const MAX_INPUT=20_000_000, MAX_PAGES=20, MAX_PIXELS=12_000_000, MAX_OUTPUT=100_000_000;
 const qualities=[0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2];
 
-export default function PdfCompressor({lang,initialTarget}:{lang:string;initialTarget:number}){
+function PdfCompressor({lang,initialTarget}:{lang:string;initialTarget:number}){
   const en=lang==='en';const [file,setFile]=useState<File|null>(null);const [target,setTarget]=useState(initialTarget);const [dpi,setDpi]=useState(96);
   const [consent,setConsent]=useState(false);const [busy,setBusy]=useState(false);const [progress,setProgress]=useState('');const [error,setError]=useState('');const [result,setResult]=useState<Result|null>(null);
   const generation=useRef(0);const loading=useRef<PDFDocumentLoadingTask|null>(null);const rendering=useRef<RenderTask|null>(null);
@@ -68,7 +69,7 @@ export default function PdfCompressor({lang,initialTarget}:{lang:string;initialT
   }
   return <section className="panel">
     <p className="local">{en?'Processed on your device. The PDF is not sent for processing.':'Diproses di perangkat Anda. PDF tidak dikirim untuk pemrosesan.'}</p>
-    <label>{en?'Choose a PDF (up to 20 MB and 20 pages)':'Pilih PDF (maks. 20 MB dan 20 halaman)'} <input type="file" accept="application/pdf" disabled={busy} onChange={e=>{invalidate();setFile(e.target.files?.[0]??null);setConsent(false)}}/></label>
+    <label>{en?'Choose a PDF (up to 20 MB and 20 pages)':'Pilih PDF (maks. 20 MB dan 20 halaman)'} <input type="file" multiple accept="application/pdf" disabled={busy} onChange={e=>{invalidate();setFile(e.target.files?.[0]??null);setConsent(false)}}/></label>
     <p className="notice">{en?'The output is rebuilt from page images. Searchable text, vectors, forms, links and annotations are removed. Keep the original PDF.':'Hasil dibuat ulang dari gambar halaman. Teks yang dapat dicari, vektor, formulir, tautan, dan anotasi akan hilang. Simpan PDF asli.'}</p>
     <label><input type="checkbox" checked={consent} disabled={busy} onChange={e=>{invalidate();setConsent(e.target.checked)}}/> {en?'I understand the PDF will be rasterized.':'Saya memahami PDF akan diubah menjadi gambar.'}</label>
     <div className="controls" style={{marginTop:20}}><label>{en?'Target (KB)':'Target (KB)'}<input type="number" min="1" max="20000" value={target} disabled={busy} onChange={e=>{invalidate();setTarget(Number(e.target.value))}}/></label><label>{en?'Resolution (DPI)':'Resolusi (DPI)'}<select value={dpi} disabled={busy} onChange={e=>{invalidate();setDpi(Number(e.target.value))}}><option value="72">72</option><option value="96">96</option><option value="144">144</option></select></label><button className="button" disabled={!file||!consent||busy} onClick={()=>void compress()}>{en?'Compress PDF':'Kompres PDF'}</button>{busy&&<button className="button secondary" onClick={cancel}>{en?'Cancel':'Batalkan'}</button>}</div>
@@ -77,3 +78,5 @@ export default function PdfCompressor({lang,initialTarget}:{lang:string;initialT
     {result&&<div className="result" aria-live="polite"><h2>{result.met?(en?'Target reached':'Target tercapai'):(en?'Target not reached':'Target belum tercapai')}</h2><p>{en?'Original':'Asli'}: {result.originalBytes.toLocaleString(en?'en':'id')} bytes → {result.bytes.toLocaleString(en?'en':'id')} bytes · {result.pages} {en?'pages':'halaman'} · JPEG {Math.round(result.quality*100)}%</p>{!result.met&&<p>{en?'This is the smallest result found at the chosen resolution. Try a larger target or lower DPI.':'Ini hasil terkecil yang ditemukan pada resolusi yang dipilih. Coba target lebih besar atau DPI lebih rendah.'}</p>}<p><a className="button download" href={result.url} download="compressed.pdf">{en?'Download PDF':'Unduh PDF'}</a></p><WorkflowActions lang={lang} blob={result.blob} steps={[{path:toolHref('pdf-jpg',lang as 'id'|'en'),id:'Ubah PDF ke JPG',en:'Convert PDF to JPG'}]}/></div>}
   </section>;
 }
+
+export default withDocuments(PdfCompressor);

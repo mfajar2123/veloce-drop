@@ -52,9 +52,9 @@ export const catalog: CatalogTool[] = [
   {
     id: 'image-converter',
     name: { id: 'Konversi format gambar', en: 'Convert image formats' },
-    description: { id: 'Konversi JPEG, PNG, WebP, HEIC, SVG, dan ICO di browser', en: 'Convert JPEG, PNG, WebP, HEIC, SVG, and ICO in your browser' },
+    description: { id: 'Konversi JPEG/JFIF, PNG, WebP, HEIC, SVG, dan ICO di browser', en: 'Convert JPEG/JFIF, PNG, WebP, HEIC, SVG, and ICO in your browser' },
     path: localized('konversi/gambar', 'convert-image'),
-    keywords: 'jpg jpeg png webp heic heif svg ico convert converter konversi format iphone',
+    keywords: 'jfif to jpg jfif ke jpg jpeg png webp heic heif svg ico convert converter konversi format iphone',
     packages: ['applicant', 'seller', 'social'],
   },
   {
@@ -149,8 +149,8 @@ for (const tool of catalog) {
       description: { id: 'Ubah dimensi atau crop foto ke ukuran pas foto 3x4, 4x6, 35x45 mm, 4R, A4, Instagram, dan ukuran khusus.', en: 'Set dimensions or crop a photo to 3x4, 4x6, 35x45 mm, 4R, A4, Instagram and custom pixel sizes.' },
     },
     'image-converter': {
-      title: { id: 'Konverter JPG, PNG, WebP, HEIC ke JPG', en: 'HEIC to JPG, PNG and WebP Image Converter' },
-      description: { id: 'Konversi JPG, PNG, WebP, HEIC, SVG, atau ICO di browser. Foto iPhone HEIC langsung jadi JPG tanpa unggah.', en: 'Convert JPG, PNG, WebP, HEIC, SVG or ICO in your browser. Turn iPhone HEIC photos into JPG without uploading.' },
+      title: { id: 'Konverter JFIF dan HEIC ke JPG, PNG & WebP', en: 'JFIF to JPG and HEIC to JPG | Image Converter' },
+      description: { id: 'Konversi JFIF ke JPG tanpa kompresi ulang. Olah PNG, WebP, HEIC, SVG, atau ICO di browser. Foto iPhone HEIC langsung jadi JPG tanpa unggah.', en: 'Convert JFIF to JPG without re-encoding. Work with PNG, WebP, HEIC, SVG or ICO in your browser. Turn iPhone HEIC photos into JPG without uploading.' },
     },
     background: {
       title: { id: 'Hapus Background Foto Online, Latar RGB', en: 'Remove Image Background Online with Any Colour' },
@@ -178,7 +178,7 @@ for (const tool of catalog) {
     },
     'document-scanner': {
       title: { id: 'Scan Dokumen pakai Kamera HP jadi PDF', en: 'Scan a Document with Your Phone Camera' },
-      description: { id: 'Arahkan kamera ke kertas, tepi dokumen dideteksi otomatis, lalu hasilnya dirapikan jadi JPG atau PDF. Tidak ada unggahan.', en: 'Point your camera at paper, the page edges are detected automatically, then straighten the result into JPG or PDF. Nothing is uploaded.' },
+      description: { id: 'Pindai beberapa halaman dengan kamera HP, periksa sudut tiap lembar, lalu unduh satu PDF A4 atau ZIP berisi JPG sesuai urutan.', en: 'Scan multiple pages with your phone, preview each corrected page, then download one A4 PDF or a ZIP of JPG images in scan order.' },
     },
   };
   tool.seo = seoCopy[tool.id];
@@ -196,7 +196,7 @@ for (const tool of catalog) {
       { question: { id: 'Apakah preset menjamin foto sesuai aturan instansi?', en: 'Do the presets guarantee compliance with official photo rules?' }, answer: { id: 'Tidak. Preset mengatur rasio dan dimensi piksel, tetapi tidak memeriksa latar, pose, atau ketentuan instansi. Periksa hasil crop dan panduan penerima sebelum digunakan.', en: 'No. A preset sets the aspect ratio and pixel dimensions, but does not check background, pose, or official requirements. Review the crop and the recipient’s rules before using the image.' } },
     ],
     'image-converter': [
-      { question: { id: 'Format apa yang bisa dikonversi?', en: 'Which formats can I convert?' }, answer: { id: 'Konverter mendukung JPEG, PNG, WebP, HEIC/HEIF, SVG, dan ICO sesuai pilihan alat. SVG dirasterkan menjadi PNG; berkas SVG dengan script, sumber luar, atau fitur yang tidak didukung akan ditolak.', en: 'The converter supports JPEG, PNG, WebP, HEIC/HEIF, SVG, and ICO as offered in the tool. SVG is rasterized to PNG; SVG files with scripts, external resources, or unsupported features are rejected.' } },
+      { question: { id: 'Format apa yang bisa dikonversi?', en: 'Which formats can I convert?' }, answer: { id: 'Konverter mendukung JPEG/JFIF, PNG, WebP, HEIC/HEIF, SVG, dan ICO sesuai pilihan alat. SVG dirasterkan menjadi PNG; berkas SVG dengan script, sumber luar, atau fitur yang tidak didukung akan ditolak.', en: 'The converter supports JPEG/JFIF, PNG, WebP, HEIC/HEIF, SVG, and ICO as offered in the tool. SVG is rasterized to PNG; SVG files with scripts, external resources, or unsupported features are rejected.' } },
       { question: { id: 'Apakah format JPEG mempertahankan transparansi?', en: 'Does JPEG keep transparent areas?' }, answer: { id: 'Tidak. Pilih warna latar untuk mengisi area transparan saat membuat JPEG. Gunakan PNG atau WebP jika transparansi perlu dipertahankan; hasil juga bergantung pada dukungan encoder browser.', en: 'No. Choose a background color to fill transparent areas when making a JPEG. Use PNG or WebP when transparency must remain; output also depends on browser encoder support.' } },
     ],
     background: [
