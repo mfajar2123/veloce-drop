@@ -81,8 +81,8 @@ export const toolGuide: Record<string, Section[]> = {
     {
       heading: { id: 'Warna latar dan resolusi hasil', en: 'Background colour and output resolution' },
       body: {
-        id: 'Latar bisa transparan, salah satu swatch, atau warna RGB yang Anda ketik pada kolom R, G, dan B. Hasil diekspor pada dimensi piksel asli foto, bukan ukuran pratinjau yang diperkecil. Opsi 2x menggandakan kanvas untuk cetak dan bersifat upscaling, bukan detail baru.',
-        en: 'The background can be transparent, one of the swatches, or an RGB colour typed into the R, G and B fields. The export uses the original pixel dimensions of the photo, not the reduced preview size. The 2x option doubles the canvas for print and is upscaling, not new detail.',
+        id: 'Biarkan latar transparan, pilih warna yang tersedia, atau gunakan pemilih warna. PNG mempertahankan dimensi piksel foto asli.',
+        en: 'Keep the background transparent, select a swatch, or use the colour picker. The PNG keeps the source photo’s pixel dimensions.',
       },
     },
   ],
@@ -154,8 +154,8 @@ export const toolGuide: Record<string, Section[]> = {
     {
       heading: { id: 'Menghitung kapasitas lembar', en: 'Working out sheet capacity' },
       body: {
-        id: 'Kapasitas dihitung dari ukuran kertas, ukuran foto, margin, jarak, dan orientasi. Lembar 4R dengan foto 3x4 cm, margin 5 mm, dan jarak 2 mm memuat 2 kolom x 3 baris, yaitu 6 foto. Nilainya ditampilkan sebelum ekspor.',
-        en: 'Capacity comes from paper size, photo size, margins, spacing and orientation. A 4R sheet with 3x4 cm photos, 5 mm margins and 2 mm spacing fits 2 columns by 3 rows, which is 6 photos. The count is shown before export.',
+        id: 'Pilih ukuran kertas, ukuran foto, dan orientasi. Tata letak memakai margin 5 mm dan jarak antarfoto 6 mm. Kapasitas terlihat sebelum ekspor.',
+        en: 'Choose the paper size, photo size and orientation. The layout uses 5 mm margins and 6 mm gaps between photos. Capacity is shown before export.',
       },
     },
     {
@@ -170,8 +170,8 @@ export const toolGuide: Record<string, Section[]> = {
     {
       heading: { id: 'Cara tepi dokumen dideteksi', en: 'How the page outline is found' },
       body: {
-        id: 'Setiap bingkai diubah ke abu-abu, dihaluskan, lalu dihitung gradien tepinya dengan operator Sobel. Ambang batas menyesuaikan kontras bingkai, jadi tidak perlu mengatur apa pun. Komponen terbesar dianggap kertas, dan empat titik terjauhnya dipakai sebagai sudut. Garis tepi yang paling kuat menang, bukan yang paling besar.',
-        en: 'Each frame is converted to greyscale, smoothed, then measured for edge gradients with a Sobel operator. The threshold adapts to the frame contrast, so there is nothing to configure. The largest connected component is treated as paper, and its four extreme points become the corners. The strongest outline wins, not the biggest.',
+        id: 'Pemindai mencari batas kertas pada keempat sisi. Calon tepi dinilai dari luas halaman dan seberapa utuh garis di setiap sisi. Jika batasnya kurang jelas, geser sudut pada pratinjau sesuai kertas.',
+        en: 'The scanner looks for the paper boundary on all four sides. It scores each candidate by page area and how well each edge is defined. If the boundary is unclear, drag the preview handles to the corners of the paper.',
       },
     },
     {
@@ -184,8 +184,8 @@ export const toolGuide: Record<string, Section[]> = {
     {
       heading: { id: 'Pencahayaan dan warna', en: 'Lighting and colour' },
       body: {
-        id: 'Foto halaman dengan lampu ruangan biasanya tampak kekuningan dan kertasnya tidak pernah benar-benar putih. Opsi pencerahan mengukur histogram tiap kanal lalu meregangkan 2 sampai 98 persen rentangnya. Hasilnya latar lebih putih dan teks lebih tegas, tanpa mengubah isi dokumen.',
-        en: 'A page photographed under room lighting usually looks yellow, and the paper never reaches true white. The brighten option measures each channel histogram and stretches its 2 to 98 percent range. Paper reads whiter and text reads crisper, without altering the document content.',
+        id: 'Opsi pencahayaan mencerahkan kertas yang redup dengan penyesuaian yang sama pada setiap kanal warna. Periksa pratinjau untuk memastikan cap dan tanda tangan tetap jelas. Matikan opsi jika ingin mempertahankan pencahayaan sumber.',
+        en: 'The lighting option brightens dim paper with the same adjustment on each colour channel. Check the preview for faint stamps and signatures. Turn the option off to keep the source lighting.',
       },
     },
   ],

@@ -23,7 +23,7 @@ function parsePages(value:string,total:number):number[]{
 
 export default function PdfToImages({lang}:{lang:string}){
   const en=lang==='en';const [file,setFile]=useState<File|null>(null);const [count,setCount]=useState(0);const [pages,setPages]=useState('');
-  const [dpi,setDpi]=useState(144);const [quality,setQuality]=useState(90);const [busy,setBusy]=useState(false);const [progress,setProgress]=useState('');
+  const [dpi,setDpi]=useState(144);const [busy,setBusy]=useState(false);const [progress,setProgress]=useState('');
   const [outputs,setOutputs]=useState<Output[]>([]);const [archive,setArchive]=useState<Archive|null>(null);const [errors,setErrors]=useState<string[]>([]);
   const generation=useRef(0);const loading=useRef<PDFDocumentLoadingTask|null>(null);const rendering=useRef<RenderTask|null>(null);const alive=useRef(true);
   const outputUrls=useRef(new Set<string>());
@@ -75,7 +75,7 @@ export default function PdfToImages({lang}:{lang:string}){
           canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d');if(!ctx)throw new Error('canvas');
           ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);
           const render=page.render({canvas,canvasContext:ctx,viewport,annotationMode:pdfjs.AnnotationMode.DISABLE,background:'#ffffff'});rendering.current=render;await render.promise;rendering.current=null;
-          const blob=await new Promise<Blob>((resolve,reject)=>canvas!.toBlob(value=>value?.type==='image/jpeg'?resolve(value):reject(new Error('encoder')),'image/jpeg',quality/100));
+          const blob=await new Promise<Blob>((resolve,reject)=>canvas!.toBlob(value=>value?.type==='image/jpeg'?resolve(value):reject(new Error('encoder')),'image/jpeg',0.97));
           page.cleanup();if(id!==generation.current)break;
           totalBytes+=blob.size;if(totalBytes>MAX_OUTPUT_BYTES)throw new Error('total');
           const url=URL.createObjectURL(blob);outputUrls.current.add(url);created.push({page:number,url,bytes:blob.size,width,height,blob});
@@ -94,7 +94,7 @@ export default function PdfToImages({lang}:{lang:string}){
   }
   return <section className="panel"><p className="local">{en?'Processed on your device. The PDF is not sent for processing.':'Diproses di perangkat Anda. PDF tidak dikirim untuk pemrosesan.'}</p>
     <label>{en?'Choose a PDF (up to 20 MB and 30 pages)':'Pilih PDF (maks. 20 MB dan 30 halaman)'} <input type="file" accept="application/pdf" disabled={busy} onChange={e=>void choose(e.target.files?.[0])}/></label>
-    {file&&<><p>{file.name} · {count} {en?'pages':'halaman'}</p><div className="controls"><label>{en?'Pages (empty = all)':'Halaman (kosong = semua)'}<input type="text" maxLength={120} placeholder="1,3-5" value={pages} disabled={busy} onChange={e=>{setPages(e.target.value);clearOutputs()}}/></label><label>{en?'Resolution (DPI)':'Resolusi (DPI)'}<select value={dpi} disabled={busy} onChange={e=>{setDpi(Number(e.target.value));clearOutputs()}}><option value="72">72</option><option value="144">144</option><option value="200">200</option></select></label><label>{en?'JPEG quality (%)':'Kualitas JPEG (%)'}<input type="number" min="1" max="100" disabled={busy} value={quality} onChange={e=>{setQuality(Math.max(1,Math.min(100,Number(e.target.value)||1)));clearOutputs()}}/></label><button className="button" disabled={busy} onClick={()=>void convert()}>{en?'Convert pages':'Konversi halaman'}</button></div></>}
+    {file&&<><p>{file.name} · {count} {en?'pages':'halaman'}</p><div className="controls"><label>{en?'Pages (empty = all)':'Halaman (kosong = semua)'}<input type="text" maxLength={120} placeholder="1,3-5" value={pages} disabled={busy} onChange={e=>{setPages(e.target.value);clearOutputs()}}/></label><label>{en?'Resolution (DPI)':'Resolusi (DPI)'}<select value={dpi} disabled={busy} onChange={e=>{setDpi(Number(e.target.value));clearOutputs()}}><option value="72">72</option><option value="144">144</option><option value="200">200</option></select></label><button className="button" disabled={busy} onClick={()=>void convert()}>{en?'Convert pages':'Konversi halaman'}</button></div></>}
     {busy&&<button className="button secondary" style={{marginTop:16}} onClick={cancel}>{en?'Cancel':'Batalkan'}</button>}
     <p aria-live="polite">{progress}</p><p className="notice">{en?'Pages render one at a time. Annotations and interactive elements are not included. Large pages may require a lower resolution.':'Halaman dirender satu per satu. Anotasi dan elemen interaktif tidak disertakan. Halaman besar mungkin memerlukan resolusi lebih rendah.'}</p>
     {errors.length>0&&<div role="alert" className="error"><ul>{errors.map((error,index)=><li key={index}>{error}</li>)}</ul></div>}

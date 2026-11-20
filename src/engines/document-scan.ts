@@ -96,13 +96,7 @@ function orderQuad(points: Point[]): Quad {
 }
 
 /**
- * Finds the outline of the largest paper-like quadrilateral in a frame.
- *
- * The pipeline is deliberately classical rather than learned: grayscale, blur,
- * Sobel magnitude, an adaptive threshold, the largest 4-connected component,
- * and finally the extreme-corner assignment that turns a blob into a quad.
- * It returns null when nothing convincing is found so the caller can fall back
- * to the full frame instead of warping a wrong crop.
+ * Ranks candidate outlines by area and edge support on all four sides.
  */
 export function detectDocumentQuad(data: Uint8ClampedArray, width: number, height: number): Quad | null {
   if (width < 16 || height < 16) return null;
@@ -146,8 +140,9 @@ export function detectDocumentQuad(data: Uint8ClampedArray, width: number, heigh
 
   const visited = new Uint8Array(dilated.length);
   const stack = new Int32Array(dilated.length);
-  let best: Point[] | null = null;
-  let bestCount = 0;
+  let best: Quad | null = null;
+  let bestScore = 0;
+  const minimumOutline = Math.max(96, width * height * 0.0015);
 
   for (let start = 0; start < dilated.length; start++) {
     if (!dilated[start] || visited[start]) continue;
@@ -172,36 +167,42 @@ export function detectDocumentQuad(data: Uint8ClampedArray, width: number, heigh
         }
       }
     }
-    if (points.length > bestCount) {
-      bestCount = points.length;
-      best = points;
+    if (points.length < minimumOutline) continue;
+    const quad = orderQuad(points);
+    const area = polygonArea(quad);
+    if (area < width * height * 0.12 || area > width * height * 0.96) continue;
+    let weakestEdge = 1;
+    for (let side = 0; side < 4; side++) {
+      const a = quad[side], b = quad[(side + 1) % 4];
+      if (Math.hypot((a.x - b.x) / width, (a.y - b.y) / height) < 0.12) {
+        weakestEdge = 0;
+        break;
+      }
+      let supported = 0;
+      for (let step = 1; step <= 20; step++) {
+        const x = Math.round(a.x + (b.x - a.x) * step / 21);
+        const y = Math.round(a.y + (b.y - a.y) * step / 21);
+        let found = false;
+        const radius = Math.max(3, Math.round(Math.max(width, height) * 0.008));
+        for (let dy = -radius; dy <= radius && !found; dy++) {
+          for (let dx = -radius; dx <= radius && !found; dx++) {
+            if (x + dx >= 0 && x + dx < width && y + dy >= 0 && y + dy < height) {
+              found = Boolean(mask[(y + dy) * width + x + dx]);
+            }
+          }
+        }
+        supported += Number(found);
+      }
+      weakestEdge = Math.min(weakestEdge, supported / 20);
+    }
+    const score = area * weakestEdge;
+    if (weakestEdge >= 0.55 && score > bestScore) {
+      bestScore = score;
+      best = quad;
     }
   }
 
-  // The component we just walked is the page *outline*, not a filled region, so
-  // it only needs to be long enough to be a real outline. The meaningful area
-  // test happens on the resulting quadrilateral below.
-  const minimumOutline = Math.max(96, width * height * 0.0015);
-  if (!best || best.length < minimumOutline) return null;
-
-  const quad = orderQuad(best);
-  const area = polygonArea(quad);
-  if (area < width * height * 0.12) return null;
-
-  const interior = new Set(quad.map(point => `${point.x},${point.y}`));
-  if (interior.size < 4) return null;
-
-  const scaleX = width;
-  const scaleY = height;
-  const normalised = quad.map(point => ({ x: point.x / scaleX, y: point.y / scaleY }));
-  const minEdge = 0.12;
-  for (let index = 0; index < 4; index++) {
-    const current = normalised[index];
-    const next = normalised[(index + 1) % 4];
-    if (Math.hypot(current.x - next.x, current.y - next.y) < minEdge) return null;
-  }
-
-  return quad;
+  return best;
 }
 
 type Matrix = number[];
@@ -338,36 +339,29 @@ function percentileBounds(histogram: number[], total: number, low: number, high:
   return [lower, upper];
 }
 
-/**
- * White balance plus contrast stretch, the two adjustments a phone snapshot of a
- * page almost always needs: indoor light casts a colour, and the paper never
- * reaches pure white. Both are measured from the image, not hardcoded.
- */
+/** Lifts dim paper using one adjustment shared by all colour channels. */
 export function enhanceDocument(image: ImageData): ImageData {
   const { data, width, height } = image;
   const total = width * height;
   if (!total) return image;
-  const histograms = [new Array(256).fill(0), new Array(256).fill(0), new Array(256).fill(0)];
+  const histogram = new Array<number>(256).fill(0);
   for (let index = 0; index < data.length; index += 4) {
-    histograms[0][data[index]]++;
-    histograms[1][data[index + 1]]++;
-    histograms[2][data[index + 2]]++;
+    const light = Math.round(0.299 * data[index] + 0.587 * data[index + 1] + 0.114 * data[index + 2]);
+    histogram[light]++;
   }
-
-  const gains: number[] = [];
-  for (let channel = 0; channel < 3; channel++) {
-    const [lower, upper] = percentileBounds(histograms[channel], total, 0.02, 0.98);
-    const span = Math.max(1, upper - lower);
-    gains.push(255 / span);
-    for (let value = 0; value < 256; value++) histograms[channel][value] = Math.round(clamp((value - lower) * gains[channel], 0, 255));
-  }
+  const [lower, upper] = percentileBounds(histogram, total, 0.02, 0.98);
+  const amount = clamp((246 - upper) / Math.max(upper, 128), 0, 0.18);
+  const pivot = Math.min(80, lower);
 
   const output = new ImageData(width, height);
   for (let index = 0; index < data.length; index += 4) {
-    output.data[index] = histograms[0][data[index]];
-    output.data[index + 1] = histograms[1][data[index + 1]];
-    output.data[index + 2] = histograms[2][data[index + 2]];
-    output.data[index + 3] = 255;
+    const light = 0.299 * data[index] + 0.587 * data[index + 1] + 0.114 * data[index + 2];
+    const headroom = 255 - Math.max(data[index], data[index + 1], data[index + 2]);
+    const lift = Math.min(headroom, Math.max(0, light - pivot) * amount);
+    output.data[index] = data[index] + lift;
+    output.data[index + 1] = data[index + 1] + lift;
+    output.data[index + 2] = data[index + 2] + lift;
+    output.data[index + 3] = data[index + 3];
   }
   return output;
 }

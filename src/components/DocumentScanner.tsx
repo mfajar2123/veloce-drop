@@ -8,7 +8,7 @@ type Stage = 'idle' | 'live' | 'review' | 'result';
 type Output = { url: string; preview: string; blob: Blob; width: number; height: number };
 
 const MAX_INPUT_PIXELS = 24_000_000;
-const LIVE_INTERVAL = 350;
+const LIVE_INTERVAL = 180;
 const CORNER_LABELS = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
 
 const fullQuad = (width: number, height: number): Quad => [
@@ -17,6 +17,35 @@ const fullQuad = (width: number, height: number): Quad => [
   { x: width, y: height },
   { x: 0, y: height },
 ];
+
+function detectCapturedPage(source: HTMLCanvasElement): Quad | null {
+  const scale = Math.min(1, 960 / Math.max(source.width, source.height));
+  const sample = document.createElement('canvas');
+  sample.width = Math.max(1, Math.round(source.width * scale));
+  sample.height = Math.max(1, Math.round(source.height * scale));
+  const ctx = sample.getContext('2d', { willReadFrequently: true });
+  if (!ctx) return null;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(source, 0, 0, sample.width, sample.height);
+  const data = ctx.getImageData(0, 0, sample.width, sample.height);
+  const quad = detectDocumentQuad(data.data, data.width, data.height);
+  return quad?.map(({ x, y }) => ({
+    x: x * source.width / data.width, y: y * source.height / data.height,
+  })) as Quad | undefined ?? null;
+}
+
+function encodePdfPreview(source: HTMLCanvasElement) {
+  const scale = Math.min(1, 1200 / Math.max(source.width, source.height));
+  if (scale === 1) return canvasToBlob(source, 'image/jpeg', 0.9);
+  const preview = document.createElement('canvas');
+  preview.width = Math.max(1, Math.round(source.width * scale));
+  preview.height = Math.max(1, Math.round(source.height * scale));
+  const context = preview.getContext('2d');
+  if (!context) throw new Error('canvas');
+  context.imageSmoothingQuality = 'high';
+  context.drawImage(source, 0, 0, preview.width, preview.height);
+  return canvasToBlob(preview, 'image/jpeg', 0.9);
+}
 
 export default function DocumentScanner({ lang }: { lang: string }) {
   const en = lang === 'en';
@@ -91,8 +120,8 @@ export default function DocumentScanner({ lang }: { lang: string }) {
     const height = Math.max(2, Math.round(video.videoHeight * scale));
     const canvas = captureRef.current ?? document.createElement('canvas');
     captureRef.current = canvas;
-    canvas.width = width;
-    canvas.height = height;
+    if (canvas.width !== width) canvas.width = width;
+    if (canvas.height !== height) canvas.height = height;
     const context = canvas.getContext('2d', { willReadFrequently: true });
     if (!context) return null;
     context.drawImage(video, 0, 0, width, height);
@@ -136,7 +165,6 @@ export default function DocumentScanner({ lang }: { lang: string }) {
       streamRef.current = stream;
       setStage('live');
       setCameraStream(stream);
-      window.setTimeout(detectLive, 400);
       timerRef.current = window.setInterval(detectLive, LIVE_INTERVAL);
     } catch {
       if (aliveRef.current) setError(en
@@ -196,7 +224,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
 
       sourceRef.current = image;
       setFrame({ width: image.width, height: image.height });
-      const quad = detectDocumentQuad(image.data, image.width, image.height);
+      const quad = detectCapturedPage(canvas);
       setDetected(Boolean(quad));
       setCorners(quad ?? fullQuad(image.width, image.height));
       replaceSourcePreview(file);
@@ -240,7 +268,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
       const fullWidth = canvas.width;
       const fullHeight = canvas.height;
       const image = context.getImageData(0, 0, fullWidth, fullHeight);
-      const detectedQuad = detectDocumentQuad(image.data, fullWidth, fullHeight);
+      const detectedQuad = detectCapturedPage(canvas);
       const previousFrame = frame;
       const scaleX = previousFrame ? fullWidth / previousFrame.width : 1;
       const scaleY = previousFrame ? fullHeight / previousFrame.height : 1;
@@ -328,13 +356,13 @@ export default function DocumentScanner({ lang }: { lang: string }) {
     setBusy(true);
     setError('');
     try {
-      const warped = warpQuad(image, corners, { maxLongSide: 2600 });
+      const warped = warpQuad(image, corners, { maxLongSide: 3200 });
       const processed = enhance ? enhanceDocument(warped) : warped;
       const canvas = imageDataToCanvas(processed);
       const blob = format === 'jpeg'
-        ? await canvasToBlob(canvas, 'image/jpeg', 0.92)
+        ? await canvasToBlob(canvas, 'image/jpeg', 0.97)
         : await buildPdf(canvas);
-      const previewBlob = format === 'pdf' ? await canvasToBlob(canvas, 'image/jpeg', 0.88) : blob;
+      const previewBlob = format === 'pdf' ? await encodePdfPreview(canvas) : blob;
 
       if (!aliveRef.current) return;
       releaseOutputs();
@@ -400,6 +428,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
               height={outputs[0].height}
               alt={en ? 'Corrected document scan' : 'Pratinjau dokumen yang sudah diluruskan'}
               onLoad={() => setResultPreviewReady(true)}
+              ref={image => { if (image?.complete && image.naturalWidth) setResultPreviewReady(true); }}
               onError={() => setError(en ? 'The preview could not open. Adjust the corners and try again.' : 'Pratinjau tidak bisa dibuka. Atur sudutnya dan coba lagi.')}
             />
           </figure>
@@ -474,7 +503,7 @@ export default function DocumentScanner({ lang }: { lang: string }) {
                   <option value="pdf">PDF (A4)</option>
                 </select>
               </label>
-              <label className="scanner-check"><input type="checkbox" checked={enhance} onChange={event => setEnhance(event.target.checked)} disabled={busy} /> {en ? 'Brighten and balance colour' : 'Cerahkan dan seimbangkan warna'}</label>
+              <label className="scanner-check"><input type="checkbox" checked={enhance} onChange={event => setEnhance(event.target.checked)} disabled={busy} /> {en ? 'Improve lighting' : 'Perjelas pencahayaan'}</label>
               <p className="notice">{detected
                 ? (en ? 'The outline was detected automatically. Drag any corner to correct it.' : 'Tepi terdeteksi otomatis. Geser sudut mana pun untuk mengoreksinya.')
                 : (en ? 'Drag the four corners onto the paper corners.' : 'Geser keempat sudut ke sudut kertas.')}</p>

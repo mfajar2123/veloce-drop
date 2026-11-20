@@ -20,13 +20,11 @@ async function download(page: import('@playwright/test').Page) {
   return Buffer.concat(chunks);
 }
 
-test('RGB fields and swatches both drive the exported background colour', async ({ page }) => {
+test('Custom picker drives the exported background colour', async ({ page }) => {
   await openStudio(page);
 
-  // Set an exact colour through the numeric RGB inputs.
-  await page.getByLabel('Red green blue R').fill('12');
-  await page.getByLabel('Red green blue G').fill('140');
-  await page.getByLabel('Red green blue B').fill('220');
+  await page.getByRole('button', {name:'Custom colour'}).click();
+  await page.getByLabel('Background colour picker').fill('#0c8cdc');
   await page.waitForTimeout(400);
   const rgbPng = await download(page);
 

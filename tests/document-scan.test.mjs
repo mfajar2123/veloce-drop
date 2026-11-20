@@ -6,7 +6,7 @@ const source = await readFile('src/engines/document-scan.ts', 'utf8');
 
 // The engine imports nothing and only uses types, so the module body can be
 // stripped of type annotations by Node's experimental type stripping.
-const { detectDocumentQuad, warpQuad } = await import('../src/engines/document-scan.ts');
+const { detectDocumentQuad, enhanceDocument, warpQuad } = await import('../src/engines/document-scan.ts');
 
 function makeFrame(width, height, quad) {
   const data = new Uint8ClampedArray(width * height * 4);
@@ -45,7 +45,7 @@ test('detects an upright page and returns its four corners in order', () => {
   const frame = makeFrame(700, 800, expected.map(point => [point.x, point.y]));
   const quad = detectDocumentQuad(frame.data, frame.width, frame.height);
   assert.ok(quad, 'a clear white page on a dark background must be detected');
-  assert.ok(cornerDistance(quad, expected) < 45, `corners were off: ${JSON.stringify(quad)}`);
+  assert.ok(cornerDistance(quad, expected) < 8, `corners were off: ${JSON.stringify(quad)}`);
   assert.deepEqual(quad.map(point => point.x < 350 ? 'left' : 'right'), ['left', 'right', 'right', 'left']);
 });
 
@@ -59,7 +59,20 @@ test('detects a tilted page, which is the case that matters for a camera', () =>
   const frame = makeFrame(760, 780, expected.map(point => [point.x, point.y]));
   const quad = detectDocumentQuad(frame.data, frame.width, frame.height);
   assert.ok(quad, 'a tilted page must still be detected');
-  assert.ok(cornerDistance(quad, expected) < 60, `corners were off: ${JSON.stringify(quad)}`);
+  assert.ok(cornerDistance(quad, expected) < 10, `corners were off: ${JSON.stringify(quad)}`);
+});
+
+test('lighting correction brightens paper while keeping the ink colour balance', () => {
+  globalThis.ImageData ??= class {
+    constructor(width, height) { this.width = width; this.height = height; this.data = new Uint8ClampedArray(width * height * 4); }
+  };
+  const image = new ImageData(10, 10);
+  for (let index = 0; index < image.data.length; index += 4) image.data.set([175, 177, 180, 255], index);
+  image.data.set([45, 80, 130, 255], 0);
+  const result = enhanceDocument(image);
+  assert.ok(result.data[4] > image.data[4]);
+  assert.equal(result.data[2] - result.data[0], image.data[2] - image.data[0]);
+  assert.equal(result.data[3], 255);
 });
 
 test('refuses to invent a page when the frame is empty', () => {
@@ -68,6 +81,21 @@ test('refuses to invent a page when the frame is empty', () => {
   frame.fill(30);
   for (let index = 3; index < frame.length; index += 4) frame[index] = 255;
   assert.equal(detectDocumentQuad(frame, 400, 400), null);
+});
+
+test('prefers four paper edges over a dense connected pattern beside the page', () => {
+  const expected = [{ x: 380, y: 80 }, { x: 730, y: 80 }, { x: 730, y: 500 }, { x: 380, y: 500 }];
+  const frame = makeFrame(800, 560, expected.map(({ x, y }) => [x, y]));
+  for (let y = 55; y < 510; y++) {
+    for (let x = 20; x < 330; x++) {
+      if (x > 26 && (y - 55) % 24 > 3) continue;
+      const index = (y * frame.width + x) * 4;
+      frame.data.set([205, 205, 205, 255], index);
+    }
+  }
+  const quad = detectDocumentQuad(frame.data, frame.width, frame.height);
+  assert.ok(quad);
+  assert.ok(cornerDistance(quad, expected) < 10, `picked the wrong boundary: ${JSON.stringify(quad)}`);
 });
 
 test('rejects a page that covers far too little of the frame', () => {

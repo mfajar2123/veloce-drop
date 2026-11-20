@@ -4,7 +4,6 @@ test('WhatsApp profile preset exports a square image with a circular safe area',
   await page.setViewportSize({width:375,height:812});
   await page.goto('/id/ukuran/ubah-ukuran-gambar/');
   await page.getByLabel('Ukuran cepat').selectOption('whatsapp-profile');
-  await expect(page.getByLabel('Potong lingkaran (PNG transparan)')).toBeChecked();
   await expect(page.getByText(/foto profil minimal 192/)).toBeVisible();
   await page.locator('input[type=file]').setInputFiles('tests/fixtures/portrait.jpg');
   const preview=page.getByLabel('Pratinjau hasil crop');

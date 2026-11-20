@@ -9,9 +9,9 @@ type Item={id:number;file:File;sourceUrl:string;quality:number;status:'ready'|'p
 type Archive={url:string;bytes:number};
 const MAX_FILES=25,MAX_FILE=20_000_000,MAX_TOTAL=100_000_000,MAX_PIXELS=20_000_000,MAX_OUTPUT=100_000_000;
 function clean(value:string){return value.replace(/[\\/:*?"<>|\p{Cc}]/gu,'_').replace(/^\.+|[. ]+$/g,'').trim().slice(0,60)}
-function outputName(item:Item,index:number,format:string,prefix:string,suffix:string){
+function outputName(item:Item,index:number,format:string){
   const original=item.file.name.replace(/\.[^.]*$/,'');const base=clean(original)||'image';
-  return `${clean(prefix)}${base}${clean(suffix)}-${String(index+1).padStart(3,'0')}.${format==='image/jpeg'?'jpg':'webp'}`;
+  return `${base}-${String(index+1).padStart(3,'0')}.${format==='image/jpeg'?'jpg':'webp'}`;
 }
 async function imageFrom(file:File){
   const header=readImageHeader(new Uint8Array(await file.slice(0,1_048_576).arrayBuffer()));
@@ -21,7 +21,7 @@ async function imageFrom(file:File){
 }
 export default function BatchCompressor({lang}:{lang:string}){
   const en=lang==='en';const [items,setItems]=useState<Item[]>([]);const [target,setTarget]=useState(200);const [format,setFormat]=useState('image/jpeg');
-  const [prefix,setPrefix]=useState('');const [suffix,setSuffix]=useState('');const [busy,setBusy]=useState(false);const [progress,setProgress]=useState('');const [error,setError]=useState('');const [archive,setArchive]=useState<Archive|null>(null);
+  const [busy,setBusy]=useState(false);const [progress,setProgress]=useState('');const [error,setError]=useState('');const [archive,setArchive]=useState<Archive|null>(null);
   const id=useRef(0);const generation=useRef(0);const urls=useRef(new Set<string>());const alive=useRef(true);
   useEffect(()=>{alive.current=true;return()=>{alive.current=false;generation.current++;for(const url of urls.current)URL.revokeObjectURL(url);urls.current.clear()}},[]);
   function revoke(url?:string){if(url){URL.revokeObjectURL(url);urls.current.delete(url)}}
@@ -50,7 +50,7 @@ export default function BatchCompressor({lang}:{lang:string}){
           for(let q=.1;q<max;q+=.1)samples.push(Math.round(q*100)/100);samples.push(max);
           for(const quality of samples){if(job!==generation.current)break;const blob=await new Promise<Blob>((resolve,reject)=>canvas!.toBlob(value=>value?.type===format?resolve(value):reject(new Error('encoder')),format,quality));if(!smallest||blob.size<smallest.size)smallest=blob;if(blob.size<=target*1000)best=blob}
           if(job!==generation.current)break;const blob=best??smallest;if(!blob)throw new Error('encoder');totalOutput+=blob.size;if(totalOutput>MAX_OUTPUT)throw new Error('total');
-          const url=URL.createObjectURL(blob);urls.current.add(url);const output={blob,url,width:canvas.width,height:canvas.height,met:!!best,name:outputName(item,index,format,prefix,suffix)};
+          const url=URL.createObjectURL(blob);urls.current.add(url);const output={blob,url,width:canvas.width,height:canvas.height,met:!!best,name:outputName(item,index,format)};
           setItems(previous=>previous.map(value=>value.id===item.id?{...value,status:'success',output,error:undefined}:value));
         }catch(cause){if(job!==generation.current)break;const code=cause instanceof Error?cause.message:'';const message=code==='pixels'?(en?'Exceeds 20 megapixels.':'Melebihi 20 megapiksel.'):code==='total'?(en?'Total output exceeds 100 MB.':'Total hasil melebihi 100 MB.'):(en?'Unsupported, corrupt, or encoding failed.':'Format tidak didukung, rusak, atau gagal dikodekan.');setItems(previous=>previous.map(value=>value.id===item.id?{...value,status:'error',error:message}:value));}
         finally{image?.close();if(canvas){canvas.width=0;canvas.height=0}}
@@ -69,7 +69,6 @@ export default function BatchCompressor({lang}:{lang:string}){
     <label>{en?'Add JPEG, PNG or WebP images':'Tambah gambar JPEG, PNG, atau WebP'} <input type="file" multiple accept="image/jpeg,image/png,image/webp" disabled={busy||items.length>=MAX_FILES} onChange={add}/></label>
     <p className="notice">{en?'Up to 25 images, 20 MB and 20 megapixels each, 100 MB total. 1 KB = 1,000 bytes.':'Maksimal 25 gambar, 20 MB dan 20 megapiksel per gambar, total 100 MB. 1 KB = 1.000 byte.'}</p>
     <div className="controls"><label>{en?'Target per image (KB)':'Target per gambar (KB)'}<input type="number" min="1" max="20000" disabled={busy} value={target} onChange={e=>{resetOutputs();setTarget(Number(e.target.value))}}/></label><label>{en?'Output format':'Format hasil'}<select value={format} disabled={busy} onChange={e=>{resetOutputs();setFormat(e.target.value)}}><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option></select></label><button className="button" disabled={busy||!items.length} onClick={()=>void process()}>{en?'Compress queue':'Kompres antrean'}</button>{busy&&<button className="button secondary" onClick={cancel}>{en?'Cancel':'Batalkan'}</button>}</div>
-    <details style={{marginTop:20}}><summary>{en?'Output names':'Nama hasil'}</summary><div className="controls"><label>{en?'Prefix':'Awalan'}<input type="text" maxLength={30} disabled={busy} value={prefix} onChange={e=>{resetOutputs();setPrefix(e.target.value)}}/></label><label>{en?'Suffix':'Akhiran'}<input type="text" maxLength={30} disabled={busy} value={suffix} onChange={e=>{resetOutputs();setSuffix(e.target.value)}}/></label></div></details>
     <p className="notice">{en?'JPEG uses a white background for transparency. Re-encoding removes metadata; visible information is not hidden. Dimensions are not reduced.':'JPEG memakai latar putih untuk transparansi. Pengodean ulang menghapus metadata; informasi yang terlihat tidak disembunyikan. Dimensi tidak dikurangi.'}</p>
     <p aria-live="polite">{progress}</p>{error&&<p role="alert" className="error">{error}</p>}
     {items.length>0&&<ol>{items.map((item,index)=><li key={item.id} style={{padding:'16px 0',borderBottom:'1px solid #e2e8f0'}}><strong>{item.file.name}</strong> · {size(item.file.size)}

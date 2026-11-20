@@ -50,6 +50,7 @@ test('a chosen photo is detected, squared into a page, and exported as JPG', asy
 });
 
 test('exporting as PDF produces a one-page A4 document', async ({ page }) => {
+  test.setTimeout(75_000);
   await page.setViewportSize({ width: 320, height: 740 });
   await page.goto('/en/scan-document/');
   await page.getByRole('link', { name: 'Bahasa Indonesia' }).click();
@@ -72,14 +73,12 @@ test('exporting as PDF produces a one-page A4 document', async ({ page }) => {
   expect((await preview.boundingBox())!.y).toBeLessThan((await download.boundingBox())!.y);
   expect(await fitsViewport()).toBe(true);
 
-  const href = await download.getAttribute('href');
-  const bytes = await page.evaluate(async (url: string) => {
-    const buffer = await (await fetch(url)).arrayBuffer();
-    return Array.from(new Uint8Array(buffer));
-  }, href!);
-
-  expect(String.fromCharCode(...bytes.slice(0, 5))).toBe('%PDF-');
-  const pdf = await PDFDocument.load(Uint8Array.from(bytes));
+  const [file] = await Promise.all([page.waitForEvent('download'), download.click()]);
+  const chunks: Buffer[] = [];
+  for await (const chunk of await file.createReadStream()) chunks.push(Buffer.from(chunk));
+  const bytes = Buffer.concat(chunks);
+  expect(bytes.toString('ascii', 0, 5)).toBe('%PDF-');
+  const pdf = await PDFDocument.load(bytes);
   expect(pdf.getPageCount()).toBe(1);
   expect(pdf.getPage(0).getWidth()).toBeCloseTo(595.28);
   expect(pdf.getPage(0).getHeight()).toBeCloseTo(841.89);

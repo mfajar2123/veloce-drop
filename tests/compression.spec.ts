@@ -15,16 +15,7 @@ test('compresses a real image and downloads a decodable result', async ({ page }
   await expect(split).toHaveValue('50');
   await split.fill('68');
   await expect(split).toHaveValue('68');
-  const zoom = page.getByLabel('Zoom pratinjau');
-  await zoom.fill('2');
-  const stage = page.getByRole('group', { name: /Pratinjau perbandingan/ });
-  await stage.focus();
-  const beforePan = await stage.locator('img').first().getAttribute('style');
-  await page.keyboard.press('ArrowRight');
-  await expect.poll(() => stage.locator('img').first().getAttribute('style')).not.toBe(beforePan);
-  await page.getByRole('button', { name: 'Reset tampilan' }).click();
-  await expect(zoom).toHaveValue('1');
-  await expect(split).toHaveValue('50');
+  await expect(page.getByLabel('Zoom pratinjau')).toHaveCount(0);
   const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('link', { name: 'Unduh gambar' }).click()]);
   const stream = await download.createReadStream(); const chunks: Buffer[] = [];
   for await (const chunk of stream) chunks.push(Buffer.from(chunk));

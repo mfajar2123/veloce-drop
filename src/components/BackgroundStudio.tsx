@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import PrintSheet from './PrintSheet';
 import WorkflowActions from './WorkflowActions';
-import { dilateAlpha, featherAlpha } from '../engines/mask-effects';
+import { featherAlpha } from '../engines/mask-effects';
 import { readImageBlobHeader } from '../engines/image-header';
 import { toolHref } from '../tool-links';
 
@@ -24,45 +24,6 @@ const swatches: Array<{ value: string; id: string; en: string }> = [
   { value: '#db1514', id: 'Merah', en: 'Red' },
 ];
 
-function hexToRgb(hex: string) {
-  const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  if (!match) return { r: 255, g: 255, b: 255 };
-  return { r: parseInt(match[1], 16), g: parseInt(match[2], 16), b: parseInt(match[3], 16) };
-}
-
-function rgbToHex(r: number, g: number, b: number) {
-  const clamp = (value: number) => Math.max(0, Math.min(255, Math.round(value)));
-  return `#${[r, g, b].map(value => clamp(value).toString(16).padStart(2, '0')).join('')}`;
-}
-
-function sharpen(context: CanvasRenderingContext2D, width: number, height: number, strength: number) {
-  if (strength <= 0 || width < 3 || height < 3) return;
-  const source = context.getImageData(0, 0, width, height);
-  const output = context.createImageData(width, height);
-  const input = source.data;
-  const result = output.data;
-  const keep = 1 - strength;
-  for (let y = 0; y < height; y += 1) {
-    const row = y * width;
-    const up = (y === 0 ? y : y - 1) * width;
-    const down = (y === height - 1 ? y : y + 1) * width;
-    for (let x = 0; x < width; x += 1) {
-      const index = (row + x) * 4;
-      const left = row + (x === 0 ? x : x - 1);
-      const right = row + (x === width - 1 ? x : x + 1);
-      for (let channel = 0; channel < 3; channel += 1) {
-        const centre = input[index + channel];
-        const neighbours = input[(up + x) * 4 + channel] + input[(down + x) * 4 + channel]
-          + input[left * 4 + channel] + input[right * 4 + channel];
-        const sharpened = centre * 5 - neighbours;
-        result[index + channel] = Math.max(0, Math.min(255, centre * keep + sharpened * strength));
-      }
-      result[index + 3] = input[index + 3];
-    }
-  }
-  context.putImageData(output, 0, 0);
-}
-
 export default function BackgroundStudio({ lang }: { lang: string }) {
   const en = lang === 'en';
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'processing'>('idle');
@@ -74,8 +35,6 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
   const [mode, setMode] = useState<'erase' | 'restore'>('erase');
   const [brush, setBrush] = useState(30);
   const [feather, setFeather] = useState(1);
-  const [outline, setOutline] = useState(0);
-  const [outlineColor, setOutlineColor] = useState('#ffffff');
   const [softness, setSoftness] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -87,13 +46,6 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState('');
   const [previewSize, setPreviewSize] = useState({ width: 1, height: 1 });
-  const [productShadow, setProductShadow] = useState(false);
-  const [shadowOpacity, setShadowOpacity] = useState(40);
-  const [shadowBlur, setShadowBlur] = useState(24);
-  const [shadowX, setShadowX] = useState(0);
-  const [shadowY, setShadowY] = useState(18);
-  const [enhance, setEnhance] = useState(true);
-  const [enlarged, setEnlarged] = useState(false);
   const [keyboardCursor, setKeyboardCursor] = useState({ x: 50, y: 50 });
 
   const worker = useRef<Worker | null>(null);
@@ -305,51 +257,6 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
       context.drawImage(alphaMask, 0, 0, width, height);
     }
     context.globalCompositeOperation = 'source-over';
-    if (enhance) sharpen(context, width, height, 0.55);
-    if (outline) {
-      const pixels = context.getImageData(0, 0, width, height);
-      const alpha = new Uint8ClampedArray(width * height);
-      for (let i = 0; i < alpha.length; i += 1) alpha[i] = pixels.data[i * 4 + 3];
-      const expanded = dilateAlpha(alpha, width, height, Math.max(1, Math.round(outline * width / source.width)));
-      const temporary = document.createElement('canvas');
-      temporary.width = width;
-      temporary.height = height;
-      const temp = temporary.getContext('2d');
-      if (!temp) throw new Error('Canvas unavailable');
-      const outlinePixels = temp.createImageData(width, height);
-      for (let i = 0; i < expanded.length; i += 1) {
-        outlinePixels.data[i * 4] = 255;
-        outlinePixels.data[i * 4 + 1] = 255;
-        outlinePixels.data[i * 4 + 2] = 255;
-        outlinePixels.data[i * 4 + 3] = expanded[i];
-      }
-      temp.putImageData(outlinePixels, 0, 0);
-      temp.globalCompositeOperation = 'source-in';
-      temp.fillStyle = outlineColor;
-      temp.fillRect(0, 0, width, height);
-      context.globalCompositeOperation = 'destination-over';
-      context.drawImage(temporary, 0, 0);
-      temporary.width = 0;
-      temporary.height = 0;
-    }
-    context.globalCompositeOperation = 'source-over';
-    if (productShadow && shadowOpacity > 0) {
-      const scale = width / source.width;
-      const shadow = document.createElement('canvas');
-      shadow.width = width;
-      shadow.height = height;
-      const shadowContext = shadow.getContext('2d');
-      if (!shadowContext) throw new Error('Canvas unavailable');
-      shadowContext.shadowColor = `rgba(0,0,0,${shadowOpacity / 100})`;
-      shadowContext.shadowBlur = shadowBlur * scale;
-      shadowContext.shadowOffsetX = shadowX * scale;
-      shadowContext.shadowOffsetY = shadowY * scale;
-      shadowContext.drawImage(canvas, 0, 0);
-      context.clearRect(0, 0, width, height);
-      context.drawImage(shadow, 0, 0);
-      shadow.width = 0;
-      shadow.height = 0;
-    }
     context.globalCompositeOperation = 'destination-over';
     if (background !== 'transparent') {
       context.fillStyle = background === 'custom' ? custom : background;
@@ -372,7 +279,7 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
     const height = Math.max(1, Math.round(source.height * scale));
     drawComposite(node, width, height);
     setPreviewSize({ width, height });
-  }, [hasMask, revision, background, custom, feather, outline, outlineColor, productShadow, shadowOpacity, shadowBlur, shadowX, shadowY, enhance]);
+  }, [hasMask, revision, background, custom, feather]);
 
   function snapshot() {
     const current = mask.current;
@@ -506,7 +413,7 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
   async function buildResult() {
     const source = original.current;
     if (!source || !mask.current) return null;
-    const scale = enlarged ? 2 : 1;
+    const scale = 1;
     const width = Math.round(source.width * scale);
     const height = Math.round(source.height * scale);
     const canvas = document.createElement('canvas');
@@ -553,7 +460,7 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
     }
   }
 
-  const rgb = hexToRgb(custom);
+
   const statusText = status === 'loading'
     ? `${en ? 'Preparing model' : 'Menyiapkan model'} ${Math.min(100, Math.round(loaded / TOTAL_MODEL * 100))}%`
     : status === 'processing'
@@ -667,46 +574,15 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
               <em>{en ? 'Custom' : 'Pilihan'}</em>
             </button>
           </div>
-          <div className="bg-rgb">
+          {background === 'custom' && <div className="bg-rgb">
             <label>{en ? 'Pick colour' : 'Pilih warna'}<input aria-label={en ? 'Background colour picker' : 'Pemilih warna latar'} type="color" value={custom} onChange={event => { generation.current += 1; setCustom(event.target.value); setBackground('custom'); setResult(null); }} /></label>
-            <div className="bg-rgb-fields">
-              {(['r', 'g', 'b'] as const).map(channel => <label key={channel}>{channel.toUpperCase()}
-                <input aria-label={en ? `Red green blue ${channel.toUpperCase()}` : `Red green blue ${channel.toUpperCase()}`} type="number" min="0" max="255" value={rgb[channel]} onChange={event => {
-                  const next = { ...rgb, [channel]: Math.max(0, Math.min(255, Number(event.target.value) || 0)) };
-                  generation.current += 1;
-                  setCustom(rgbToHex(next.r, next.g, next.b));
-                  setBackground('custom');
-                  setResult(null);
-                }} />
-              </label>)}
-            </div>
-            <code>{custom.toUpperCase()}</code>
-          </div>
-        </div>
 
-        <div className="bg-block">
-          <h2>{en ? 'Quality' : 'Kualitas'}</h2>
-          <label className="bg-check"><input type="checkbox" checked={enhance} onChange={event => { generation.current += 1; setEnhance(event.target.checked); setResult(null); }} />{en ? 'Sharpen details (HD)' : 'Pertajam detail (HD)'}</label>
-          <label className="bg-check"><input type="checkbox" checked={enlarged} onChange={event => { generation.current += 1; setEnlarged(event.target.checked); setResult(null); }} />{en ? 'Export at 2× pixels' : 'Ekspor 2× piksel'}</label>
-          <p className="notice">{en ? 'Output keeps the original pixel dimensions by default. Sharpening adds edge definition; 2× doubles the canvas for print and is upscaling, not new detail.' : 'Hasil mempertahankan dimensi piksel asli secara default. Penajaman menambah ketegasan tepi; 2× menggandakan kanvas untuk cetak dan bersifat upscaling, bukan detail baru.'}</p>
-        </div>
-
-        <details className="bg-block bg-details">
-          <summary>{en ? 'Edge and shadow' : 'Tepi dan bayangan'}</summary>
-          <div className="bg-details-grid">
-            <label>{en ? 'Feather (px)' : 'Kehalusan tepi (px)'}<input type="range" min="0" max="12" value={feather} onChange={event => { generation.current += 1; setFeather(Number(event.target.value)); setResult(null); }} /></label>
-            <label>Outline (px)<input type="range" min="0" max="12" value={outline} onChange={event => { generation.current += 1; setOutline(Number(event.target.value)); setResult(null); }} /></label>
-            {outline > 0 && <label>{en ? 'Outline colour' : 'Warna outline'}<input aria-label={en ? 'Outline colour' : 'Warna outline'} type="color" value={outlineColor} onChange={event => { generation.current += 1; setOutlineColor(event.target.value); setResult(null); }} /></label>}
-            <label className="bg-check"><input type="checkbox" checked={productShadow} onChange={event => { generation.current += 1; setProductShadow(event.target.checked); setResult(null); }} />{en ? 'Product shadow' : 'Bayangan produk'}</label>
-          </div>
-          {productShadow && <div className="bg-details-grid">
-            <label>{en ? 'Shadow opacity (%)' : 'Opasitas bayangan (%)'}<input aria-label={en ? 'Shadow opacity' : 'Opasitas bayangan'} type="range" min="0" max="80" value={shadowOpacity} onChange={event => { generation.current += 1; setShadowOpacity(Number(event.target.value)); setResult(null); }} /></label>
-            <label>{en ? 'Shadow blur' : 'Blur bayangan'}<input aria-label={en ? 'Shadow blur' : 'Blur bayangan'} type="range" min="0" max="100" value={shadowBlur} onChange={event => { generation.current += 1; setShadowBlur(Number(event.target.value)); setResult(null); }} /></label>
-            <label>{en ? 'Offset X' : 'Offset horizontal'}<input aria-label={en ? 'Shadow horizontal offset' : 'Offset bayangan horizontal'} type="range" min="-100" max="100" value={shadowX} onChange={event => { generation.current += 1; setShadowX(Number(event.target.value)); setResult(null); }} /></label>
-            <label>{en ? 'Offset Y' : 'Offset vertikal'}<input aria-label={en ? 'Shadow vertical offset' : 'Offset bayangan vertikal'} type="range" min="-100" max="100" value={shadowY} onChange={event => { generation.current += 1; setShadowY(Number(event.target.value)); setResult(null); }} /></label>
           </div>}
-        </details>
+        </div>
 
+
+
+        {hasMask && <label className="bg-edge">{en ? 'Soften edges' : 'Haluskan tepi'}<input type="range" min="0" max="6" value={feather} onChange={event => { generation.current += 1; setFeather(Number(event.target.value)); setResult(null); }} /></label>}
         {result && <WorkflowActions lang={lang} blob={result.blob} width={result.width} height={result.height} onBeforeNavigate={async () => {
           worker.current?.terminate();
           worker.current = null;
@@ -720,7 +596,7 @@ export default function BackgroundStudio({ lang }: { lang: string }) {
           await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
         }} steps={[{ path: toolHref('resize-image', lang as 'id' | 'en'), id: 'Buat pas foto 3x4', en: 'Make a 3x4 photo' }]} />}
 
-        {hasMask && <PrintSheet lang={lang} version={`${revision}:${background}:${custom}:${feather}:${outline}:${outlineColor}`} capture={() => {
+        {hasMask && <PrintSheet lang={lang} version={`${revision}:${background}:${custom}:${feather}`} capture={() => {
           const source = original.current;
           if (!source || !mask.current) return null;
           const canvas = document.createElement('canvas');

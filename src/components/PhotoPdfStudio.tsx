@@ -21,7 +21,7 @@ async function toBlob(canvas:HTMLCanvasElement):Promise<Blob>{return new Promise
 
 export default function PhotoPdfStudio({lang}:{lang:string}){
   const en=lang==='en';const [items,setItems]=useState<Item[]>([]);const [errors,setErrors]=useState<string[]>([]);
-  const [size,setSize]=useState('a4');const [orientation,setOrientation]=useState('portrait');const [margin,setMargin]=useState(10);
+  const [size,setSize]=useState('a4');const [orientation,setOrientation]=useState('portrait');const margin=10;
   const [result,setResult]=useState<Result|null>(null);const [busy,setBusy]=useState(false);const [progress,setProgress]=useState(0);
   const previews=useRef(new Set<string>());const nextId=useRef(0);const dragId=useRef<number|null>(null);const alive=useRef(true);
   useEffect(()=>{alive.current=true;return()=>{alive.current=false;for(const url of previews.current)URL.revokeObjectURL(url);previews.current.clear()}},[]);
@@ -86,7 +86,6 @@ export default function PhotoPdfStudio({lang}:{lang:string}){
     </li>)}</ol>}
     <div className="controls" style={{marginTop:20}}><label>{en?'Paper size':'Ukuran kertas'}<select value={size} disabled={busy} onChange={e=>{setSize(e.target.value);invalidate()}}><option value="a4">A4 (210 × 297 mm)</option><option value="f4">F4 (210 × 330 mm)</option><option value="letter">Letter (8.5 × 11 in)</option><option value="image">{en?'Match image (96 pixels/in)':'Ikuti gambar (96 piksel/in)'}</option></select></label>
       {size!=='image'&&<label>{en?'Orientation':'Orientasi'}<select value={orientation} disabled={busy} onChange={e=>{setOrientation(e.target.value);invalidate()}}><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label>}
-      <label>{en?'Margin (mm)':'Margin (mm)'}<input type="number" min="0" max="50" value={margin} disabled={busy} onChange={e=>{setMargin(Math.max(0,Math.min(50,Number(e.target.value)||0)));invalidate()}}/></label>
       <button className="button" disabled={!items.length||busy} onClick={()=>void create()}>{busy?(en?`Processing ${progress}/${items.length}`:`Memproses ${progress}/${items.length}`):(en?'Create PDF':'Buat PDF')}</button>
     </div>
     {items.length>0&&<section aria-label={en?'PDF page layout preview':'Pratinjau tata letak halaman PDF'} style={{marginTop:28}}><h2>{en?'Page layout preview':'Pratinjau tata letak halaman'}</h2><p className="notice">{en?'Each image becomes one centered page. The preview follows the selected paper, orientation, margin, order and rotation.':'Setiap gambar menjadi satu halaman dengan posisi di tengah. Pratinjau mengikuti ukuran kertas, orientasi, margin, urutan, dan rotasi yang dipilih.'}</p><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,180px),1fr))',gap:16}}>{items.map((item,index)=>{

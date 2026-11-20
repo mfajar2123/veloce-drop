@@ -10,7 +10,7 @@ function cropRect(width:number,height:number,aspect:number,x=50,y=50){let w=widt
 
 export default function PrintSheet({lang,version,capture}:{lang:string;version:string;capture:()=>HTMLCanvasElement|null}){
   const en=lang==='en';const [paper,setPaper]=useState('4r');const [photo,setPhoto]=useState('3x4');const [orientation,setOrientation]=useState('portrait');
-  const [margin,setMargin]=useState(5);const [gap,setGap]=useState(6);const [requested,setRequested]=useState(0);const [busy,setBusy]=useState(false);
+  const margin=5, gap=6;const [requested,setRequested]=useState(0);const [busy,setBusy]=useState(false);
   const [cropX,setCropX]=useState(50);const [cropY,setCropY]=useState(50);const drag=useRef<{x:number;y:number;cropX:number;cropY:number}|null>(null);
   const [result,setResult]=useState<Output|null>(null);const [error,setError]=useState('');const [expanded,setExpanded]=useState(false);const generation=useRef(0);const alive=useRef(true);const cropPreview=useRef<HTMLCanvasElement|null>(null);
   const dimensions=papers[paper],page=orientation==='portrait'?dimensions:[dimensions[1],dimensions[0]];const [photoWidth,photoHeight]=photos[photo];
@@ -27,8 +27,9 @@ export default function PrintSheet({lang,version,capture}:{lang:string;version:s
     if(!capacity||busy)return;const job=generation.current;setBusy(true);setError('');setResult(null);let source:HTMLCanvasElement|null=null;let cropped:HTMLCanvasElement|null=null;
     try{
       source=capture();if(!source||!source.width||!source.height)throw new Error('image');
-      const area=cropRect(source.width,source.height,photoWidth/photoHeight,cropX,cropY);const scale=Math.max(1,Math.floor(Math.min(area.width/photoWidth,area.height/photoHeight)));
-      cropped=document.createElement('canvas');cropped.width=photoWidth*scale;cropped.height=photoHeight*scale;const ctx=cropped.getContext('2d');if(!ctx)throw new Error('canvas');
+      const area=cropRect(source.width,source.height,photoWidth/photoHeight,cropX,cropY);
+      cropped=document.createElement('canvas');cropped.width=Math.max(1,Math.round(area.width));cropped.height=Math.max(1,Math.round(area.height));const ctx=cropped.getContext('2d');if(!ctx)throw new Error('canvas');
+      ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(source,area.x,area.y,area.width,area.height,0,0,cropped.width,cropped.height);
       const blob=await new Promise<Blob>((resolve,reject)=>cropped!.toBlob(value=>value?.type==='image/png'?resolve(value):reject(new Error('png')),'image/png'));
       const {PDFDocument,rgb}=await import('pdf-lib');const pdf=await PDFDocument.create();const embedded=await pdf.embedPng(await blob.arrayBuffer());
@@ -52,8 +53,6 @@ export default function PrintSheet({lang,version,capture}:{lang:string;version:s
     <div className="controls"><label>{en?'Print paper':'Kertas cetak'}<select value={paper} disabled={busy} onChange={e=>{setPaper(e.target.value);setRequested(0)}}><option value="4r">4R (101.6 × 152.4 mm)</option><option value="a4">A4 (210 × 297 mm)</option></select></label>
       <label>{en?'Photo size':'Ukuran foto'}<select value={photo} disabled={busy} onChange={e=>{setPhoto(e.target.value);setRequested(0)}}><option value="2x3">2 × 3 cm</option><option value="3x4">3 × 4 cm</option><option value="4x6">4 × 6 cm</option></select></label>
       <label>{en?'Paper orientation':'Orientasi kertas'}<select value={orientation} disabled={busy} onChange={e=>{setOrientation(e.target.value);setRequested(0)}}><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label>
-      <label>{en?'Margin (mm)':'Margin cetak (mm)'}<input type="number" min="4" max="30" value={margin} disabled={busy} onChange={e=>{setMargin(Math.max(4,Math.min(30,Number(e.target.value)||4)));setRequested(0)}}/></label>
-      <label>{en?'Spacing (mm)':'Jarak foto (mm)'}<input type="number" min="6" max="30" value={gap} disabled={busy} onChange={e=>{setGap(Math.max(6,Math.min(30,Number(e.target.value)||6)));setRequested(0)}}/></label>
       <label>{en?'Horizontal crop position':'Posisi crop horizontal'}<input aria-label={en?'Horizontal crop position':'Posisi crop horizontal'} type="range" min="0" max="100" value={cropX} disabled={busy} onChange={e=>setCropX(Number(e.target.value))}/></label>
       <label>{en?'Vertical crop position':'Posisi crop vertikal'}<input aria-label={en?'Vertical crop position':'Posisi crop vertikal'} type="range" min="0" max="100" value={cropY} disabled={busy} onChange={e=>setCropY(Number(e.target.value))}/></label>
       <button type="button" className="button secondary" disabled={busy||cropX===50&&cropY===50} onClick={()=>{setCropX(50);setCropY(50)}}>{en?'Center crop':'Pusatkan crop'}</button>
